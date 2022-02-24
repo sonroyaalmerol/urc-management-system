@@ -1,8 +1,8 @@
-import { PrismaClient } from "@prisma/client"
+import prisma from "../../../../prisma/client"
 
 export default async function handler(req, res) {
   const { id } = req.query
-  const prisma = new PrismaClient()
+  
 
   const institute = await prisma.institute.findFirst({
     where: {
