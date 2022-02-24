@@ -18,8 +18,8 @@ http
 
       const body = JSON.parse(chunk);
 
-      const isMaster = body?.ref === 'refs/heads/master';
-      console.log(`is allowed: ${isAllowed}, is master: ${isMaster}`)
+      const isMaster = body?.ref === 'refs/heads/main';
+      console.log(`is allowed: ${isAllowed}, is main: ${isMaster}`)
       if (isAllowed && isMaster) {
         // do something
         try {
