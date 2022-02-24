@@ -1,6 +1,7 @@
-import http from 'http';
-import crypto from 'crypto';
-import { exec } from 'child_process';
+
+const http = require('http');
+const crypto = require('crypto');
+const { exec } = require('child_process');
 
 const SECRET = 'aYwBpLv3BaEhAVoHrlQLN2mhA6oSB4nK';
 
