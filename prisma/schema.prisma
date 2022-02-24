@@ -1,0 +1,473 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+  oauth_token_secret String?
+  oauth_token        String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model CapsuleProposalRequirement {
+  id                           String                        @id @default(cuid())
+  deadline                     DateTime                     
+  title                        String
+  description                  String?
+  research_id                  String                        
+  created_at                   DateTime?                     @default(now())
+  updated_at                   DateTime?                     @updatedAt
+  urc_funded_researches        URCFundedResearch         @relation(fields: [research_id], references: [id], onUpdate: Restrict)
+  capsule_proposal_submissions CapsuleProposalSubmission?
+}
+
+model CapsuleProposalSubmission {
+  id                            String                        @id @default(cuid())
+  requirement_id                String                        @unique 
+  created_at                    DateTime?                     @default(now())
+  updated_at                    DateTime?                     @updatedAt
+  title                         String
+  research_thrust               String
+  brief_background              String
+  objectives_of_the_study       String
+  significance_of_the_study     String
+  methodology                   String
+  capsule_proposal_requirements CapsuleProposalRequirement @relation(fields: [requirement_id], references: [id], onUpdate: Restrict)
+}
+
+model Comment {
+  id                        String                  @id @default(cuid())
+  parent_comment_id         String?                 
+  deliverable_submission_id String                  
+  content                   String
+  user_id                   String
+  created_at                DateTime                @default(now())
+  updated_at                DateTime                @updatedAt
+  deliverable_submissions   DeliverableSubmission @relation(fields: [deliverable_submission_id], references: [id], onUpdate: Restrict)
+  comments                  Comment?               @relation("commentsTocomments_parent_comment_id", fields: [parent_comment_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  users                     User                   @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+  other_comments            Comment[]              @relation("commentsTocomments_parent_comment_id")
+}
+
+model DeliverableSubmission {
+  id             String       @id @default(cuid())
+  deliverable_id String       
+  created_at     DateTime     @default(now())
+  updated_at     DateTime     @updatedAt
+  title          String
+  description    String?
+  deliverables   Deliverable @relation(fields: [deliverable_id], references: [id], onUpdate: Restrict)
+  comments       Comment[]
+}
+
+model Deliverable {
+  id                      String                    @id @default(cuid())
+  deadline                DateTime                 
+  title                   String
+  description             String?
+  created_at              DateTime                  @default(now())
+  updated_at              DateTime                  @updatedAt
+  research_id             String                    
+  urc_funded_researches   URCFundedResearch     @relation(fields: [research_id], references: [id], onUpdate: Restrict)
+  deliverable_submissions DeliverableSubmission[]
+}
+
+model Download {
+  id           String       @id @default(cuid())
+  title        String
+  description  String?
+  user_id      String
+  upload_id    String       
+  created_at   DateTime     @default(now())
+  updated_at   DateTime     @updatedAt
+  file_uploads FileUpload @relation(fields: [upload_id], references: [id], onUpdate: Restrict)
+  users        User        @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+}
+
+model ExternalResearchInvolvement {
+  id                   String               @id(map: "external_research_involvement_pkey") @default(cuid())
+  proof_upload_id      String               
+  role                 String
+  verified             Boolean              @default(false)
+  user_id              String
+  created_at           DateTime             @default(now())
+  updated_at           DateTime             @updatedAt
+  external_research_id String?              
+  external_researches  ExternalResearch? @relation(fields: [external_research_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  proof_upload         FileUpload         @relation(fields: [proof_upload_id], references: [id], onUpdate: Restrict)
+  users                User                @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+}
+
+model ExternalResearch {
+  id                             String                           @id @default(cuid())
+  title                          String
+  organization                   String?
+  page_number                    String?
+  publisher_page_url             String?
+  upload_id                      String?                          
+  created_at                     DateTime                         @default(now())
+  updated_at                     DateTime                         @updatedAt
+  research_status                String                           @default("not_implemented")
+  research_statuses              ResearchStatus                @relation(fields: [research_status], references: [id], onUpdate: Restrict)
+  file_uploads                   FileUpload?                    @relation(fields: [upload_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  external_research_involvements ExternalResearchInvolvement[]
+  research_presentations         ResearchPresentation[]
+  journal_publications           JournalPublication[]
+  users_to_external_researches   UserToExternalResearchBridge[]
+}
+
+model FileUpload {
+  id                              String                            @unique @default(cuid())
+  google_id                       String                            @unique
+  name                            String
+  file_type                       String
+  mime_type                       String
+  created_at                      DateTime                          @default(now())
+  updated_at                      DateTime                          @updatedAt
+  resource_key                    String?
+  user_id                         String
+  users                           User                             @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+  downloads                       Download[]
+  external_research_involvements  ExternalResearchInvolvement[]
+  external_researches             ExternalResearch[]
+  full_blown_proposal_submissions FullBlownProposalSubmission[]
+  institute_news                  InstituteNews[]
+  research_event_attendances      ResearchEventAttendance[]
+  journal_publications            JournalPublication[]
+  book_publications               BookPublication[]
+
+  @@id([id, google_id])
+}
+
+model FullBlownProposalRequirement {
+  id                              String                           @id @default(cuid())
+  deadline                        DateTime                        
+  title                           String
+  description                     String?
+  research_id                     String                           
+  created_at                      DateTime?                        @default(now())
+  updated_at                      DateTime?                        @updatedAt
+  urc_funded_researches           URCFundedResearch            @relation(fields: [research_id], references: [id], onUpdate: Restrict)
+  full_blown_proposal_submissions FullBlownProposalSubmission?
+}
+
+model FullBlownProposalSubmission {
+  id                               String                           @id @default(cuid())
+  requirement_id                   String                           @unique 
+  title                            String
+  description                      String?
+  created_at                       DateTime?                        @default(now())
+  updated_at                       DateTime?                        @updatedAt
+  upload_id                        String                           
+  full_blown_proposal_requirements FullBlownProposalRequirement @relation(fields: [requirement_id], references: [id], onUpdate: Restrict)
+  file_uploads                     FileUpload                     @relation(fields: [upload_id], references: [id], onUpdate: Restrict)
+}
+
+model InstituteNews {
+  id           String        @id @default(cuid())
+  title        String
+  content      String
+  created_at   DateTime      @default(now())
+  updated_at   DateTime      @updatedAt
+  institute_id String        
+  user_id      String
+  upload_id    String?       
+  institutes   Institute    @relation(fields: [institute_id], references: [id], onUpdate: Restrict)
+  file_uploads FileUpload? @relation(fields: [upload_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  users        User         @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+}
+
+model Institute {
+  id                  String                @id(map: "institute_pkey") @default(cuid())
+  name                String
+  short_name          String?
+  description         String?
+  logo_url            String?
+  created_at          DateTime?             @default(now())
+  updated_at          DateTime?             @updatedAt
+  institute_news      InstituteNews[]
+  institutes_to_users InstituteToUserBridge[]
+}
+
+model InstituteToUserBridge {
+  id           String     @id @default(cuid())
+  user_id      String
+  institute_id String     
+  role_title   String
+  created_at   DateTime?  @default(now())
+  updated_at   DateTime?  @updatedAt
+  institutes   Institute @relation(fields: [institute_id], references: [id], onUpdate: Restrict)
+  users        User      @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+}
+
+model ResearchEventAttendance {
+  id              String       @id @default(cuid())
+  verified        Boolean      @default(false)
+  user_id         String
+  created_at      DateTime     @default(now())
+  updated_at      DateTime     @updatedAt
+  event_name      String
+  start_date      DateTime    
+  end_date        DateTime    
+  description     String
+  proof_upload_id String       
+  proof_upload    FileUpload @relation(fields: [proof_upload_id], references: [id], onUpdate: Restrict)
+  users           User        @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+}
+
+model ResearchPresentation {
+  id                     String                 @id @default(cuid())
+  is_external_research   Boolean                @default(false)
+  urc_funded_research_id String?                
+  external_research_id   String?                
+  event_title            String
+  location               String
+  start_date             DateTime              
+  end_date               DateTime              
+  created_at             DateTime               @default(now())
+  updated_at             DateTime               @updatedAt
+  verified               Boolean                @default(false)
+  user_id                String
+  external_researches    ExternalResearch?   @relation(fields: [external_research_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  urc_funded_researches  URCFundedResearch? @relation(fields: [urc_funded_research_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  users                  User                  @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+}
+
+model JournalPublication {
+  id                     String                 @id @default(cuid())
+  is_external_research   Boolean                @default(false)
+  urc_funded_research_id String?                
+  external_research_id   String?                
+  created_at             DateTime               @default(now())
+  user_id                String
+  proof_upload_id        String                 
+  approved               Boolean                @default(false)
+  updated_at             DateTime               @updatedAt
+  date_published         DateTime?             
+  issn                   String?
+  journal                String?
+  url                    String?
+  is_indexed             Boolean                @default(false)
+  external_researches    ExternalResearch?   @relation(fields: [external_research_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  proof_upload           FileUpload           @relation(fields: [proof_upload_id], references: [id], onUpdate: Restrict)
+  urc_funded_researches  URCFundedResearch? @relation(fields: [urc_funded_research_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  users                  User                  @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+  journal_publication_to_unit JournalPublicationToUnit[]
+}
+
+model BookPublication {
+  id                     String                 @id @default(cuid())
+  created_at             DateTime               @default(now())
+  user_id                String
+  proof_upload_id        String                 
+  approved               Boolean                @default(false)
+  updated_at             DateTime               @updatedAt
+  title                  String
+  authors                String?
+  publisher              String?
+  isbn                   String?
+  date_published         DateTime?             
+  proof_upload           FileUpload           @relation(fields: [proof_upload_id], references: [id], onUpdate: Restrict)
+  users                  User                  @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+  book_publication_to_unit BookPublicationToUnit[]
+}
+
+model JournalPublicationToUnit {
+  id  String  @id @default(cuid())
+  unit_id String
+  journal_publication_id String
+
+  unit Unit @relation(fields: [unit_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  journal_publication JournalPublication @relation(fields: [journal_publication_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+}
+
+model BookPublicationToUnit {
+  id  String  @id @default(cuid())
+  unit_id String
+  book_publication_id String
+
+  unit Unit @relation(fields: [unit_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  book_publication BookPublication @relation(fields: [book_publication_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+}
+
+model ResearchStatus {
+  id                    String                  @id
+  comment               String?
+  external_researches   ExternalResearch[]
+  urc_funded_researches URCFundedResearch[]
+}
+
+model RevisionRequirement {
+  id                    String                @id(map: "revision_requirement_pkey") @default(cuid())
+  deadline              DateTime             
+  research_id           String                
+  title                 String
+  description           String?
+  created_at            DateTime?             @default(now())
+  updated_at            DateTime?             @updatedAt
+  urc_funded_researches URCFundedResearch @relation(fields: [research_id], references: [id], onUpdate: Restrict, map: "revision_requirement_research_id_fkey")
+  revision_submissions  RevisionSubmission?
+}
+
+model RevisionSubmission {
+  id                    String                @id(map: "revision_submission_pkey") @default(cuid())
+  requirement_id        String                @unique(map: "revision_submission_requirement_id_key") 
+  title                 String
+  description           String?
+  created_at            DateTime?             @default(now())
+  updated_at            DateTime?             @updatedAt
+  revision_requirements RevisionRequirement @relation(fields: [requirement_id], references: [id], onUpdate: Restrict, map: "revision_submission_requirement_id_fkey")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Unit {
+  id             String    @id @default(cuid())
+  parent_unit_id String?   
+  name           String
+  description    String?
+  created_at     DateTime? @default(now())
+  updated_at     DateTime? @updatedAt
+  units          Unit?    @relation("unitsTounits_parent_unit_id", fields: [parent_unit_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  other_units    Unit[]   @relation("unitsTounits_parent_unit_id")
+  users          User[]
+  urc_funded_research_to_unit URCFundedResearchToUnit[]
+  journal_publication_to_unit JournalPublicationToUnit[]
+  book_publication_to_unit BookPublicationToUnit[]
+}
+
+model URCFundedResearchToUnit {
+  id  String  @id @default(cuid())
+  unit_id String
+  urc_funded_research_id String
+
+  unit Unit @relation(fields: [unit_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  urc_funded_research URCFundedResearch @relation(fields: [urc_funded_research_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+}
+
+model URCFundedResearch {
+  id                               String                             @id @default(cuid())
+  title                            String
+  main_proponents                  String?
+  co_proponents                    String?
+  start_date                       DateTime?
+  end_date                         DateTime?
+  cycle                            String?
+  budget                           Float?
+  source_of_fund                   String?
+  is_approved                      Boolean                            @default(false)
+  created_at                       DateTime?                          @default(now())
+  updated_at                       DateTime?                          @updatedAt
+  research_status                  String                             @default("not_implemented")
+  research_statuses                ResearchStatus                  @relation(fields: [research_status], references: [id], onUpdate: Restrict)
+  capsule_proposal_requirements    CapsuleProposalRequirement[]
+  deliverables                     Deliverable[]
+  full_blown_proposal_requirements FullBlownProposalRequirement[]
+  research_presentations           ResearchPresentation[]
+  journal_publications             JournalPublication[]
+  revision_requirements            RevisionRequirement[]
+  users_to_urc_funded_researches   UserToURCFundedResearchBridge[]
+  urc_funded_research_to_unit      URCFundedResearchToUnit[]
+}
+
+model UserRole {
+  id             String           @id @default("default")
+  comment        String?
+  users_to_roles UserToRoleBridge[]
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+
+  created_at                     DateTime                         @default(now())
+  updated_at                     DateTime                         @updatedAt
+  unit_id                        String?                          
+  units                          Unit?                           @relation(fields: [unit_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  accounts                       Account[]
+  comments                       Comment[]
+  downloads                      Download[]
+  external_research_involvements ExternalResearchInvolvement[]
+  file_uploads                   FileUpload[]
+  institute_news                 InstituteNews[]
+  institutes_to_users            InstituteToUserBridge[]
+  research_event_attendances     ResearchEventAttendance[]
+  research_presentations         ResearchPresentation[]
+  journal_publications           JournalPublication[]
+  book_publications              BookPublication[]
+  sessions                       Session[]
+  users_to_external_researches   UserToExternalResearchBridge[]
+  users_to_roles                 UserToRoleBridge[]
+  users_to_urc_funded_researches UserToURCFundedResearchBridge[]
+}
+
+model UserToExternalResearchBridge {
+  id                   String              @id @default(cuid())
+  external_research_id String              
+  role_title           String
+  created_at           DateTime?           @default(now())
+  updated_at           DateTime?           @updatedAt
+  user_id              String
+  external_researches  ExternalResearch @relation(fields: [external_research_id], references: [id], onUpdate: Restrict)
+  users                User               @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+}
+
+model UserToRoleBridge {
+  id         String     @id @default(cuid())
+  role_id    String     @default("default")
+  user_id    String
+  user_roles UserRole @relation(fields: [role_id], references: [id], onUpdate: Restrict)
+  users      User      @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+}
+
+model UserToURCFundedResearchBridge {
+  id                     String                @id(map: "user_to_research_pkey") @default(cuid())
+  urc_funded_research_id String                
+  role_title             String
+  created_at             DateTime?             @default(now())
+  updated_at             DateTime?             @updatedAt
+  admin_positions        String?
+  user_id                String
+  urc_funded_researches  URCFundedResearch    @relation(fields: [urc_funded_research_id], references: [id], onUpdate: Restrict, map: "user_to_research_research_id_fkey")
+  users                  User                 @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
