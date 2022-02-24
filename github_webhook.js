@@ -8,6 +8,7 @@ const SECRET = 'aYwBpLv3BaEhAVoHrlQLN2mhA6oSB4nK';
 http
   .createServer((req, res) => {
     req.on('data', chunk => {
+      console.log('push incoming')
       const signature = `sha1=${crypto
         .createHmac('sha1', SECRET)
         .update(chunk)
@@ -18,7 +19,7 @@ http
       const body = JSON.parse(chunk);
 
       const isMaster = body?.ref === 'refs/heads/master';
-
+      console.log(`is allowed: ${isAllowed}, is master: ${isMaster}`)
       if (isAllowed && isMaster) {
         // do something
         try {
