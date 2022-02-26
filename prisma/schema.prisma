@@ -176,16 +176,16 @@ model FullBlownProposalSubmission {
 
 model InstituteNews {
   id           String        @id @default(cuid())
-  title        String
+  title        String        @unique
   content      String
   created_at   DateTime      @default(now())
   updated_at   DateTime      @updatedAt
   institute_id String?        
-  user_id      String
+  user_id      String?
   upload_id    String?       
   institute    Institute?   @relation(fields: [institute_id], references: [id], onUpdate: Restrict)
   file_upload  FileUpload? @relation(fields: [upload_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
-  user         User         @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+  user         User?       @relation(fields: [user_id], references: [id], onUpdate: Restrict)
 }
 
 model Institute {

@@ -83,6 +83,52 @@ const scrapeResearches = async () => {
   return result
 }
 
+const scrapeNews = async () => {
+  let news = []
+  const links = [
+    "https://research.addu.edu.ph/category/memos/page/1/",
+    "https://research.addu.edu.ph/category/memos/page/2/",
+    "https://research.addu.edu.ph/category/memos/page/3/",
+    "https://research.addu.edu.ph/category/memos/page/4/",
+  ];
+
+  for (let link of links) {
+    const html = await rp(link);
+    const $ = cheerio.load(html);
+
+    news = [
+      ...news, 
+      ...$("#main")
+        .children("article")
+        .map((i, element) => {
+          let currentElement = $(element);
+
+          return {
+            title: currentElement.find("header").find("h2").find("a").text().trim(),
+            author: "AdDU - URC",
+            date: currentElement
+              .find("header")
+              .find("div")
+              .find("a")
+              .find("time:nth-of-type(1)")
+              .text()
+              .trim(),
+            description: currentElement.find("div").find("p").text().trim(),
+            link:
+              currentElement
+                .find("div")
+                .find("div:nth-of-type(1)")
+                .find("a:nth-of-type(1)")
+                .attr("href") ?? null,
+          };
+        })
+        .get()
+    ]
+  }
+
+  return news
+}
+
 async function main() {
   try {
     await prisma.researchStatus.upsert({
@@ -127,17 +173,19 @@ async function main() {
   let researches = []
   let presentations = []
   let publications = []
+  let news = []
 
   try {
-    [researches, presentations, publications] = await Promise.all([
+    [researches, presentations, publications, news] = await Promise.all([
       scrapeResearches(),
       scrapePresentations(),
-      scrapePublications()
+      scrapePublications(),
+      scrapeNews()
     ])
   } catch (err) {
     console.log(err)
   }
-  
+
   researches.forEach(async (research) => {
     const slug_raw = research.slug?.split("/")
     if (research.fundSource === 'AdDU-URC') {
@@ -293,6 +341,21 @@ async function main() {
       } catch (err) {
         console.log(err)
       }
+    }
+  })
+
+  news.forEach(async (article) => {
+    try {
+      await prisma.instituteNews.upsert({
+        where: { title: article.title },
+        update: {},
+        create: {
+          title: article.title,
+          content: article.description,
+        },
+      })
+    } catch (err) {
+      console.log(err)
     }
   })
   
