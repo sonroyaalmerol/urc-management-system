@@ -1,7 +1,12 @@
 import prisma from "../../../../lib/prisma-client"
 
 export default async function handler(req, res) {
-  const institutes = await prisma.institute.findMany()
+  const { page } = req.query
+
+  const institutes = await prisma.institute.findMany({
+    skip: 10 * page ? (page - 1) : 0,
+    take: 10,
+  })
 
   res.status(200).json(institutes)
 }

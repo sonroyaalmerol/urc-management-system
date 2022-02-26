@@ -23,7 +23,7 @@ http
       if (isAllowed && isMaster) {
         // do something
         try {
-          exec(`cd /var/www/urc-management-system && git pull && yarn && npx prisma migrate deploy && npx prisma generate && yarn build && pm2 reload urc_ms && pm2 reload urc_webhook && npx prisma db seed`);
+          exec(`cd /var/www/urc-management-system && git pull && yarn && npx prisma migrate deploy && npx prisma generate && yarn build && pm2 reload urc_ms && pm2 reload urc_webhook`);
         } catch (error) {
           console.log(error);
         }
