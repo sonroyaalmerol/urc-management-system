@@ -1,7 +1,7 @@
 
 const http = require('http');
 const crypto = require('crypto');
-const { exec } = require('child_process');
+const { spawn } = require('child_process');
 
 const SECRET = 'aYwBpLv3BaEhAVoHrlQLN2mhA6oSB4nK';
 
@@ -23,7 +23,20 @@ http
       if (isAllowed && isMaster) {
         // do something
         try {
-          exec(`cd /var/www/urc-management-system && git pull && yarn && npx prisma migrate deploy && npx prisma generate && yarn build && pm2 reload urc_ms && pm2 reload urc_webhook`);
+          const spawnedShell = spawn('/bin/sh');
+          // Capture stdout
+          spawnedShell.stdout.on('data', d => console.log(d.toString()));
+
+          spawnedShell.stdin.write('cd /var/www/urc-management-system\n');
+          spawnedShell.stdin.write('git pull\n');
+          spawnedShell.stdin.write('yarn\n');
+          spawnedShell.stdin.write('npx prisma migrate deploy\n');
+          spawnedShell.stdin.write('npx prisma generate\n');
+          spawnedShell.stdin.write('yarn build\n');
+          spawnedShell.stdin.write('pm2 reload urc_ms\n');
+          spawnedShell.stdin.write('pm2 reload urc_webhook\n');
+          // End
+          spawnedShell.stdin.end();
         } catch (error) {
           console.log(error);
         }

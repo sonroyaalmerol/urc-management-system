@@ -254,7 +254,8 @@ model ResearchDissemination {
   urc_funded_research_id String?                
   external_research_id   String?                
   title                  String                 @unique
-  location               String
+  location               String?
+  organization           String?
   event_date             String?
   created_at             DateTime               @default(now())
   updated_at             DateTime               @updatedAt
