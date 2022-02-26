@@ -39,8 +39,8 @@ model CapsuleProposalRequirement {
   research_id                  String                        
   created_at                   DateTime?                     @default(now())
   updated_at                   DateTime?                     @updatedAt
-  urc_funded_researches        URCFundedResearch         @relation(fields: [research_id], references: [id], onUpdate: Restrict)
-  capsule_proposal_submissions CapsuleProposalSubmission?
+  urc_funded_research          URCFundedResearch         @relation(fields: [research_id], references: [id], onUpdate: Restrict)
+  capsule_proposal_submission  CapsuleProposalSubmission?
 }
 
 model CapsuleProposalSubmission {
@@ -54,7 +54,7 @@ model CapsuleProposalSubmission {
   objectives_of_the_study       String
   significance_of_the_study     String
   methodology                   String
-  capsule_proposal_requirements CapsuleProposalRequirement @relation(fields: [requirement_id], references: [id], onUpdate: Restrict)
+  capsule_proposal_requirement  CapsuleProposalRequirement @relation(fields: [requirement_id], references: [id], onUpdate: Restrict)
 }
 
 model Comment {
@@ -65,9 +65,9 @@ model Comment {
   user_id                   String
   created_at                DateTime                @default(now())
   updated_at                DateTime                @updatedAt
-  deliverable_submissions   DeliverableSubmission @relation(fields: [deliverable_submission_id], references: [id], onUpdate: Restrict)
-  comments                  Comment?               @relation("commentsTocomments_parent_comment_id", fields: [parent_comment_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
-  users                     User                   @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+  deliverable_submission    DeliverableSubmission @relation(fields: [deliverable_submission_id], references: [id], onUpdate: Restrict)
+  comment                   Comment?               @relation("commentsTocomments_parent_comment_id", fields: [parent_comment_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  user                      User                   @relation(fields: [user_id], references: [id], onUpdate: Restrict)
   other_comments            Comment[]              @relation("commentsTocomments_parent_comment_id")
 }
 
@@ -78,7 +78,7 @@ model DeliverableSubmission {
   updated_at     DateTime     @updatedAt
   title          String
   description    String?
-  deliverables   Deliverable @relation(fields: [deliverable_id], references: [id], onUpdate: Restrict)
+  deliverable    Deliverable @relation(fields: [deliverable_id], references: [id], onUpdate: Restrict)
   comments       Comment[]
 }
 
@@ -90,7 +90,7 @@ model Deliverable {
   created_at              DateTime                  @default(now())
   updated_at              DateTime                  @updatedAt
   research_id             String                    
-  urc_funded_researches   URCFundedResearch     @relation(fields: [research_id], references: [id], onUpdate: Restrict)
+  urc_funded_research     URCFundedResearch     @relation(fields: [research_id], references: [id], onUpdate: Restrict)
   deliverable_submissions DeliverableSubmission[]
 }
 
@@ -102,22 +102,8 @@ model Download {
   upload_id    String       
   created_at   DateTime     @default(now())
   updated_at   DateTime     @updatedAt
-  file_uploads FileUpload @relation(fields: [upload_id], references: [id], onUpdate: Restrict)
+  file_upload  FileUpload @relation(fields: [upload_id], references: [id], onUpdate: Restrict)
   users        User        @relation(fields: [user_id], references: [id], onUpdate: Restrict)
-}
-
-model ExternalResearchInvolvement {
-  id                   String               @id(map: "external_research_involvement_pkey") @default(cuid())
-  proof_upload_id      String               
-  role                 String
-  verified             Boolean              @default(false)
-  user_id              String
-  created_at           DateTime             @default(now())
-  updated_at           DateTime             @updatedAt
-  external_research_id String?              
-  external_researches  ExternalResearch? @relation(fields: [external_research_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
-  proof_upload         FileUpload         @relation(fields: [proof_upload_id], references: [id], onUpdate: Restrict)
-  users                User                @relation(fields: [user_id], references: [id], onUpdate: Restrict)
 }
 
 model ExternalResearch {
@@ -132,14 +118,14 @@ model ExternalResearch {
   upload_id                      String?                          
   created_at                     DateTime                         @default(now())
   updated_at                     DateTime                         @updatedAt
-  research_status                String                           @default("not_implemented")
+  research_status_id             String                           @default("not_implemented")
   slug                           String?
-  research_statuses              ResearchStatus                @relation(fields: [research_status], references: [id], onUpdate: Restrict)
-  file_uploads                   FileUpload?                    @relation(fields: [upload_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
-  external_research_involvements ExternalResearchInvolvement[]
+  research_status                ResearchStatus                @relation(fields: [research_status_id], references: [id], onUpdate: Restrict)
+  file_upload                    FileUpload?                    @relation(fields: [upload_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
   research_presentations         ResearchPresentation[]
   journal_publications           JournalPublication[]
   users_to_external_researches   UserToExternalResearchBridge[]
+  research_to_research_dissemination ResearchToResearchDissemination[]
 }
 
 model FileUpload {
@@ -152,9 +138,8 @@ model FileUpload {
   updated_at                      DateTime                          @updatedAt
   resource_key                    String?
   user_id                         String
-  users                           User                             @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+  user                            User                             @relation(fields: [user_id], references: [id], onUpdate: Restrict)
   downloads                       Download[]
-  external_research_involvements  ExternalResearchInvolvement[]
   external_researches             ExternalResearch[]
   full_blown_proposal_submissions FullBlownProposalSubmission[]
   institute_news                  InstituteNews[]
@@ -173,8 +158,8 @@ model FullBlownProposalRequirement {
   research_id                     String                           
   created_at                      DateTime?                        @default(now())
   updated_at                      DateTime?                        @updatedAt
-  urc_funded_researches           URCFundedResearch            @relation(fields: [research_id], references: [id], onUpdate: Restrict)
-  full_blown_proposal_submissions FullBlownProposalSubmission?
+  urc_funded_research             URCFundedResearch            @relation(fields: [research_id], references: [id], onUpdate: Restrict)
+  full_blown_proposal_submission  FullBlownProposalSubmission?
 }
 
 model FullBlownProposalSubmission {
@@ -185,8 +170,8 @@ model FullBlownProposalSubmission {
   created_at                       DateTime?                        @default(now())
   updated_at                       DateTime?                        @updatedAt
   upload_id                        String                           
-  full_blown_proposal_requirements FullBlownProposalRequirement @relation(fields: [requirement_id], references: [id], onUpdate: Restrict)
-  file_uploads                     FileUpload                     @relation(fields: [upload_id], references: [id], onUpdate: Restrict)
+  full_blown_proposal_requirement  FullBlownProposalRequirement @relation(fields: [requirement_id], references: [id], onUpdate: Restrict)
+  file_upload                      FileUpload                     @relation(fields: [upload_id], references: [id], onUpdate: Restrict)
 }
 
 model InstituteNews {
@@ -195,12 +180,12 @@ model InstituteNews {
   content      String
   created_at   DateTime      @default(now())
   updated_at   DateTime      @updatedAt
-  institute_id String        
+  institute_id String?        
   user_id      String
   upload_id    String?       
-  institutes   Institute    @relation(fields: [institute_id], references: [id], onUpdate: Restrict)
-  file_uploads FileUpload? @relation(fields: [upload_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
-  users        User         @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+  institute    Institute?   @relation(fields: [institute_id], references: [id], onUpdate: Restrict)
+  file_upload  FileUpload? @relation(fields: [upload_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  user         User         @relation(fields: [user_id], references: [id], onUpdate: Restrict)
 }
 
 model Institute {
@@ -222,8 +207,8 @@ model InstituteToUserBridge {
   role_title   String
   created_at   DateTime?  @default(now())
   updated_at   DateTime?  @updatedAt
-  institutes   Institute @relation(fields: [institute_id], references: [id], onUpdate: Restrict)
-  users        User      @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+  institute    Institute @relation(fields: [institute_id], references: [id], onUpdate: Restrict)
+  user         User      @relation(fields: [user_id], references: [id], onUpdate: Restrict)
 }
 
 model ResearchEventAttendance {
@@ -238,7 +223,7 @@ model ResearchEventAttendance {
   description     String
   proof_upload_id String       
   proof_upload    FileUpload @relation(fields: [proof_upload_id], references: [id], onUpdate: Restrict)
-  users           User        @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+  user            User        @relation(fields: [user_id], references: [id], onUpdate: Restrict)
 }
 
 model ResearchPresentation {
@@ -257,10 +242,39 @@ model ResearchPresentation {
   budget                 Float?
   url                    String?
   user_id                String?
-  external_researches    ExternalResearch?   @relation(fields: [external_research_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
-  urc_funded_researches  URCFundedResearch? @relation(fields: [urc_funded_research_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
-  users                  User?                  @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+  external_research      ExternalResearch?   @relation(fields: [external_research_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  urc_funded_research    URCFundedResearch? @relation(fields: [urc_funded_research_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  user                   User?                  @relation(fields: [user_id], references: [id], onUpdate: Restrict)
   research_presentation_to_unit ResearchPresentationToUnit[]
+}
+
+model ResearchDissemination {
+  id                     String                 @id @default(cuid())
+  is_external_research   Boolean                @default(false)
+  urc_funded_research_id String?                
+  external_research_id   String?                
+  title                  String                 @unique
+  location               String
+  event_date             String?
+  created_at             DateTime               @default(now())
+  updated_at             DateTime               @updatedAt
+  verified               Boolean                @default(false)
+  url                    String?
+  user_id                String?
+  user                   User?                  @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+  research_to_research_dissemination  ResearchToResearchDissemination[]
+  research_dissemination_to_unit ResearchDisseminationToUnit[]
+}
+
+model ResearchToResearchDissemination {
+  id  String  @id @default(cuid())
+  urc_funded_research_id String?                
+  external_research_id   String?
+  research_dissemination_id String
+
+  urc_funded_research URCFundedResearch? @relation(fields: [urc_funded_research_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  external_research ExternalResearch? @relation(fields: [external_research_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  research_dissemination ResearchDissemination @relation(fields: [research_dissemination_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
 }
 
 model JournalPublication {
@@ -364,7 +378,7 @@ model Session {
 model Unit {
   id             String    @id @default(cuid())
   parent_unit_id String?   
-  name           String
+  name           String    @unique
   description    String?
   created_at     DateTime? @default(now())
   updated_at     DateTime? @updatedAt
@@ -375,6 +389,7 @@ model Unit {
   journal_publication_to_unit JournalPublicationToUnit[]
   book_publication_to_unit BookPublicationToUnit[]
   research_presentation_to_unit ResearchPresentationToUnit[]
+  research_dissemination_to_unit ResearchDisseminationToUnit[]
 }
 
 model ResearchPresentationToUnit {
@@ -384,6 +399,15 @@ model ResearchPresentationToUnit {
 
   unit Unit @relation(fields: [unit_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
   research_presentation ResearchPresentation @relation(fields: [research_presentation_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+}
+
+model ResearchDisseminationToUnit {
+  id  String  @id @default(cuid())
+  unit_id String
+  research_dissemination_id String
+
+  unit Unit @relation(fields: [unit_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  research_dissemination ResearchDissemination @relation(fields: [research_dissemination_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
 }
 
 model URCFundedResearchToUnit {
@@ -407,13 +431,14 @@ model URCFundedResearch {
   is_approved                      Boolean                            @default(false)
   created_at                       DateTime?                          @default(now())
   updated_at                       DateTime?                          @updatedAt
-  research_status                  String                             @default("not_implemented")
-  research_statuses                ResearchStatus                  @relation(fields: [research_status], references: [id], onUpdate: Restrict)
+  research_status_id               String                             @default("not_implemented")
+  research_status                  ResearchStatus                  @relation(fields: [research_status_id], references: [id], onUpdate: Restrict)
   slug                             String?
   capsule_proposal_requirements    CapsuleProposalRequirement[]
   deliverables                     Deliverable[]
   full_blown_proposal_requirements FullBlownProposalRequirement[]
   research_presentations           ResearchPresentation[]
+  research_to_research_dissemination ResearchToResearchDissemination[]
   journal_publications             JournalPublication[]
   revision_requirements            RevisionRequirement[]
   users_to_urc_funded_researches   UserToURCFundedResearchBridge[]
@@ -441,12 +466,12 @@ model User {
   accounts                       Account[]
   comments                       Comment[]
   downloads                      Download[]
-  external_research_involvements ExternalResearchInvolvement[]
   file_uploads                   FileUpload[]
   institute_news                 InstituteNews[]
   institutes_to_users            InstituteToUserBridge[]
   research_event_attendances     ResearchEventAttendance[]
   research_presentations         ResearchPresentation[]
+  research_disseminations        ResearchDissemination[]
   journal_publications           JournalPublication[]
   book_publications              BookPublication[]
   sessions                       Session[]
@@ -462,16 +487,16 @@ model UserToExternalResearchBridge {
   created_at           DateTime?           @default(now())
   updated_at           DateTime?           @updatedAt
   user_id              String
-  external_researches  ExternalResearch @relation(fields: [external_research_id], references: [id], onUpdate: Restrict)
-  users                User               @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+  external_research    ExternalResearch @relation(fields: [external_research_id], references: [id], onUpdate: Restrict)
+  user                 User               @relation(fields: [user_id], references: [id], onUpdate: Restrict)
 }
 
 model UserToRoleBridge {
   id         String     @id @default(cuid())
   role_id    String     @default("default")
   user_id    String
-  user_roles UserRole @relation(fields: [role_id], references: [id], onUpdate: Restrict)
-  users      User      @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+  user_role  UserRole @relation(fields: [role_id], references: [id], onUpdate: Restrict)
+  user       User      @relation(fields: [user_id], references: [id], onUpdate: Restrict)
 }
 
 model UserToURCFundedResearchBridge {
@@ -482,8 +507,8 @@ model UserToURCFundedResearchBridge {
   updated_at             DateTime?             @updatedAt
   admin_positions        String?
   user_id                String
-  urc_funded_researches  URCFundedResearch    @relation(fields: [urc_funded_research_id], references: [id], onUpdate: Restrict, map: "user_to_research_research_id_fkey")
-  users                  User                 @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+  urc_funded_research    URCFundedResearch    @relation(fields: [urc_funded_research_id], references: [id], onUpdate: Restrict, map: "user_to_research_research_id_fkey")
+  user                   User                 @relation(fields: [user_id], references: [id], onUpdate: Restrict)
 }
 
 model VerificationToken {

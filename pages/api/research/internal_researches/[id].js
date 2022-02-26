@@ -3,21 +3,21 @@ import prisma from "../../../../lib/prisma-client"
 export default async function handler(req, res) {
   const { id } = req.query
   
-  const researcher = await prisma.user.findFirst({
+  const research = await prisma.uRCFundedResearch.findFirst({ 
     where: {
-      id,
-      users_to_roles: {
-        some: {
-          user_roles: {
-            id: 'researcher'
-          }
+      id
+    },
+    include: {
+      users_to_urc_funded_researches: {
+        include: {
+          user: true
         }
       }
-    }
+    } 
   })
 
-  if (researcher) {
-    res.status(200).json(researcher)
+  if (research) {
+    res.status(200).json(research)
   } else {
     res.status(404).json({ error: 'Resource not found.' })
   }

@@ -2,18 +2,18 @@ import prisma from "../../../../lib/prisma-client"
 
 export default async function handler(req, res) {
   const { id } = req.query
-  
-  const research = await prisma.uRCFundedResearch.findFirst({ 
+
+  const research = await prisma.externalResearch.findFirst({ 
     where: {
       id
     },
     include: {
-      users_to_urc_funded_researches: {
+      users_to_external_researches: {
         include: {
-          users: true
+          user: true
         }
       }
-    } 
+    }
   })
 
   if (research) {

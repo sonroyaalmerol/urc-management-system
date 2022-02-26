@@ -84,7 +84,6 @@ const scrapeResearches = async () => {
 }
 
 async function main() {
-
   try {
     await prisma.researchStatus.upsert({
       where: { id: 'not_implemented' },
@@ -121,16 +120,28 @@ async function main() {
         comment: 'Cancelled'
       }
     })
-  
-    const [researches, presentations, publications] = await Promise.all([
+  } catch (err) {
+    console.log(err)
+  }
+
+  let researches = []
+  let presentations = []
+  let publications = []
+
+  try {
+    [researches, presentations, publications] = await Promise.all([
       scrapeResearches(),
       scrapePresentations(),
       scrapePublications()
     ])
-    
-    researches.forEach(async (research) => {
-      const slug_raw = research.slug?.split("/")
-      if (research.fundSource === 'AdDU-URC') {
+  } catch (err) {
+    console.log(err)
+  }
+  
+  researches.forEach(async (research) => {
+    const slug_raw = research.slug?.split("/")
+    if (research.fundSource === 'AdDU-URC') {
+      try {
         await prisma.uRCFundedResearch.upsert({
           where: { title: research.name },
           update: {},
@@ -144,16 +155,26 @@ async function main() {
             urc_funded_research_to_unit: {
               create: {
                 unit: {
-                  create: {
-                    name: research.unit
+                  connectOrCreate: {
+                    where: {
+                      name: research.unit
+                    },
+                    create: {
+                      name: research.unit
+                    }
                   }
                 },
               }
             },
-            slug: (slug_raw === undefined || slug_raw.length == 0) ? '' : slug_raw[slug_raw.length - 1]
+            slug: (slug_raw === undefined || slug_raw.length == 0) ? '' : slug_raw[slug_raw.length - 1],
+            research_status_id: 'finished'
           },
         })
-      } else {
+      } catch (err) {
+        console.log(err)
+      }
+    } else {
+      try {
         await prisma.externalResearch.upsert({
           where: { title: research.name },
           update: {},
@@ -165,13 +186,18 @@ async function main() {
             duration: research.duration,
             cycle: research.cycle,
             budget: research.budget,
-            slug: (slug_raw === undefined || slug_raw.length == 0) ? '' : slug_raw[slug_raw.length - 1]
+            slug: (slug_raw === undefined || slug_raw.length == 0) ? '' : slug_raw[slug_raw.length - 1],
+            research_status_id: 'finished'
           },
         })
+      } catch (err) {
+        console.log(err)
       }
-    })
-  
-    presentations.forEach(async (presentation) => {
+    }
+  })
+
+  presentations.forEach(async (presentation) => {
+    try {
       await prisma.researchPresentation.upsert({
         where: { event_title: presentation.title },
         update: {},
@@ -182,8 +208,13 @@ async function main() {
           research_presentation_to_unit: {
             create: {
               unit: {
-                create: {
-                  name: presentation.unit
+                connectOrCreate: {
+                  where: {
+                    name: presentation.unit
+                  },
+                  create: {
+                    name: presentation.unit
+                  }
                 }
               },
             }
@@ -195,10 +226,14 @@ async function main() {
           budget: presentation.budget
         },
       })
-    })
-  
-    publications.forEach(async (publication) => {
-      if (publication.type === 'journal') {
+    } catch (err) {
+      console.log(err)
+    }
+  })
+
+  publications.forEach(async (publication) => {
+    if (publication.type === 'journal') {
+      try {
         await prisma.journalPublication.upsert({
           where: { title: publication.title },
           update: {},
@@ -213,15 +248,24 @@ async function main() {
             journal_publication_to_unit: {
               create: {
                 unit: {
-                  create: {
-                    name: publication.unit
+                  connectOrCreate: {
+                    where: {
+                      name: publication.unit
+                    },
+                    create: {
+                      name: publication.unit
+                    }
                   }
                 },
               }
             },
           },
         })
-      } else {
+      } catch (err) {
+        console.log(err)
+      }
+    } else {
+      try {
         await prisma.bookPublication.upsert({
           where: { title: publication.title },
           update: {},
@@ -233,19 +277,24 @@ async function main() {
             book_publication_to_unit: {
               create: {
                 unit: {
-                  create: {
-                    name: publication.unit
+                  connectOrCreate: {
+                    where: {
+                      name: publication.unit
+                    },
+                    create: {
+                      name: publication.unit
+                    }
                   }
                 },
               }
             },
           },
         })
+      } catch (err) {
+        console.log(err)
       }
-    })
-  } catch (err) {
-    console.log(err)
-  }
+    }
+  })
   
   //*/
 }
