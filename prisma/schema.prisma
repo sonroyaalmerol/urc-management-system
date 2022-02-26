@@ -122,14 +122,18 @@ model ExternalResearchInvolvement {
 
 model ExternalResearch {
   id                             String                           @id @default(cuid())
-  title                          String
+  title                          String                           @unique
   organization                   String?
-  page_number                    String?
-  publisher_page_url             String?
+  main_proponents                String?
+  co_proponents                  String?
+  duration                       String?
+  cycle                          String?
+  budget                         Float?
   upload_id                      String?                          
   created_at                     DateTime                         @default(now())
   updated_at                     DateTime                         @updatedAt
   research_status                String                           @default("not_implemented")
+  slug                           String?
   research_statuses              ResearchStatus                @relation(fields: [research_status], references: [id], onUpdate: Restrict)
   file_uploads                   FileUpload?                    @relation(fields: [upload_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
   external_research_involvements ExternalResearchInvolvement[]
@@ -242,17 +246,21 @@ model ResearchPresentation {
   is_external_research   Boolean                @default(false)
   urc_funded_research_id String?                
   external_research_id   String?                
-  event_title            String
+  event_title            String                 @unique
   location               String
-  start_date             DateTime              
-  end_date               DateTime              
+  event_date             String?             
   created_at             DateTime               @default(now())
   updated_at             DateTime               @updatedAt
   verified               Boolean                @default(false)
-  user_id                String
+  presentor              String?
+  conference             String?
+  budget                 Float?
+  url                    String?
+  user_id                String?
   external_researches    ExternalResearch?   @relation(fields: [external_research_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
   urc_funded_researches  URCFundedResearch? @relation(fields: [urc_funded_research_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
-  users                  User                  @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+  users                  User?                  @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+  research_presentation_to_unit ResearchPresentationToUnit[]
 }
 
 model JournalPublication {
@@ -261,36 +269,40 @@ model JournalPublication {
   urc_funded_research_id String?                
   external_research_id   String?                
   created_at             DateTime               @default(now())
-  user_id                String
-  proof_upload_id        String                 
+  user_id                String?
+  proof_upload_id        String?                 
   approved               Boolean                @default(false)
   updated_at             DateTime               @updatedAt
   date_published         DateTime?             
+  title                  String                 @unique
+  authors                String?
   issn                   String?
   journal                String?
   url                    String?
+  slug                   String?
   is_indexed             Boolean                @default(false)
   external_researches    ExternalResearch?   @relation(fields: [external_research_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
-  proof_upload           FileUpload           @relation(fields: [proof_upload_id], references: [id], onUpdate: Restrict)
+  proof_upload           FileUpload?           @relation(fields: [proof_upload_id], references: [id], onUpdate: Restrict)
   urc_funded_researches  URCFundedResearch? @relation(fields: [urc_funded_research_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
-  users                  User                  @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+  users                  User?                  @relation(fields: [user_id], references: [id], onUpdate: Restrict)
   journal_publication_to_unit JournalPublicationToUnit[]
 }
 
 model BookPublication {
   id                     String                 @id @default(cuid())
   created_at             DateTime               @default(now())
-  user_id                String
-  proof_upload_id        String                 
+  user_id                String?
+  proof_upload_id        String?                 
   approved               Boolean                @default(false)
   updated_at             DateTime               @updatedAt
-  title                  String
+  title                  String                 @unique
   authors                String?
   publisher              String?
   isbn                   String?
+  slug                   String?
   date_published         DateTime?             
-  proof_upload           FileUpload           @relation(fields: [proof_upload_id], references: [id], onUpdate: Restrict)
-  users                  User                  @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+  proof_upload           FileUpload?           @relation(fields: [proof_upload_id], references: [id], onUpdate: Restrict)
+  users                  User?                  @relation(fields: [user_id], references: [id], onUpdate: Restrict)
   book_publication_to_unit BookPublicationToUnit[]
 }
 
@@ -362,6 +374,16 @@ model Unit {
   urc_funded_research_to_unit URCFundedResearchToUnit[]
   journal_publication_to_unit JournalPublicationToUnit[]
   book_publication_to_unit BookPublicationToUnit[]
+  research_presentation_to_unit ResearchPresentationToUnit[]
+}
+
+model ResearchPresentationToUnit {
+  id  String  @id @default(cuid())
+  unit_id String
+  research_presentation_id String
+
+  unit Unit @relation(fields: [unit_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  research_presentation ResearchPresentation @relation(fields: [research_presentation_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
 }
 
 model URCFundedResearchToUnit {
@@ -375,11 +397,10 @@ model URCFundedResearchToUnit {
 
 model URCFundedResearch {
   id                               String                             @id @default(cuid())
-  title                            String
+  title                            String                             @unique
   main_proponents                  String?
   co_proponents                    String?
-  start_date                       DateTime?
-  end_date                         DateTime?
+  duration                         String?
   cycle                            String?
   budget                           Float?
   source_of_fund                   String?
@@ -388,6 +409,7 @@ model URCFundedResearch {
   updated_at                       DateTime?                          @updatedAt
   research_status                  String                             @default("not_implemented")
   research_statuses                ResearchStatus                  @relation(fields: [research_status], references: [id], onUpdate: Restrict)
+  slug                             String?
   capsule_proposal_requirements    CapsuleProposalRequirement[]
   deliverables                     Deliverable[]
   full_blown_proposal_requirements FullBlownProposalRequirement[]
