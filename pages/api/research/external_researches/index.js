@@ -10,7 +10,7 @@ export default async function handler(req, res) {
       error: 'Invalid per_page value.',
       page,
       per_page,
-      total_pages
+      total_pages: -1
     })
     return;
   }
@@ -21,7 +21,7 @@ export default async function handler(req, res) {
       skip: (per_page ?? 10) * page ? (page - 1) : 0,
       take: (per_page ?? 10),
       include: {
-        users_to_external_researches: {
+        bridge_users: {
           include: {
             user: true
           }

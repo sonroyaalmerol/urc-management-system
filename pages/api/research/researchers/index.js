@@ -18,7 +18,7 @@ export default async function handler(req, res) {
   const [count, researchers] = await prisma.$transaction([
     prisma.user.count({
       where: {
-        users_to_roles: {
+        bridge_roles: {
           some: {
             user_role: {
               id: 'researcher'
@@ -31,7 +31,7 @@ export default async function handler(req, res) {
       skip: (per_page ?? 10) * page ? (page - 1) : 0,
       take: (per_page ?? 10),
       where: {
-        users_to_roles: {
+        bridge_roles: {
           some: {
             user_role: {
               id: 'researcher'

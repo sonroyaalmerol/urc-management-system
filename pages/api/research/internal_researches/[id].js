@@ -8,7 +8,12 @@ export default async function handler(req, res) {
       id
     },
     include: {
-      users_to_urc_funded_researches: {
+      bridge_units: {
+        include: {
+          unit: true
+        }
+      },
+      bridge_users: {
         include: {
           user: true
         }

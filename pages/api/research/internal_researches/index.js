@@ -21,12 +21,12 @@ export default async function handler(req, res) {
       skip: (per_page ?? 10) * page ? (page - 1) : 0,
       take: (per_page ?? 10),
       include: {
-        urc_funded_research_to_unit: {
+        bridge_units: {
           include: {
             unit: true
           }
         },
-        users_to_urc_funded_researches: {
+        bridge_users: {
           include: {
             user: true
           }

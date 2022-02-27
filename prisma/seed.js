@@ -200,7 +200,7 @@ async function main() {
             duration: research.duration,
             cycle: research.cycle,
             budget: research.budget,
-            urc_funded_research_to_unit: {
+            bridge_units: {
               create: {
                 unit: {
                   connectOrCreate: {
@@ -253,7 +253,7 @@ async function main() {
           is_external_research: presentation.fundSource !== 'AdDU-URC',
           event_title: presentation.title,
           location: presentation.place,
-          research_presentation_to_unit: {
+          bridge_units: {
             create: {
               unit: {
                 connectOrCreate: {
@@ -293,7 +293,7 @@ async function main() {
             url: publication.link,
             is_indexed: publication.indexed === 'Yes',
             approved: true,
-            journal_publication_to_unit: {
+            bridge_units: {
               create: {
                 unit: {
                   connectOrCreate: {
@@ -322,7 +322,7 @@ async function main() {
             authors: publication.authors,
             publisher: publication.publisher,
             isbn: publication.isbn,
-            book_publication_to_unit: {
+            bridge_units: {
               create: {
                 unit: {
                   connectOrCreate: {

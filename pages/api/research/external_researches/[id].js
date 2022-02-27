@@ -8,7 +8,7 @@ export default async function handler(req, res) {
       id
     },
     include: {
-      users_to_external_researches: {
+      bridge_users: {
         include: {
           user: true
         }

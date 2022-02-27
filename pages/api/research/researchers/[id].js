@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   const researcher = await prisma.user.findFirst({
     where: {
       id,
-      users_to_roles: {
+      bridge_roles: {
         some: {
           user_role: {
             id: 'researcher'
