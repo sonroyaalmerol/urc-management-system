@@ -112,8 +112,7 @@ model ExternalResearch {
   organization                   String?
   main_proponents                String?
   co_proponents                  String?
-  start_date                     DateTime?
-  end_date                       DateTime?
+  duration                       String?
   cycle                          String?
   budget                         Float?
   upload_id                      String?                          
