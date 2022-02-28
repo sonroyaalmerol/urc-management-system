@@ -234,7 +234,7 @@ model ResearchPresentation {
   external_research_id   String?                
   event_title            String                 @unique
   location               String
-  event_date             DateTime?             
+  event_date             String?             
   created_at             DateTime               @default(now())
   updated_at             DateTime               @updatedAt
   verified               Boolean                @default(false)
@@ -257,7 +257,7 @@ model ResearchDissemination {
   title                  String                 @unique
   location               String?
   organization           String?
-  event_date             DateTime?
+  event_date             String?
   created_at             DateTime               @default(now())
   updated_at             DateTime               @updatedAt
   verified               Boolean                @default(false)
