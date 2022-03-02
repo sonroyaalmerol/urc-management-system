@@ -9,6 +9,22 @@ export default NextAuth({
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      profile: (_profile) => ({
+        id: _profile.sub,
+        first_name: _profile.given_name,
+        last_name: _profile.family_name,
+        name: _profile.name,
+        email: _profile.email,
+        image: _profile.picture,
+      })
     }),
   ],
+  callbacks: {
+    async signIn({ account, profile }) {
+      if (account.provider === "google") {
+        return profile.email_verified && profile.email.endsWith("@addu.edu.ph")
+      }
+      return true // Do different verification for other providers that don't have `email_verified`
+    },
+  }
 })

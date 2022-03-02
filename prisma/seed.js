@@ -3,6 +3,9 @@ const prisma = new PrismaClient()
 const rp = require('request-promise')
 const cheerio = require('cheerio')
 
+const centers = require('./centers')
+const council = require('./council')
+
 const scrapePublications = async () => {
   const JOURNAL_URL = 'https://research.addu.edu.ph/journal-publications/';
   const BOOK_URL = 'https://research.addu.edu.ph/book-publications-3/';
@@ -166,6 +169,14 @@ async function main() {
         comment: 'Cancelled'
       }
     })
+
+    await prisma.institute.upsert({
+      where: { name: 'The Council' },
+      update: {},
+      create: {
+        name: 'The Council',
+      }
+    })
   } catch (err) {
     console.log(err)
   }
@@ -186,7 +197,7 @@ async function main() {
     console.log(err)
   }
 
-  researches.forEach(async (research) => {
+  for (const research of researches) {
     const slug_raw = research.slug?.split("/")
     if (research.fundSource === 'AdDU-URC') {
       try {
@@ -242,9 +253,9 @@ async function main() {
         console.log(err)
       }
     }
-  })
+  }
 
-  presentations.forEach(async (presentation) => {
+  for (const presentation of presentations) {
     try {
       await prisma.researchPresentation.upsert({
         where: { event_title: presentation.title },
@@ -277,9 +288,9 @@ async function main() {
     } catch (err) {
       console.log(err)
     }
-  })
+  }
 
-  publications.forEach(async (publication) => {
+  for (const publication of publications) {
     if (publication.type === 'journal') {
       try {
         await prisma.journalPublication.upsert({
@@ -342,9 +353,9 @@ async function main() {
         console.log(err)
       }
     }
-  })
+  }
 
-  news.forEach(async (article) => {
+  for (const article of news) {
     try {
       await prisma.instituteNews.upsert({
         where: { title: article.title },
@@ -357,8 +368,101 @@ async function main() {
     } catch (err) {
       console.log(err)
     }
-  })
+  }
+
+  for (const member of council) {
+    try {
+      await prisma.user.upsert({
+        where: { email: member.email },
+        update: {},
+        create: {
+          email: member.email,
+          first_name: member.first_name,
+          middle_initial: member.middle_initial,
+          last_name: member.last_name,
+          honorific: member.honorific,
+          titles: member.titles,
+          image: member.image,
+          name: `${member.honorific ? `${member.honorific} ` : ''}${member.first_name} ${member.middle_initial} ${member.last_name}${member.titles ? `, ${member.titles}` : ''}`,
+          bridge_institutes: {
+            create: {
+              institute: {
+                connectOrCreate: {
+                  where: {
+                    name: 'The Council'
+                  },
+                  create: {
+                    name: 'The Council'
+                  }
+                }
+              },
+              role_title: member.position,
+              duration: member.duration
+            }
+          },
+          bridge_roles: {
+            create: {
+              user_role: {
+                connectOrCreate: {
+                  where: {
+                    id: 'researcher',
+                  },
+                  create: {
+                    id: 'researcher',
+                  }
+                }
+              }
+            }
+          }
+        },
+      })
+    } catch (err) {
+      console.log(err)
+    }
+  }
   
+  for (const center of centers) {
+    try {
+      await prisma.institute.upsert({
+        where: { name: center.name },
+        update: {},
+        create: {
+          name: center.name,
+          short_name: center.short_name,
+          email: center.email,
+          contact_number: center.contact_number,
+          address: center.address,
+          description: center.description,
+          research_areas: center.research_areas,
+          bridge_users: {
+            create: center.users.map((member) => ({
+              user: {
+                connectOrCreate: {
+                  where: {
+                    email: member.email,
+                  },
+                  create: {
+                    email: member.email,
+                    first_name: member.first_name,
+                    middle_initial: member.middle_initial,
+                    last_name: member.last_name,
+                    honorific: member.honorific,
+                    titles: member.titles,
+                    image: member.image,
+                    name: `${member.honorific ? `${member.honorific} ` : ''}${member.first_name} ${member.middle_initial} ${member.last_name}${member.titles ? `, ${member.titles}` : ''}`,
+                  }
+                }
+              },
+              role_title: member.position,
+              duration: member.duration
+            }))
+          }
+        },
+      })
+    } catch (err) {
+      console.log(err)
+    }
+  }
   //*/
 }
 

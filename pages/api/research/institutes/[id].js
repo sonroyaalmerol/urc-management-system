@@ -6,6 +6,13 @@ export default async function handler(req, res) {
   const institute = await prisma.institute.findFirst({
     where: {
       id
+    },
+    include: {
+      bridge_users: {
+        include: {
+          user: true
+        }
+      }
     }
   })
 

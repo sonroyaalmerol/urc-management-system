@@ -190,9 +190,13 @@ model InstituteNews {
 
 model Institute {
   id                  String                @id(map: "institute_pkey") @default(cuid())
-  name                String
+  name                String                @unique
   short_name          String?
+  contact_number      String?
+  email               String?
   description         String?
+  address             String?
+  research_areas      String?
   logo_url            String?
   created_at          DateTime?             @default(now())
   updated_at          DateTime?             @updatedAt
@@ -204,6 +208,7 @@ model InstituteToUserBridge {
   user_id      String
   institute_id String     
   role_title   String
+  duration     String?
   created_at   DateTime?  @default(now())
   updated_at   DateTime?  @updatedAt
   institute    Institute @relation(fields: [institute_id], references: [id], onUpdate: Restrict)
@@ -474,6 +479,12 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+
+  first_name    String?
+  middle_initial String?
+  last_name     String?
+  honorific     String?
+  titles        String?
 
   created_at                     DateTime                         @default(now())
   updated_at                     DateTime                         @updatedAt
