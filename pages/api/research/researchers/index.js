@@ -28,7 +28,7 @@ export default async function handler(req, res) {
       }
     }),
     prisma.user.findMany({
-      skip: (per_page ?? 10) * page ? (page - 1) : 0,
+      skip: (per_page ?? 10) * (page ? (page - 1) : 0),
       take: (per_page ?? 10),
       where: {
         bridge_roles: {

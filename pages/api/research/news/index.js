@@ -18,7 +18,7 @@ export default async function handler(req, res) {
   const [count, news] = await prisma.$transaction([
     prisma.instituteNews.count(),
     prisma.instituteNews.findMany({
-      skip: (per_page ?? 10) * page ? (page - 1) : 0,
+      skip: (per_page ?? 10) * (page ? (page - 1) : 0),
       take: (per_page ?? 10),
     })
   ])

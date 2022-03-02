@@ -18,7 +18,7 @@ export default async function handler(req, res) {
   const [count, institutes] = await prisma.$transaction([
     prisma.institute.count(),
     prisma.institute.findMany({
-      skip: (per_page ?? 10) * page ? (page - 1) : 0,
+      skip: (per_page ?? 10) * (page ? (page - 1) : 0),
       take: (per_page ?? 10),
       include: {
         bridge_users: {

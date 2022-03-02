@@ -18,7 +18,7 @@ export default async function handler(req, res) {
   const [count, externalResearches] = await prisma.$transaction([
     prisma.externalResearch.count(),
     prisma.externalResearch.findMany({
-      skip: (per_page ?? 10) * page ? (page - 1) : 0,
+      skip: (per_page ?? 10) * (page ? (page - 1) : 0),
       take: (per_page ?? 10),
       include: {
         bridge_users: {
