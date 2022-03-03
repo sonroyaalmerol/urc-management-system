@@ -34,7 +34,7 @@ const Sidebar = ({ menus }) => {
         )) }
       </Container>
       { currentMenu ? (
-        <SidebarMenu onClick={() => changeMenu(currentMenu)} selected key={currentMenu.url}>{currentMenu.name}</SidebarMenu>
+        <SidebarMenu onClick={() => changeMenu(currentMenu)} selected key={currentMenu.url} borderRadius='0' borderTopRightRadius='2rem' borderBottomRightRadius='2rem'>{currentMenu.name}</SidebarMenu>
       ) : null }
       <Container w='100%' backgroundColor='brand.blue' h="100%" borderTopRightRadius={currentMenu ? '2rem' : '0'} padding='0'>
         { bottomMenus.map((menu, i) => (
