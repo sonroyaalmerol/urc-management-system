@@ -12,6 +12,7 @@ const Sidebar = ({ menus }) => {
       router.push
     ]
   }, [router.pathname, router.push])
+
   const [topMenus, bottomMenus, currentMenu] = React.useMemo(() => {
     const current = menus.find((menu) => menu.url === selectedMenu)
     const bottom = [...menus].filter((menu) => menu.url !== selectedMenu)
@@ -24,18 +25,20 @@ const Sidebar = ({ menus }) => {
 
   return (
     <VStack maxW='21.25rem' h='100vh' spacing={0}>
-      <Container w='100%' backgroundColor='brand.blue' borderBottomRightRadius='2rem' padding='0'>
+      <Container w='100%' backgroundColor='brand.blue' borderBottomRightRadius={currentMenu ? '2rem' : '0'} padding='0'>
         <Center padding="1.5rem" marginBottom='2rem'>
           <chakra.img src="./urc_header.png"></chakra.img>
         </Center>
         { topMenus.map((menu, i) => (
-          <SidebarMenu key={`top-${menu.url}`} onClick={() => changeMenu(menu)} borderRadius='0' borderBottomRightRadius={i === topMenus.length - 1 ? '2rem' : '0'}>{menu.name}</SidebarMenu>
+          <SidebarMenu key={`top-${menu.url}`} onClick={() => changeMenu(menu)} borderRadius='0' borderBottomRightRadius={i === topMenus.length - 1 && currentMenu ? '2rem' : '0'}>{menu.name}</SidebarMenu>
         )) }
       </Container>
-      <SidebarMenu onClick={() => changeMenu(currentMenu)} selected key={currentMenu.url}>{currentMenu.name}</SidebarMenu>
-      <Container w='100%' backgroundColor='brand.blue' h="100%" borderTopRightRadius='2rem' padding='0'>
+      { currentMenu ? (
+        <SidebarMenu onClick={() => changeMenu(currentMenu)} selected key={currentMenu.url}>{currentMenu.name}</SidebarMenu>
+      ) : null }
+      <Container w='100%' backgroundColor='brand.blue' h="100%" borderTopRightRadius={currentMenu ? '2rem' : '0'} padding='0'>
         { bottomMenus.map((menu, i) => (
-          <SidebarMenu onClick={() => changeMenu(menu)} key={`bottom-${menu.url}`} borderRadius='0' borderTopRightRadius={i === 0 ? '2rem' : '0'}>{menu.name}</SidebarMenu>
+          <SidebarMenu onClick={() => changeMenu(menu)} key={`bottom-${menu.url}`} borderRadius='0' borderTopRightRadius={i === 0 && currentMenu ? '2rem' : '0'}>{menu.name}</SidebarMenu>
         )) }
       </Container>
     </VStack>
