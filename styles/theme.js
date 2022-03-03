@@ -13,6 +13,10 @@ const colors = {
 
 const theme = extendTheme({ 
   colors,
+  fonts: {
+    heading: 'Montserrat',
+    body: 'Open Sans',
+  },
   styles: {
     global: {
       'html, body': {
@@ -23,10 +27,10 @@ const theme = extendTheme({
   },
   components: { 
     Button: { 
-      baseStyle: { 
+      baseStyle: {
         _focus: { 
           boxShadow: 'none' 
-        } 
+        }
       } 
     } 
   }

@@ -4,11 +4,13 @@ import DashboardLayout from '../components/DashboardLayout'
 
 function MyApp({ Component, pageProps }) {
   return (
-    <ChakraProvider theme={theme}>
-      <DashboardLayout>
-        <Component {...pageProps} />
-      </DashboardLayout>
-    </ChakraProvider>
+    <>
+      <ChakraProvider theme={theme}>
+        <DashboardLayout>
+          <Component {...pageProps} />
+        </DashboardLayout>
+      </ChakraProvider>
+    </>
   )
 }
 

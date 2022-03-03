@@ -1,7 +1,10 @@
+import React from 'react'
+import DashboardContentHeader from '../components/DashboardContentHeader'
+
 export default function Researches() {
   return (
-    <div>
+    <DashboardContentHeader>
       Hello Researches!
-    </div>
+    </DashboardContentHeader>
   )
 }
