@@ -1,11 +1,11 @@
 import prisma from "../../../../lib/prisma-client"
 
 export default async function handler(req, res) {
-  const { id } = req.query
+  const { short_name } = req.query
 
   const institute = await prisma.institute.findFirst({
     where: {
-      id
+      short_name
     },
     include: {
       bridge_users: {

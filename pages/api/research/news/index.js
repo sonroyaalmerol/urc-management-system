@@ -1,7 +1,7 @@
 import prisma from "../../../../lib/prisma-client"
 
 export default async function handler(req, res) {
-  let { page, per_page } = req.query
+  let { page, per_page, search } = req.query
   page = page ? parseInt(page) : 1
   per_page = per_page ? parseInt(per_page) : 10
 
@@ -20,6 +20,22 @@ export default async function handler(req, res) {
     prisma.instituteNews.findMany({
       skip: (per_page ?? 10) * (page ? (page - 1) : 0),
       take: (per_page ?? 10),
+      where: search ? {
+        OR: [
+          {
+            title: {
+              mode: 'insensitive',
+              contains: search
+            }
+          },
+          {
+            content: {
+              mode: 'insensitive',
+              contains: search
+            }
+          }
+        ]
+      } : undefined
     })
   ])
 

@@ -175,6 +175,7 @@ async function main() {
       update: {},
       create: {
         name: 'The Council',
+        short_name: 'URC'
       }
     })
   } catch (err) {
@@ -392,7 +393,8 @@ async function main() {
                     name: 'The Council'
                   },
                   create: {
-                    name: 'The Council'
+                    name: 'The Council',
+                    short_name: 'URC'
                   }
                 }
               },
