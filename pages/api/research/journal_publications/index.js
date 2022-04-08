@@ -15,9 +15,9 @@ export default async function handler(req, res) {
     return;
   }
   
-  const [count, disseminations] = await prisma.$transaction([
-    prisma.researchDissemination.count(),
-    prisma.researchDissemination.findMany({
+  const [count, publications] = await prisma.$transaction([
+    prisma.journalPublication.count(),
+    prisma.journalPublication.findMany({
       skip: (per_page ?? 10) * (page ? (page - 1) : 0),
       take: (per_page ?? 10),
       include: {
@@ -42,7 +42,7 @@ export default async function handler(req, res) {
   }
 
   res.status(200).json({
-    data: disseminations,
+    data: publications,
     page,
     per_page,
     total_pages

@@ -1,10 +1,21 @@
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
-const rp = require('request-promise')
 const cheerio = require('cheerio')
+const https = require('https')
+const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 const centers = require('./centers')
 const council = require('./council')
+
+const httpsAgent = new https.Agent({
+  rejectUnauthorized: false,
+});
+
+const rp = async (url) => {
+  return (await fetch(url, {
+    agent: httpsAgent,
+  })).text();
+}
 
 const scrapePublications = async () => {
   const JOURNAL_URL = 'https://research.addu.edu.ph/journal-publications/';

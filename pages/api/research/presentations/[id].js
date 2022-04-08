@@ -6,7 +6,14 @@ export default async function handler(req, res) {
   const presentations = await prisma.researchPresentation.findFirst({
     where: {
       id
-    }
+    },
+    include: {
+      bridge_users: {
+        include: {
+          user: true
+        }
+      }
+    },
   })
 
   if (presentations) {

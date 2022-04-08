@@ -248,11 +248,20 @@ model ResearchPresentation {
   conference             String?
   budget                 Float?
   url                    String?
-  user_id                String?
   external_research      ExternalResearch?   @relation(fields: [external_research_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
   urc_funded_research    URCFundedResearch? @relation(fields: [urc_funded_research_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
-  user                   User?                  @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+  bridge_users   UserToResearchPresentationBridge[]
   bridge_units ResearchPresentationToUnitBridge[]
+}
+
+model UserToResearchPresentationBridge {
+  user_id String
+  research_presentation_id String
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  research_presentation ResearchPresentation @relation(fields: [research_presentation_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@id([user_id, research_presentation_id])
 }
 
 model ResearchDissemination {
@@ -268,11 +277,20 @@ model ResearchDissemination {
   updated_at             DateTime               @updatedAt
   verified               Boolean                @default(false)
   url                    String?
-  user_id                String?
-  user                   User?                  @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+  bridge_users   UserToResearchDisseminationBridge[]
   bridge_external_researches  ExternalResearchToDisseminationBridge[]
   bridge_urc_funded_researches  URCFundedResearchToDisseminationBridge[]
   bridge_units ResearchDisseminationToUnitBridge[]
+}
+
+model UserToResearchDisseminationBridge {
+  user_id String
+  research_dissemination_id String
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  research_dissemination ResearchDissemination @relation(fields: [research_dissemination_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@id([user_id, research_dissemination_id])
 }
 
 model ExternalResearchToDisseminationBridge {        
@@ -301,7 +319,6 @@ model JournalPublication {
   urc_funded_research_id String?                
   external_research_id   String?                
   created_at             DateTime               @default(now())
-  user_id                String?
   proof_upload_id        String?                 
   approved               Boolean                @default(false)
   updated_at             DateTime               @updatedAt
@@ -316,14 +333,23 @@ model JournalPublication {
   external_researches    ExternalResearch?   @relation(fields: [external_research_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
   proof_upload           FileUpload?           @relation(fields: [proof_upload_id], references: [id], onUpdate: Restrict)
   urc_funded_researches  URCFundedResearch? @relation(fields: [urc_funded_research_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
-  users                  User?                  @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+  bridge_users   UserToJournalPublicationBridge[]
   bridge_units JournalPublicationToUnitBridge[]
+}
+
+model UserToJournalPublicationBridge {
+  user_id String
+  journal_publication_id String
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  journal_publication JournalPublication @relation(fields: [journal_publication_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@id([user_id, journal_publication_id])
 }
 
 model BookPublication {
   id                     String                 @id @default(cuid())
   created_at             DateTime               @default(now())
-  user_id                String?
   proof_upload_id        String?                 
   approved               Boolean                @default(false)
   updated_at             DateTime               @updatedAt
@@ -334,8 +360,18 @@ model BookPublication {
   slug                   String?
   date_published         DateTime?             
   proof_upload           FileUpload?           @relation(fields: [proof_upload_id], references: [id], onUpdate: Restrict)
-  users                  User?                  @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+  bridge_users   UserToBookPublicationBridge[]
   bridge_units BookPublicationToUnitBridge[]
+}
+
+model UserToBookPublicationBridge {
+  user_id String
+  book_publication_id String
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  book_publication BookPublication @relation(fields: [book_publication_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@id([user_id, book_publication_id])
 }
 
 model JournalPublicationToUnitBridge {
@@ -497,13 +533,14 @@ model User {
   downloads                      Download[]
   file_uploads                   FileUpload[]
   institute_news                 InstituteNews[]
-  bridge_institutes            InstituteToUserBridge[]
   research_event_attendances     ResearchEventAttendance[]
-  research_presentations         ResearchPresentation[]
-  research_disseminations        ResearchDissemination[]
-  journal_publications           JournalPublication[]
-  book_publications              BookPublication[]
   sessions                       Session[]
+
+  bridge_institutes            InstituteToUserBridge[]
+  bridge_book_publications              UserToBookPublicationBridge[]
+  bridge_research_presentations         UserToResearchPresentationBridge[]
+  bridge_research_disseminations        UserToResearchDisseminationBridge[]
+  bridge_journal_publications           UserToJournalPublicationBridge[]
   bridge_external_researches   UserToExternalResearchBridge[]
   bridge_roles                 UserToRoleBridge[]
   bridge_urc_funded_researches UserToURCFundedResearchBridge[]
