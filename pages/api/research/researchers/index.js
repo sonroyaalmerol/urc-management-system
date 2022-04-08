@@ -1,7 +1,7 @@
 import prisma from "../../../../lib/prisma-client"
 
 export default async function handler(req, res) {
-  let { page, per_page } = req.query
+  let { page, per_page, search, fields } = req.query
   page = page ? parseInt(page) : 1
   per_page = per_page ? parseInt(per_page) : 10
 
@@ -15,32 +15,63 @@ export default async function handler(req, res) {
     return;
   }
 
-  const [count, researchers] = await prisma.$transaction([
-    prisma.user.count({
-      where: {
-        bridge_roles: {
-          some: {
-            user_role: {
-              id: 'researcher'
-            }
-          }
-        }
-      }
-    }),
-    prisma.user.findMany({
-      skip: (per_page ?? 10) * (page ? (page - 1) : 0),
-      take: (per_page ?? 10),
-      where: {
-        bridge_roles: {
-          some: {
-            user_role: {
-              id: 'researcher'
-            }
-          }
-        }
-      }
+  let count = 0;
+  let researchers = [];
+
+  if (search && !fields) {
+    res.status(400).json({
+      error: '"fields" selection required when searching.',
+      page,
+      per_page,
+      total_pages: 0
     })
-  ])
+    return;
+  }
+
+  try {
+    [count, researchers] = await prisma.$transaction([
+      prisma.user.count({
+        where: {
+          bridge_roles: {
+            some: {
+              user_role: {
+                id: 'researcher'
+              }
+            }
+          }
+        }
+      }),
+      prisma.user.findMany({
+        skip: (per_page ?? 10) * (page ? (page - 1) : 0),
+        take: (per_page ?? 10),
+        where: {
+          bridge_roles: {
+            some: {
+              user_role: {
+                id: 'researcher'
+              }
+            }
+          },
+          where: search ? {
+            OR: fields.split(',').map((i) => ({
+              [i]: {
+                mode: 'insensitive',
+                contains: search
+              }
+            }))
+          } : undefined
+        }
+      })
+    ])
+  } catch (err) {
+    res.status(500).json({
+      error: err.message,
+      page,
+      per_page,
+      total_pages: 0
+    })
+    return;
+  }
 
   const total_pages = Math.ceil(count / per_page)
   if (total_pages > 0 && (page > total_pages || page < 1)) {
