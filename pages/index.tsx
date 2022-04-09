@@ -1,7 +1,11 @@
 import React from 'react'
 import DashboardContentHeader from '../components/DashboardContentHeader'
 
-export default function Home() {
+interface IndexProps {
+
+}
+
+const Home: React.FC<IndexProps> = (props) => {
   return (
     <main>
       <DashboardContentHeader>
@@ -10,3 +14,5 @@ export default function Home() {
     </main>
   )
 }
+
+export default Home

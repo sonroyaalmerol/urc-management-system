@@ -4,7 +4,7 @@ import DashboardLayout from '../components/DashboardLayout'
 
 import type { AppProps } from 'next/app'
 
-function MyApp({ Component, pageProps }) {
+const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <>
       <ChakraProvider theme={theme}>

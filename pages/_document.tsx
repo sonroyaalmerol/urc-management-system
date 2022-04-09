@@ -1,7 +1,7 @@
 import { Html, Head, Main, NextScript } from 'next/document'
 import type { DocumentProps } from 'next/document'
 
-export default function Document(props) {
+const Document: React.FC<DocumentProps> = (props) => {
   return (
     <Html>
       <Head>
@@ -16,3 +16,5 @@ export default function Document(props) {
     </Html>
   )
 }
+
+export default Document

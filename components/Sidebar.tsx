@@ -3,7 +3,14 @@ import { VStack, chakra, Container, Center } from '@chakra-ui/react'
 import SidebarMenu from './SidebarMenu'
 import { useRouter } from 'next/router'
 
-const Sidebar = ({ menus }) => {
+interface SidebarProps {
+  menus: {
+    name: string,
+    url: string
+  }[] 
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ menus }) => {
   const router = useRouter()
 
   const [selectedMenu, setSelectedMenu] = React.useMemo(() => {

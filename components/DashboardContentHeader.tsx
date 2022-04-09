@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box } from '@chakra-ui/react'
 
-export default function DashboardContentHeader(props) {
+const DashboardContentHeader: React.FC = (props) => {
   return (
     <main>
       <Box w='100%' h='11.25rem' bgImg='url(/header.png)' borderRadius='2rem'>
@@ -14,3 +14,5 @@ export default function DashboardContentHeader(props) {
     </main>
   )
 }
+
+export default DashboardContentHeader

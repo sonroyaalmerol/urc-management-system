@@ -1,10 +1,16 @@
 import React from 'react'
 import DashboardContentHeader from '../components/DashboardContentHeader'
 
-export default function Researches() {
+interface ResearchesProps {
+
+}
+
+const Researches: React.FC<ResearchesProps> = (props) => {
   return (
     <DashboardContentHeader>
       Hello Researches!
     </DashboardContentHeader>
   )
 }
+
+export default Researches
