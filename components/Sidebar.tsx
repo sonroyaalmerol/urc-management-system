@@ -3,11 +3,13 @@ import { VStack, chakra, Container, Center } from '@chakra-ui/react'
 import SidebarMenu from './SidebarMenu'
 import { useRouter } from 'next/router'
 
+interface Menu {
+  name: string,
+  url: string
+}
+
 interface SidebarProps {
-  menus: {
-    name: string,
-    url: string
-  }[] 
+  menus: Menu[] 
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ menus }) => {
@@ -26,7 +28,7 @@ const Sidebar: React.FC<SidebarProps> = ({ menus }) => {
     const top = bottom.splice(0, menus.findIndex((menu) => menu.url === selectedMenu)).filter((menu) => menu.url !== selectedMenu)
     return [top, bottom, current]
   }, [selectedMenu, menus])
-  const changeMenu = (menu) => {
+  const changeMenu = (menu: Menu) => {
     setSelectedMenu(menu.url)
   }
 
