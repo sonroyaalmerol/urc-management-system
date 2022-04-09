@@ -1,13 +1,15 @@
 import prisma from "../../../../lib/prisma-client"
 import injector from "../../../../lib/injectors/collection_api"
 
-export default async function handler(req, res) {
-  await injector(req, res, async ({ skip, take, where }) => {
+import type { NextApiRequest, NextApiResponse } from 'next'
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  await injector(req, res, async ({ skip, take, where }) : Promise<any[]> => {
     return await prisma.$transaction([
-      prisma.externalResearch.count({
+      prisma.bookPublication.count({
         where
       }),
-      prisma.externalResearch.findMany({
+      prisma.bookPublication.findMany({
         skip,
         take,
         include: {

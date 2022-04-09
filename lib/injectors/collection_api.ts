@@ -1,10 +1,12 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { Function } from '../../types/collection_api';
 
-const injector = async (req, res, fn) => {
-  let { page, per_page, search, fields } = req.query
-  page = page ? parseInt(page) : 1
-  per_page = per_page ? parseInt(per_page) : 10
+const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function) => {
+  let { page: raw_page, per_page: raw_per_page, search, fields } = req.query
+  const page: number = raw_page ? parseInt(raw_page as string) : 1
+  const per_page: number = raw_per_page ? parseInt(raw_per_page as string) : 10
 
-  const returnError = (code, message) => {
+  const returnError = (code: number, message: string) => {
     res.status(code).json({
       error: message,
       page,
@@ -23,14 +25,14 @@ const injector = async (req, res, fn) => {
     return;
   }
 
-  let count = 0;
-  let data = [];
+  let count: number = 0;
+  let data: any = [];
 
   const args = {
     skip: (per_page ?? 10) * (page ? (page - 1) : 0),
     take: (per_page ?? 10),
     where: search ? {
-      OR: fields.split(',').map((i) => ({
+      OR: (fields as string).split(',').map((i) => ({
         [i]: {
           mode: 'insensitive',
           contains: search
@@ -59,4 +61,5 @@ const injector = async (req, res, fn) => {
     total_pages
   })
 }
+
 export default injector

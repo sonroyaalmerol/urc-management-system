@@ -1,11 +1,13 @@
 import prisma from "../../../../lib/prisma-client"
 
-export default async function handler(req, res) {
+import type { NextApiRequest, NextApiResponse } from 'next'
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query
   
-  const publications = await prisma.bookPublication.findFirst({
+  const publications = await prisma.journalPublication.findFirst({
     where: {
-      id
+      id: id as string
     },
     include: {
       bridge_users: {

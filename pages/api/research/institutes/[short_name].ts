@@ -1,11 +1,13 @@
 import prisma from "../../../../lib/prisma-client"
 
-export default async function handler(req, res) {
+import type { NextApiRequest, NextApiResponse } from 'next'
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { short_name } = req.query
 
   const institute = await prisma.institute.findFirst({
     where: {
-      short_name
+      short_name: short_name as string
     },
     include: {
       bridge_users: {
