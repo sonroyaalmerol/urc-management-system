@@ -7,12 +7,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   
   const research = await prisma.uRCFundedResearch.findFirst({ 
     where: {
-      id: id as string
+      id: id as string,
+      approved: true
     },
     include: {
       bridge_units: {
         include: {
-          unit: true
+          unit: {
+            include: {
+              parent_unit: true
+            }
+          }
         }
       },
       bridge_users: {

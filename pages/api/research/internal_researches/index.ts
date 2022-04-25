@@ -7,7 +7,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   await injector(req, res, async ({ skip, take, where }) => {
     return await prisma.$transaction([
       prisma.uRCFundedResearch.count({
-        where
+        where: {
+          ...where,
+          approved: true
+        }
       }),
       prisma.uRCFundedResearch.findMany({
         skip,
@@ -15,7 +18,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         include: {
           bridge_units: {
             include: {
-              unit: true
+              unit: {
+                include: {
+                  parent_unit: true
+                }
+              }
             }
           },
           bridge_users: {
@@ -24,7 +31,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
           }
         },
-        where
+        where: {
+          ...where,
+          approved: true
+        }
       })
     ])
   })

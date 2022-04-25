@@ -28,16 +28,53 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function)
   let count: number = 0;
   let data: any = [];
 
+  const ORarray = [];
+
+  if (search) {
+    (fields as string).split(',').forEach((i) => {
+      if(i !== 'units') {
+        ORarray.push({
+          [i]: {
+            mode: 'insensitive',
+            contains: search
+          }
+        })
+      } else {
+        ORarray.push({
+          bridge_units: {
+            some: {
+              unit: {
+                name: {
+                  mode: 'insensitive',
+                  contains: search
+                },
+              }
+            }
+          }
+        })
+        ORarray.push({
+          bridge_units: {
+            some: {
+              unit: {
+                parent_unit: {
+                  name: {
+                    mode: 'insensitive',
+                    contains: search
+                  }
+                },
+              }
+            }
+          }
+        })
+      }
+    })
+  }
+
   const args = {
     skip: (per_page ?? 10) * (page ? (page - 1) : 0),
     take: (per_page ?? 10),
     where: search ? {
-      OR: (fields as string).split(',').map((i) => ({
-        [i]: {
-          mode: 'insensitive',
-          contains: search
-        }
-      }))
+      OR: ORarray
     } : undefined
   }
 

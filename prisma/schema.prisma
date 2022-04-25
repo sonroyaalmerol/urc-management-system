@@ -121,6 +121,7 @@ model ExternalResearch {
   updated_at                     DateTime                         @updatedAt
   research_status_id             String                           @default("not_implemented")
   slug                           String?
+  verified                       Boolean                          @default(false)
   research_status                ResearchStatus                @relation(fields: [research_status_id], references: [id], onUpdate: Restrict)
   file_upload                    FileUpload?                    @relation(fields: [upload_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
   research_presentations         ResearchPresentation[]
@@ -320,7 +321,7 @@ model JournalPublication {
   external_research_id   String?                
   created_at             DateTime               @default(now())
   proof_upload_id        String?                 
-  approved               Boolean                @default(false)
+  verified               Boolean                @default(false)
   updated_at             DateTime               @updatedAt
   date_published         DateTime?             
   title                  String                 @unique
@@ -351,7 +352,7 @@ model BookPublication {
   id                     String                 @id @default(cuid())
   created_at             DateTime               @default(now())
   proof_upload_id        String?                 
-  approved               Boolean                @default(false)
+  verified               Boolean                @default(false)
   updated_at             DateTime               @updatedAt
   title                  String                 @unique
   authors                String?
@@ -438,8 +439,8 @@ model Unit {
   description    String?
   created_at     DateTime? @default(now())
   updated_at     DateTime? @updatedAt
-  units          Unit?    @relation("unitsTounits_parent_unit_id", fields: [parent_unit_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
-  other_units    Unit[]   @relation("unitsTounits_parent_unit_id")
+  parent_unit    Unit?    @relation("unitsTounits_parent_unit_id", fields: [parent_unit_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  sub_units      Unit[]   @relation("unitsTounits_parent_unit_id")
   users          User[]
   bridge_urc_funded_researches URCFundedResearchToUnitBridge[]
   bridge_journal_publications JournalPublicationToUnitBridge[]
@@ -487,7 +488,7 @@ model URCFundedResearch {
   cycle                            String?
   budget                           Float?
   source_of_fund                   String?
-  is_approved                      Boolean                            @default(false)
+  approved                         Boolean                            @default(false)
   created_at                       DateTime?                          @default(now())
   updated_at                       DateTime?                          @updatedAt
   research_status_id               String                             @default("not_implemented")
@@ -561,8 +562,8 @@ model UserToExternalResearchBridge {
 model UserToRoleBridge {
   role_id    String     @default("default")
   user_id    String
-  user_role  UserRole @relation(fields: [role_id], references: [id], onUpdate: Restrict)
-  user       User      @relation(fields: [user_id], references: [id], onUpdate: Restrict)
+  user_role  UserRole   @relation(fields: [role_id], references: [id], onUpdate: Restrict)
+  user       User       @relation(fields: [user_id], references: [id], onUpdate: Restrict)
 
   @@id([role_id, user_id])
 }

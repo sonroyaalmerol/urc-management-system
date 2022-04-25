@@ -67,7 +67,7 @@ const scrapePresentations = async () => {
       link: $(element).find('td:nth-of-type(5)').text().trim(),
       place: $(element).find('td:nth-of-type(6)').text().trim(),
       unit: $(element).find('td:nth-of-type(7)').text().trim(),
-      budget: parseFloat($(element).find('td:nth-of-type(8)').text().trim()),
+      budget: parseFloat($(element).find('td:nth-of-type(8)').text().trim().replace(',', '')),
       fundSource: $(element).find('td:nth-of-type(9)').text().trim(),
     })
   }).get()
@@ -85,11 +85,11 @@ const scrapeResearches = async () => {
       slug,
       name: $(element).find('td:nth-of-type(1)').text().trim(),
       mainProponent: $(element).find('td:nth-of-type(2)').text().trim(),
-      coProponents: $(element).find('td:nth-of-type(3)').text().trim(),
+      coProponents: $(element).find('td:nth-of-type(3)').text().trim().replace('\n', ', '),
       unit: $(element).find('td:nth-of-type(4)').text().trim(),
       duration: $(element).find('td:nth-of-type(5)').text().trim(),
       cycle: $(element).find('td:nth-of-type(6)').text().trim(),
-      budget: parseFloat($(element).find('td:nth-of-type(7)').text().trim()),
+      budget: parseFloat($(element).find('td:nth-of-type(7)').text().trim().replace(',', '')),
       fundSource: $(element).find('td:nth-of-type(8)').text().trim(),
     })
   }).get()
@@ -209,6 +209,66 @@ async function main() {
     console.log(err)
   }
 
+  const extractUnits = (unitsString) => {
+    const rawUnits = unitsString.split(',')
+    const doneUnits = []
+
+    return rawUnits?.filter((unitDetail) => {
+      const unitTrimmed = unitDetail.trim()
+      if (unitTrimmed.split('-').length > 1) {
+        if (!doneUnits.includes(unitDetail.trim().split('-')[1].trim())) {
+          doneUnits.push(unitDetail.trim().split('-')[1].trim())
+          return true
+        }
+        return false
+      } else {
+        if (!doneUnits.includes(unitDetail.trim().split('-')[0].trim())) {
+          doneUnits.push(unitDetail.trim().split('-')[0].trim())
+          return true
+        }
+        return false
+      }
+    }).map((unitDetail) => {
+      const unitTrimmed = unitDetail.trim()
+      if (unitTrimmed.split('-').length > 1) {
+        return {
+          unit: {
+            connectOrCreate: {
+              where: {
+                name: unitDetail.trim().split('-')[1].trim()
+              },
+              create: {
+                name: unitDetail.trim().split('-')[1].trim(),
+                parent_unit: {
+                  connectOrCreate: {
+                    where: {
+                      name: unitDetail.trim().split('-')[0].trim()
+                    },
+                    create:{ 
+                      name: unitDetail.trim().split('-')[0].trim()
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      return {
+        unit: {
+          connectOrCreate: {
+            where: {
+              name: unitDetail.trim().split('-')[0].trim()
+            },
+            create: {
+              name: unitDetail.trim().split('-')[0].trim()
+            }
+          }
+        }
+      }
+    })
+  }
+
   for (const research of researches) {
     const slug_raw = research.slug?.split("/")
     if (research.fundSource === 'AdDU-URC') {
@@ -223,25 +283,17 @@ async function main() {
             duration: research.duration,
             cycle: research.cycle,
             budget: research.budget,
+            approved: true,
             bridge_units: {
-              create: {
-                unit: {
-                  connectOrCreate: {
-                    where: {
-                      name: research.unit
-                    },
-                    create: {
-                      name: research.unit
-                    }
-                  }
-                },
-              }
+              create: extractUnits(research.unit)
             },
             slug: (slug_raw === undefined || slug_raw.length == 0) ? '' : slug_raw[slug_raw.length - 1],
             research_status_id: 'finished'
           },
         })
       } catch (err) {
+        console.log(research.name)
+        console.log(extractUnits(research.unit))
         console.log(err)
       }
     } else {
@@ -257,6 +309,7 @@ async function main() {
             duration: research.duration,
             cycle: research.cycle,
             budget: research.budget,
+            verified: true,
             slug: (slug_raw === undefined || slug_raw.length == 0) ? '' : slug_raw[slug_raw.length - 1],
             research_status_id: 'finished'
           },
@@ -277,18 +330,7 @@ async function main() {
           event_title: presentation.title,
           location: presentation.place,
           bridge_units: {
-            create: {
-              unit: {
-                connectOrCreate: {
-                  where: {
-                    name: presentation.unit
-                  },
-                  create: {
-                    name: presentation.unit
-                  }
-                }
-              },
-            }
+            create: extractUnits(presentation.unit)
           },
           event_date: presentation.date,
           verified: true,
@@ -315,20 +357,9 @@ async function main() {
             journal: publication.journal,
             url: publication.link,
             is_indexed: publication.indexed === 'Yes',
-            approved: true,
+            verified: true,
             bridge_units: {
-              create: {
-                unit: {
-                  connectOrCreate: {
-                    where: {
-                      name: publication.unit
-                    },
-                    create: {
-                      name: publication.unit
-                    }
-                  }
-                },
-              }
+              create: extractUnits(publication.unit)
             },
           },
         })
@@ -345,23 +376,15 @@ async function main() {
             authors: publication.authors,
             publisher: publication.publisher,
             isbn: publication.isbn,
+            verified: true,
             bridge_units: {
-              create: {
-                unit: {
-                  connectOrCreate: {
-                    where: {
-                      name: publication.unit
-                    },
-                    create: {
-                      name: publication.unit
-                    }
-                  }
-                },
-              }
+              create: extractUnits(publication.unit)
             },
           },
         })
       } catch (err) {
+        console.log(publication.title)
+        console.log(extractUnits(publication.unit))
         console.log(err)
       }
     }

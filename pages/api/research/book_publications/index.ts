@@ -7,7 +7,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   await injector(req, res, async ({ skip, take, where }) : Promise<any[]> => {
     return await prisma.$transaction([
       prisma.bookPublication.count({
-        where
+        where: {
+          ...where,
+          verified: true
+        }
       }),
       prisma.bookPublication.findMany({
         skip,
@@ -17,9 +20,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             include: {
               user: true
             }
+          },
+          bridge_units: {
+            include: {
+              unit: {
+                include: {
+                  parent_unit: true
+                }
+              }
+            }
           }
         },
-        where
+        where: {
+          ...where,
+          verified: true
+        }
       })
     ])
   })

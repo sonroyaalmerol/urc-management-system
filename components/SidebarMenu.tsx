@@ -1,8 +1,8 @@
 import React from 'react'
-import { Button, Center } from '@chakra-ui/react'
+import { Button, ButtonProps, Center } from '@chakra-ui/react'
 
-interface SidebarMenuProps {
-  selected: boolean
+interface SidebarMenuProps extends ButtonProps {
+  selected?: boolean
 }
 
 const SidebarMenu: React.FC<SidebarMenuProps> = (props) => {

@@ -7,7 +7,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   await injector(req, res, async ({ skip, take, where }) => {
     return await prisma.$transaction([
       prisma.researchDissemination.count({
-        where
+        where: {
+          ...where,
+          verified: true
+        }
       }),
       prisma.researchDissemination.findMany({
         skip,
@@ -20,11 +23,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           },
           bridge_units: {
             include: {
-              unit: true
+              unit: {
+                include: {
+                  parent_unit: true
+                }
+              }
             }
           }
         },
-        where
+        where: {
+          ...where,
+          verified: true
+        }
       })
     ])
   })

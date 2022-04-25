@@ -6,25 +6,16 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   await injector(req, res, async ({ skip, take, where }) => {
     return await prisma.$transaction([
-      prisma.externalResearch.count({
-        where: {
-          ...where,
-          verified: true
-        }
+      prisma.unit.count({
+        where
       }),
-      prisma.externalResearch.findMany({
+      prisma.unit.findMany({
         skip,
         take,
+        where,
         include: {
-          bridge_users: {
-            include: {
-              user: true
-            }
-          },
-        },
-        where: {
-          ...where,
-          verified: true
+          parent_unit: true,
+          sub_units: true
         }
       })
     ])

@@ -7,12 +7,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   
   const disseminations = await prisma.researchDissemination.findFirst({
     where: {
-      id: id as string
+      id: id as string,
+      verified: true
     },
     include: {
       bridge_users: {
         include: {
           user: true
+        }
+      },
+      bridge_units: {
+        include: {
+          unit: {
+            include: {
+              parent_unit: true
+            }
+          }
         }
       }
     },

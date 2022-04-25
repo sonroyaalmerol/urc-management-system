@@ -4,23 +4,19 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query
-
-  const research = await prisma.externalResearch.findFirst({ 
+  
+  const unit = await prisma.unit.findFirst({
     where: {
-      id: id as string,
-      verified: true
+      id: id as string
     },
     include: {
-      bridge_users: {
-        include: {
-          user: true
-        }
-      }
+      parent_unit: true,
+      sub_units: true
     }
   })
 
-  if (research) {
-    res.status(200).json(research)
+  if (unit) {
+    res.status(200).json(unit)
   } else {
     res.status(404).json({ error: 'Resource not found.' })
   }
