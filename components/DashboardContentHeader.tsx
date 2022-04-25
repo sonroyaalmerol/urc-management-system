@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react'
 import { Box } from '@chakra-ui/react'
 
 interface DashboardContentHeaderProps {
-  children: ReactNode
+  children?: ReactNode
 }
 
 const DashboardContentHeader: React.FC<DashboardContentHeaderProps> = (props) => {
