@@ -1,7 +1,11 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import { Box } from '@chakra-ui/react'
 
-const DashboardContentHeader: React.FC = (props) => {
+interface DashboardContentHeaderProps {
+  children: ReactNode
+}
+
+const DashboardContentHeader: React.FC<DashboardContentHeaderProps> = (props) => {
   return (
     <main>
       <Box w='100%' h='11.25rem' bgImg='url(/header.png)' borderRadius='2rem'>
