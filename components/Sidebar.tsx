@@ -1,4 +1,4 @@
-import React, { createRef, useEffect, useState } from 'react'
+import React from 'react'
 import { VStack, chakra, Box, Center, Container } from '@chakra-ui/react'
 import SidebarMenu from './SidebarMenu'
 import { useRouter } from 'next/router'
@@ -22,6 +22,10 @@ const Sidebar: React.FC<SidebarProps> = ({ menus }) => {
     offsetTop: 0,
     offsetBottom: 0
   })
+
+  const updateCurrentPosition = (data : { offsetTop: number, offsetBottom: number }) => {
+    setCurrMenuPos(data)
+  }
 
   React.useEffect(() => {
     topControls.start({
@@ -103,7 +107,7 @@ const Sidebar: React.FC<SidebarProps> = ({ menus }) => {
             borderRadius={0}
             borderTopRightRadius={currentMenu.url === menu.url || currentIndex + 1 === i ? '2rem' : 0}
             borderBottomRightRadius={currentMenu.url === menu.url || currentIndex - 1 === i ? '2rem' : 0}
-            setCurrentPosition={setCurrMenuPos}
+            updateCurrentPosition={updateCurrentPosition}
           >
             {menu.name}
           </SidebarMenu>
