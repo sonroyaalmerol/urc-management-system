@@ -56,8 +56,34 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function)
           bridge_units: {
             some: {
               unit: {
+                id: {
+                  mode: 'insensitive',
+                  contains: search
+                },
+              }
+            }
+          }
+        })
+        ORarray.push({
+          bridge_units: {
+            some: {
+              unit: {
                 parent_unit: {
                   name: {
+                    mode: 'insensitive',
+                    contains: search
+                  }
+                },
+              }
+            }
+          }
+        })
+        ORarray.push({
+          bridge_units: {
+            some: {
+              unit: {
+                parent_unit: {
+                  id: {
                     mode: 'insensitive',
                     contains: search
                   }
