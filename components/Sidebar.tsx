@@ -1,7 +1,8 @@
-import React from 'react'
-import { VStack, chakra, Container, Center } from '@chakra-ui/react'
+import React, { createRef, useEffect, useState } from 'react'
+import { VStack, chakra, Box, Center, Container } from '@chakra-ui/react'
 import SidebarMenu from './SidebarMenu'
 import { useRouter } from 'next/router'
+import { motion, useAnimation } from 'framer-motion'
 
 interface Menu {
   name: string,
@@ -14,6 +15,29 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ menus }) => {
   const router = useRouter()
+  const topControls = useAnimation()
+  const bottomControls = useAnimation()
+
+  const [currMenuPos, setCurrMenuPos] = React.useState({
+    offsetTop: 0,
+    offsetBottom: 0
+  })
+
+  React.useEffect(() => {
+    topControls.start({
+      height: currMenuPos.offsetTop,
+      transition: {
+        ease: [0.17, 0.67, 0.83, 0.67]
+      }
+    })
+
+    bottomControls.start({
+      height: currMenuPos.offsetBottom,
+      transition: {
+        ease: [0.17, 0.67, 0.83, 0.67]
+      }
+    })
+  }, [currMenuPos, topControls, bottomControls])
 
   const [selectedMenu, setSelectedMenu] = React.useMemo(() => {
     return [
@@ -22,32 +46,67 @@ const Sidebar: React.FC<SidebarProps> = ({ menus }) => {
     ]
   }, [router.pathname, router.push])
 
-  const [topMenus, bottomMenus, currentMenu] = React.useMemo(() => {
-    const current = menus.find((menu) => menu.url === selectedMenu)
-    const bottom = [...menus].filter((menu) => menu.url !== selectedMenu)
-    const top = bottom.splice(0, menus.findIndex((menu) => menu.url === selectedMenu)).filter((menu) => menu.url !== selectedMenu)
-    return [top, bottom, current]
-  }, [selectedMenu, menus])
+  const [currentMenu, currentIndex] = React.useMemo(() => {
+    const currentIndex = menus.findIndex((menu) => menu.url === selectedMenu)
+    const current = menus[currentIndex]
+
+    return [current, currentIndex]
+  }, [
+    selectedMenu,
+    menus
+  ])
+  
   const changeMenu = (menu: Menu) => {
     setSelectedMenu(menu.url)
   }
 
   return (
-    <VStack maxW='21.25rem' h='100vh' spacing={0}>
-      <Container w='100%' backgroundColor='brand.blue' borderBottomRightRadius={currentMenu ? '2rem' : '0'} padding='0'>
+    <VStack maxW='21.25rem' h='100vh' spacing={0} position="relative">
+      <Box
+        as={motion.div}
+        animate={topControls}
+        initial={{
+          height: '100vh'
+        }}
+        bgColor="#1A2B75"
+        width="100%"
+        height="100"
+        position="absolute"
+        zIndex={0}
+        borderBottomRightRadius="2rem"
+        top={0}
+      />
+      <Box
+        as={motion.div}
+        animate={bottomControls}
+        initial={{
+          height: '100vh'
+        }}
+        bgColor="#1A2B75"
+        width="100%"
+        height="100"
+        position="absolute"
+        zIndex={0}
+        borderTopRightRadius="2rem"
+        bottom={0}
+      />
+      <Container zIndex={1} padding={0}>
         <Center padding="1.5rem" marginBottom='2rem'>
           <chakra.img src="./urc_header.png"></chakra.img>
         </Center>
-        { topMenus.map((menu, i) => (
-          <SidebarMenu key={`top-${menu.url}`} onClick={() => changeMenu(menu)} borderRadius='0' borderBottomRightRadius={i === topMenus.length - 1 && currentMenu ? '2rem' : '0'}>{menu.name}</SidebarMenu>
-        )) }
-      </Container>
-      { currentMenu ? (
-        <SidebarMenu onClick={() => changeMenu(currentMenu)} selected key={currentMenu.url} borderRadius='0' borderTopRightRadius='2rem' borderBottomRightRadius='2rem'>{currentMenu.name}</SidebarMenu>
-      ) : null }
-      <Container w='100%' backgroundColor='brand.blue' h="100%" borderTopRightRadius={currentMenu ? '2rem' : '0'} padding='0'>
-        { bottomMenus.map((menu, i) => (
-          <SidebarMenu onClick={() => changeMenu(menu)} key={`bottom-${menu.url}`} borderRadius='0' borderTopRightRadius={i === 0 && currentMenu ? '2rem' : '0'}>{menu.name}</SidebarMenu>
+        
+        { menus.map((menu, i) => (
+          <SidebarMenu
+            key={`top-${menu.url}`}
+            selected={currentMenu.url === menu.url}
+            onClick={() => changeMenu(menu)}
+            borderRadius={0}
+            borderTopRightRadius={currentMenu.url === menu.url || currentIndex + 1 === i ? '2rem' : 0}
+            borderBottomRightRadius={currentMenu.url === menu.url || currentIndex - 1 === i ? '2rem' : 0}
+            setCurrentPosition={setCurrMenuPos}
+          >
+            {menu.name}
+          </SidebarMenu>
         )) }
       </Container>
     </VStack>
