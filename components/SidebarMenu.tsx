@@ -9,13 +9,20 @@ interface SidebarMenuProps extends ButtonProps {
 }
 
 const useSize = (target : React.RefObject<any>) => {
-  const [size, setSize] = React.useState<DOMRectReadOnly | null>()
+  const [size, setSize] = React.useState<{ offsetTop: number, offsetBottom: number } | null>()
+  const [resized, setResized] = React.useState<DOMRectReadOnly | null>()
 
   React.useEffect(() => {
-    setSize(target.current.getBoundingClientRect())
-  }, [target])
+    const currentPosition = {
+      offsetTop: target.current.offsetTop,
+      offsetBottom: window.innerHeight - (target.current.offsetTop + target.current.offsetHeight)
+    }
 
-  useResizeObserver(target, (entry) => setSize(entry.contentRect))
+    setSize(currentPosition)
+  }, [target, resized])
+
+  useResizeObserver(target, (entry) => setResized(entry.contentRect))
+
   return size
 }
 
@@ -28,15 +35,11 @@ const SidebarMenu: React.FC<SidebarMenuProps> = (props) => {
   delete divProps.updateCurrentPosition
 
   React.useEffect(() => {
-    if (updateCurrentPosition && selected) {
-      const currentPosition = {
-        offsetTop: target.current.offsetTop,
-        offsetBottom: window.innerHeight - (target.current.offsetTop + target.current.offsetHeight)
-      }
-      updateCurrentPosition(currentPosition)
+    if (updateCurrentPosition && selected && size) {
+      updateCurrentPosition(size)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [size, selected, target.current?.offsetTop])
+  }, [size, selected])
 
   return (
     <Button 
