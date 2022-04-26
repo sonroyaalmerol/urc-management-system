@@ -36,7 +36,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = (props) => {
       updateCurrentPosition(currentPosition)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [size, selected])
+  }, [size, selected, target.current?.offsetTop])
 
   return (
     <Button 
