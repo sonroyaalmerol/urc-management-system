@@ -1,7 +1,6 @@
 import React, { LegacyRef } from 'react'
 import { Button, ButtonProps, Center } from '@chakra-ui/react'
 import useResizeObserver from '@react-hook/resize-observer'
-
 interface SidebarMenuProps extends ButtonProps {
   selected?: boolean,
   ref?: LegacyRef<HTMLButtonElement>,
@@ -10,18 +9,15 @@ interface SidebarMenuProps extends ButtonProps {
 
 const useSize = (target : React.RefObject<any>) => {
   const [size, setSize] = React.useState<{ offsetTop: number, offsetBottom: number } | null>()
-  const [resized, setResized] = React.useState<DOMRectReadOnly | null>()
-
-  React.useEffect(() => {
+  
+  useResizeObserver(target, (entry) => {
     const currentPosition = {
-      offsetTop: target.current.offsetTop,
-      offsetBottom: window.innerHeight - (target.current.offsetTop + target.current.offsetHeight)
+      offsetTop: entry.target?.getBoundingClientRect()?.top ?? 0,
+      offsetBottom: window.innerHeight - (entry.target?.getBoundingClientRect()?.bottom ?? 0 + entry.target?.getBoundingClientRect()?.height ?? 0)
     }
 
     setSize(currentPosition)
-  }, [target, resized])
-
-  useResizeObserver(target, (entry) => setResized(entry.contentRect))
+  })
 
   return size
 }
