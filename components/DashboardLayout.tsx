@@ -1,7 +1,11 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import { HStack, Box } from '@chakra-ui/react'
 import Sidebar from './Sidebar'
 // import Head from 'next/head'
+
+interface DashboardLayoutProps {
+  children?: ReactNode
+}
 
 const menus = [
   {
@@ -18,7 +22,7 @@ const menus = [
   }
 ]
 
-const DashboardLayout: React.FC = (props) => {
+const DashboardLayout: React.FC<DashboardLayoutProps> = (props) => {
   return (
     <>
       {/*<Head></Head>*/}
