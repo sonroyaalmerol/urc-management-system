@@ -33,8 +33,8 @@ http
           spawnedShell.stdin.write('npx prisma migrate deploy\n');
           spawnedShell.stdin.write('npx prisma generate\n');
           spawnedShell.stdin.write('yarn build\n');
-          // spawnedShell.stdin.write('pm2 reload urc_webhook\n');
           spawnedShell.stdin.write('pm2 reload urc_ms\n');
+          spawnedShell.stdin.write('pm2 reload smee_urc\n');
           // End
           spawnedShell.stdin.end();
         } catch (error) {
