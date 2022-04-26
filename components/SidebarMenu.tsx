@@ -1,7 +1,6 @@
 import React, { LegacyRef } from 'react'
 import { Button, ButtonProps, Center } from '@chakra-ui/react'
-import useResizeObserver from '@react-hook/resize-observer'
-import useIntersectionObserver from '@react-hook/intersection-observer'
+
 interface SidebarMenuProps extends ButtonProps {
   selected?: boolean,
   ref?: LegacyRef<HTMLButtonElement>,
@@ -11,32 +10,23 @@ interface SidebarMenuProps extends ButtonProps {
 const useSize = (target : React.RefObject<any>) => {
   const [size, setSize] = React.useState<{ offsetTop: number, offsetBottom: number } | null>()
 
-  const { boundingClientRect } = useIntersectionObserver(target)
-
-  const updatePosition = (offsetTop: number, offsetBottom: number) => {
-    const currentPosition = {
-      offsetTop: offsetTop,
-      offsetBottom: offsetBottom
-    }
-
-    setSize(currentPosition)
-  }
-
   React.useEffect(() => {
-    console.log('intersection')
-    updatePosition(
-      boundingClientRect?.top ?? 0,
-      window.innerHeight - (boundingClientRect?.bottom ?? 0 + boundingClientRect?.height ?? 0),
-    )
-  }, [boundingClientRect?.top, boundingClientRect?.bottom, boundingClientRect?.height])
-  
-  useResizeObserver(target, (entry) => {
-    console.log('resize')
-    updatePosition(
-      entry.target?.getBoundingClientRect()?.top ?? 0,
-      window.innerHeight - (entry.target?.getBoundingClientRect()?.bottom ?? 0 + entry.target?.getBoundingClientRect()?.height ?? 0),
-    )
-  })
+    const polling = setInterval(() => {
+      const boundingClientRect = target.current?.getBoundingClientRect()
+      const currentPosition = {
+        offsetTop: boundingClientRect?.top ?? 0,
+        offsetBottom: window.innerHeight - (boundingClientRect?.bottom ?? 0 + boundingClientRect?.height ?? 0)
+      }
+      if (size !== currentPosition) {
+        setSize(currentPosition)
+      }
+    }, 250)
+
+    return () => {
+      clearInterval(polling)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return size
 }

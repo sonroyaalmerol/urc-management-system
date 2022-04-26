@@ -28,19 +28,21 @@ const Sidebar: React.FC<SidebarProps> = ({ menus }) => {
   }
 
   React.useEffect(() => {
-    topControls.start({
-      height: currMenuPos.offsetTop,
-      transition: {
-        ease: [0.17, 0.67, 0.83, 0.67]
-      }
-    })
+    if (currMenuPos.offsetBottom !== 0 && currMenuPos.offsetTop !== 0) {
+      topControls.start({
+        height: currMenuPos.offsetTop,
+        transition: {
+          ease: [0.17, 0.67, 0.83, 0.67]
+        }
+      })
 
-    bottomControls.start({
-      height: currMenuPos.offsetBottom,
-      transition: {
-        ease: [0.17, 0.67, 0.83, 0.67]
-      }
-    })
+      bottomControls.start({
+        height: currMenuPos.offsetBottom,
+        transition: {
+          ease: [0.17, 0.67, 0.83, 0.67]
+        }
+      })
+    }
   }, [currMenuPos, topControls, bottomControls])
 
   const [selectedMenu, setSelectedMenu] = React.useMemo(() => {
