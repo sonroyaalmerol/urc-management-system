@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { Function } from '../../types/collection_api';
+import type { Function } from '../../types/api.type';
 
 const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function) => {
   let { page: raw_page, per_page: raw_per_page, search, fields } = req.query

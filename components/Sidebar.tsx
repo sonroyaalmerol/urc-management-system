@@ -1,22 +1,22 @@
 import React from 'react'
-import { VStack, chakra, Box, Center, Container } from '@chakra-ui/react'
+import { VStack, chakra, Box, Center, Container, StackProps } from '@chakra-ui/react'
 import SidebarMenu from './SidebarMenu'
 import { useRouter } from 'next/router'
 import { motion, useAnimation } from 'framer-motion'
+import type { Menu } from '../types/menu.type'
 
-interface Menu {
-  name: string,
-  url: string
+interface SidebarProps extends StackProps {
+  menus: Menu[]
 }
 
-interface SidebarProps {
-  menus: Menu[] 
-}
-
-const Sidebar: React.FC<SidebarProps> = ({ menus }) => {
+const Sidebar: React.FC<SidebarProps> = (props) => {
+  const { menus } = props
   const router = useRouter()
   const topControls = useAnimation()
   const bottomControls = useAnimation()
+
+  const divProps = Object.assign({}, props)
+  delete divProps.menus
 
   const [currMenuPos, setCurrMenuPos] = React.useState({
     offsetTop: 0,
@@ -67,7 +67,13 @@ const Sidebar: React.FC<SidebarProps> = ({ menus }) => {
   }
 
   return (
-    <VStack maxW='21.25rem' h='100vh' spacing={0} position="relative">
+    <VStack
+      maxW='21.25rem'
+      h='100vh'
+      spacing={0}
+      position="relative"
+      {...divProps}
+    >
       <Box
         as={motion.div}
         animate={topControls}
@@ -96,9 +102,9 @@ const Sidebar: React.FC<SidebarProps> = ({ menus }) => {
         borderTopRightRadius="2rem"
         bottom={0}
       />
-      <Container zIndex={1} padding={0}>
+      <Container zIndex={5} padding={0}>
         <Center padding="1.5rem" marginBottom='2rem'>
-          <chakra.img src="./urc_header.png"></chakra.img>
+          <chakra.img zIndex={5} src="./urc_header.png"></chakra.img>
         </Center>
         
         { menus.map((menu, i) => (

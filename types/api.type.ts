@@ -4,4 +4,4 @@ export interface FunctionProps {
   where: object
 }
 
-export type Function = (args: FunctionProps) => Promise<any[]>;
+export type Function = (args: FunctionProps) => Promise<any[]>
