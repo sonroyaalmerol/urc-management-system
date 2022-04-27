@@ -81,14 +81,16 @@ const Navbar: React.FC<NavbarProps> = (props) => {
             >
               <DrawerOverlay />
               <DrawerContent paddingY={4} maxW="45vw">
-                <DrawerBody paddingX={0}>
+                <DrawerBody paddingX={2}>
                   <VStack>
                     { menus.map((menu, i) => (
                       <Button
                         key={`top-${menu.url}`}
                         onClick={() => changeMenu(menu)}
-                        borderRadius={0}
-                        bgColor="transparent"
+                        borderRadius="20px"
+                        paddingY="2rem"
+                        bgColor={currentIndex === i ? "#1A2B75" : "transparent"}
+                        color={currentIndex === i ? "white" : "#1A2B75"}
                         width="100%"
                       >
                         {menu.name}
