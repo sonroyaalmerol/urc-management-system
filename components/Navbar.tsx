@@ -127,13 +127,12 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                   />
                 </MenuButton>
                 <MenuList alignItems={'center'}>
-                  <br />
                   <NavigationAvatar
                     name='Segun Adebayo'
                     imageUrl='https://bit.ly/sage-adebayo'
                     email='sadebayo@addu.edu.ph'
+                    marginY={4}
                   />
-                  <br />
                   <MenuDivider />
                   <MenuItem>Log Out</MenuItem>
                 </MenuList>
