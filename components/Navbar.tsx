@@ -11,7 +11,6 @@ import {
   MenuItem,
   MenuDivider,
   Stack,
-  Center,
   BoxProps,
   IconButton,
   HStack,
@@ -20,10 +19,12 @@ import {
   DrawerContent,
   DrawerBody,
   useDisclosure,
-  VStack
-} from '@chakra-ui/react';
-import { HamburgerIcon } from '@chakra-ui/icons';
+  VStack,
+  Text
+} from '@chakra-ui/react'
+import { HamburgerIcon } from '@chakra-ui/icons'
 import { useRouter } from 'next/router'
+import NavigationAvatar from './NavigationAvatar'
 import type { Menu as MenuType } from '../types/menu.type'
 
 interface NavbarProps extends BoxProps {
@@ -63,7 +64,15 @@ const Navbar: React.FC<NavbarProps> = (props) => {
 
   return (
     <>
-      <Box bgColor="#1A2B75" px={4} w="100%" margin={0} {...divProps}>
+      <Box
+        bgColor="#1A2B75"
+        px={4}
+        w="100%"
+        margin={0}
+        boxShadow="0px 1px 10px"
+        position="fixed"
+        {...divProps}
+      >
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
           <HStack spacing={4}>
             <IconButton
@@ -114,21 +123,16 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                   minW={0}>
                   <Avatar
                     size={'sm'}
-                    src={'https://avatars.dicebear.com/api/male/username.svg'}
+                    src={'https://bit.ly/sage-adebayo'}
                   />
                 </MenuButton>
                 <MenuList alignItems={'center'}>
                   <br />
-                  <Center>
-                    <Avatar
-                      size={'2xl'}
-                      src={'https://avatars.dicebear.com/api/male/username.svg'}
-                    />
-                  </Center>
-                  <br />
-                  <Center>
-                    <p>Username</p>
-                  </Center>
+                  <NavigationAvatar
+                    name='Segun Adebayo'
+                    imageUrl='https://bit.ly/sage-adebayo'
+                    email='sadebayo@addu.edu.ph'
+                  />
                   <br />
                   <MenuDivider />
                   <MenuItem>Log Out</MenuItem>

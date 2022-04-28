@@ -31,7 +31,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = (props) => {
         <Sidebar menus={menus} display={{ base: 'none', md: 'initial' }} />
         <VStack w='100vw'>
           <Navbar menus={menus} display={{ base: 'initial', md: 'none' }} />
-          <Box w='100%' h='100%' paddingY={{ base: '0.5rem', md: '2rem'}} paddingX={{ base: '1.5rem', md: '6rem'}}>
+          <Box
+            w='100%'
+            h='100%'
+            paddingY={{ base: '0.5rem', md: '2rem'}}
+            paddingX={{ base: '1.5rem', md: '6rem'}}
+            paddingTop={{ base: '5rem', md: '2rem' }}
+          >
             {props.children}
           </Box>
         </VStack>

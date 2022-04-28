@@ -1,9 +1,10 @@
 import React from 'react'
-import { VStack, chakra, Box, Center, Container, StackProps } from '@chakra-ui/react'
+import { VStack, chakra, Box, Center, Container, StackProps, Avatar, Heading, Text } from '@chakra-ui/react'
 import SidebarMenu from './SidebarMenu'
 import { useRouter } from 'next/router'
 import { motion, useAnimation } from 'framer-motion'
 import type { Menu } from '../types/menu.type'
+import NavigationAvatar from './NavigationAvatar'
 
 interface SidebarProps extends StackProps {
   menus: Menu[]
@@ -104,7 +105,14 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
       />
       <Container zIndex={5} padding={0}>
         <Center padding="1.5rem" marginBottom='2rem'>
-          <chakra.img zIndex={5} src="./urc_header.png"></chakra.img>
+          <VStack spacing={8} color="white">
+            <chakra.img zIndex={5} src="./urc_header.png"></chakra.img>
+            <NavigationAvatar
+              name='Segun Adebayo'
+              imageUrl='https://bit.ly/sage-adebayo'
+              email='sadebayo@addu.edu.ph'
+            />
+          </VStack>
         </Center>
         
         { menus.map((menu, i) => (
