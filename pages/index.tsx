@@ -9,7 +9,7 @@ const Home: React.FC<IndexProps> = (props) => {
   return (
     <main>
       <DashboardContentHeader>
-        Hello World!
+        Hello World! This website is currently under construction!
       </DashboardContentHeader>
     </main>
   )
