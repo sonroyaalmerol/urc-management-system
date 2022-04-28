@@ -2,6 +2,7 @@
 const http = require('http');
 const crypto = require('crypto');
 const { spawn } = require('child_process');
+const pm2 = require('pm2');
 
 const SECRET = 'aYwBpLv3BaEhAVoHrlQLN2mhA6oSB4nK';
 
@@ -26,7 +27,7 @@ http
           const spawnedShell = spawn('/bin/sh');
           // Capture stdout
           spawnedShell.stdout.on('data', d => console.log(d.toString()));
-
+          
           spawnedShell.stdin.write('cd /var/www/urc-management-system\n');
           spawnedShell.stdin.write('git pull\n');
           spawnedShell.stdin.write('yarn\n');
@@ -37,6 +38,20 @@ http
           spawnedShell.stdin.write('pm2 reload smee_urc\n');
           // End
           spawnedShell.stdin.end();
+
+          spawnedShell.on('exit', () => {
+            pm2.connect((err) => {
+              if (err) {
+                console.error(err)
+                process.exit(2)
+              }
+
+              pm2.restart('urc_ms', (err) => {
+                pm2.disconnect()
+                if (err) throw err
+              })
+            })
+          })
         } catch (error) {
           console.log(error);
         }
