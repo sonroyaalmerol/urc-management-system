@@ -108,7 +108,7 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
           <VStack spacing={8} color="white">
             <chakra.img zIndex={5} src="./urc_header.png"></chakra.img>
             <NavigationAvatar
-              name='Segun Adebayo'
+              name='Segun T. Adebayo'
               imageUrl='https://bit.ly/sage-adebayo'
               email='sadebayo@addu.edu.ph'
             />
