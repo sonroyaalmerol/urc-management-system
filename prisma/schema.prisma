@@ -140,6 +140,7 @@ model FileUpload {
   updated_at                      DateTime                          @updatedAt
   resource_key                    String?
   user_id                         String
+  public_access                   Boolean                           @default(false)
   user                            User                             @relation(fields: [user_id], references: [id], onUpdate: Restrict)
   downloads                       Download[]
   external_researches             ExternalResearch[]

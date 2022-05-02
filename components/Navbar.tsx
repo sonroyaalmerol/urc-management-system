@@ -25,6 +25,7 @@ import {
 import { HamburgerIcon } from '@chakra-ui/icons'
 import { useRouter } from 'next/router'
 import NavigationAvatar from './NavigationAvatar'
+import { useSession, signOut } from 'next-auth/react'
 import type { Menu as MenuType } from '../types/menu.type'
 
 interface NavbarProps extends BoxProps {
@@ -34,6 +35,8 @@ interface NavbarProps extends BoxProps {
 const Navbar: React.FC<NavbarProps> = (props) => {
   const { menus } = props
   const router = useRouter()
+
+  const { data: session } = useSession()
 
   const divProps = Object.assign({}, props)
   delete divProps.menus
@@ -123,18 +126,15 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                   minW={0}>
                   <Avatar
                     size={'sm'}
-                    src={'https://bit.ly/sage-adebayo'}
+                    src={session.user.image}
                   />
                 </MenuButton>
                 <MenuList alignItems={'center'}>
                   <NavigationAvatar
-                    name='Segun Adebayo'
-                    imageUrl='https://bit.ly/sage-adebayo'
-                    email='sadebayo@addu.edu.ph'
                     marginY={4}
                   />
                   <MenuDivider />
-                  <MenuItem>Log Out</MenuItem>
+                  <MenuItem onClick={() => signOut()}>Log Out</MenuItem>
                 </MenuList>
               </Menu>
             </Stack>

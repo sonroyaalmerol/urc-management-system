@@ -1,5 +1,5 @@
 import React from 'react'
-import { VStack, chakra, Box, Center, Container, StackProps, Avatar, Heading, Text } from '@chakra-ui/react'
+import { VStack, chakra, Box, Center, Container, StackProps } from '@chakra-ui/react'
 import SidebarMenu from './SidebarMenu'
 import { useRouter } from 'next/router'
 import { motion, useAnimation } from 'framer-motion'
@@ -107,11 +107,7 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
         <Center padding="1.5rem" marginBottom='2rem'>
           <VStack spacing={8} color="white">
             <chakra.img zIndex={5} src="./urc_header.png"></chakra.img>
-            <NavigationAvatar
-              name='Segun T. Adebayo'
-              imageUrl='https://bit.ly/sage-adebayo'
-              email='sadebayo@addu.edu.ph'
-            />
+            <NavigationAvatar avatarSize="small" />
           </VStack>
         </Center>
         

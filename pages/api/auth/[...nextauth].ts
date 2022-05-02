@@ -19,6 +19,9 @@ export default NextAuth({
       })
     }),
   ],
+  pages: {
+    signIn: '/login'
+  },
   callbacks: {
     async signIn({ account, profile }) {
       if (account.provider === "google") {
@@ -26,5 +29,9 @@ export default NextAuth({
       }
       return true // Do different verification for other providers that don't have `email_verified`
     },
+    async session({ session, user }) {
+      session.userId = user.id
+      return Promise.resolve(session)
+    }
   }
 })
