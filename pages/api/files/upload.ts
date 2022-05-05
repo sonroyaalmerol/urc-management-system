@@ -1,7 +1,6 @@
-import { uploadFile } from '../../../lib/drive-client'
+import { uploadFile } from '../../../lib/server/drive'
 import { getSession } from 'next-auth/react'
 import { IncomingForm } from 'formidable'
-import { PassThrough } from 'stream'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { IncomingMessage } from 'http'
@@ -19,8 +18,6 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
   const { public_access } = req.query
   
   if (req.method === 'POST') {
-
-    const pass = new PassThrough()
     const form = new IncomingForm({
       multiples: false,
       keepExtensions: true
@@ -31,6 +28,8 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
       type: ''
     }
 
+    const bufs: Buffer[] = []
+    let buf: Buffer
     form.onPart = (part) => {
       if (part.originalFilename === '' || !part.mimetype) {
         // let formidable handle all non-file parts
@@ -42,11 +41,11 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
       fileMeta.type = part.mimetype
 
       part.on('data', (buffer) => {
-        pass.write(buffer)
+        bufs.push(buffer as Buffer)
       })
       
       part.on('end', () => {
-        pass.end()
+        buf = Buffer.concat(bufs)
       })
     }
 
@@ -54,10 +53,9 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
       return new Promise<FileUpload>((resolve, reject) => {
         form.parse(req, (err) => {
           if (err) return reject(err)
-
           uploadFile({
             mimeType: fileMeta.type,
-            body: pass,
+            body: buf,
             origName: fileMeta.name,
             publicAccess: public_access === 'true'
           }, session?.userId as string).then((file) => {

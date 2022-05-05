@@ -1,10 +1,21 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/react'
-import { prisma } from '../../../../lib/prisma-client'
-import fetch from 'node-fetch'
+import { prisma } from '../../../../lib/server/prisma'
+import fetch from 'node-fetch-cache'
+import { Response } from 'node-fetch'
+
+export const config = {
+  api: {
+    bodyParser: false
+  }
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query
+
+  if (!req.query.export) {
+    res.redirect(req.url.includes('?') ? `${req.url}&export=view` : `?export=view`)
+  }
 
   const file = await prisma.fileUpload.findFirst({
     where: {
@@ -22,9 +33,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     res.setHeader('Content-Type', file.mime_type)
-    res.setHeader('Content-Disposition', `inline; filename=${file.name}`)
+    res.setHeader('Content-Disposition', `${req.query.export === 'view' ? 'inline' : 'attachment'}; filename=${file.name}`)
     
-    const response = await fetch(`https://drive.google.com/uc?export=view&id=${file.google_id}`, {
+    const response: Response = await fetch(`https://drive.google.com/uc?export=view&id=${file.google_id}`, {
       method: 'GET',
       headers: {
         'X-Goog-Drive-Resource-Keys': `${file.google_id}/${file.resource_key}`
@@ -32,20 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       redirect: 'follow'
     })
 
-    /* const writableStream = new WritableStream({
-      write(chunk: Uint8Array) {
-        res.write(chunk)
-      },
-      close() {
-        res.end()
-      },
-      abort(err) {
-        res.end()
-        throw err
-      }
-    }); */
-
-    response.body.pipe(res)
+    return response.body.pipe(res)
 
   } catch (err) {
     res.status(500).json({ error: err.message })

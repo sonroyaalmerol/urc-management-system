@@ -1,22 +1,11 @@
 import { drive_v3, google } from 'googleapis'
-import { prisma } from './prisma-client'
+import { prisma } from './prisma'
 import { nanoid } from 'nanoid/async'
 import path from 'path'
 import type { FileUpload } from '@prisma/client'
-import { Readable } from 'stream'
-
-const auth = new google.auth.GoogleAuth({
-  keyFile: 'urc-management-service-account.json',
-  scopes: [
-    'https://www.googleapis.com/auth/drive',
-    'https://www.googleapis.com/auth/drive.appdata',
-    'https://www.googleapis.com/auth/drive.file'
-  ],
-})
-
-google.options({
-  // http2: true,
-})
+import { PassThrough } from 'stream'
+import sharp from 'sharp'
+import auth from './google-auth'
 
 const drive = google.drive({
   version: 'v3',
@@ -25,51 +14,84 @@ const drive = google.drive({
 
 interface FileProps {
   mimeType: string
-  body: Readable,
+  body: Buffer,
   origName: string,
   publicAccess: boolean
 }
 
+const ALLOWED_MIMES = [
+  'image/jpeg',
+  'image/png',
+  'application/msword',
+  'application/pdf',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+]
+
 const uploadFile = async (fileProps: FileProps, ownerId: string) : Promise<FileUpload | null> => {
-  const extension = path.extname(fileProps.origName)
+  if (!ALLOWED_MIMES.includes(fileProps.mimeType)) {
+    throw new Error(`${fileProps.mimeType} is not allowed for upload.`)
+  }
   
-  const randomFileName = await nanoid()
+  const extension = path.extname(fileProps.origName)
+
+  const randomId = await nanoid(36)
+
+  let toUpload: Buffer = fileProps.body
+
+  const byteSize = Buffer.byteLength(toUpload)
+
+  if (byteSize > 7000000) {
+    throw new Error(`File size of ${fileProps.origName} exceeds 7MB.`)
+  }
+
+  if (fileProps.mimeType.includes('image')) {
+    toUpload = await sharp(fileProps.body)
+      .jpeg({ progressive: true, force: false, quality: 60 })
+      .png({ progressive: true, force: false, compressionLevel: 9 })
+      .toBuffer()
+  }
+
+  const bufferStream = new PassThrough()
+  bufferStream.end(toUpload)
+
   const file = await drive.files.create({
     media: {
       mimeType: fileProps.mimeType,
-      body: fileProps.body
+      body: bufferStream
     },
     requestBody: {
       parents: [process.env.GOOGLE_DRIVE_FOLDER],
-      name: `${ownerId ?? 'root'}__${randomFileName}${extension}`
+      name: `${ownerId ?? 'root'}__${randomId}${extension}`
     },
   })
 
-  await drive.permissions.create({
-    fileId: file.data.id,
-    requestBody: {
-      type: 'anyone',
-      role: 'reader'
-    }
-  })
-
   try {
-    const fileUpload = await prisma.fileUpload.create({
-      data: {
-        google_id: file.data.id,
-        name: fileProps.origName,
-        file_type: extension,
-        mime_type: fileProps.mimeType,
-        resource_key: file.data.resourceKey,
-        public_access: fileProps.publicAccess,
-        user: ownerId ? {
-          connect: {
-            id: ownerId
-          }
-        } : undefined
-      }
-    })
-
+    const [ fileUpload ] = await Promise.all([
+      prisma.fileUpload.create({
+        data: {
+          id: randomId,
+          google_id: file.data.id,
+          name: fileProps.origName,
+          file_type: extension,
+          mime_type: fileProps.mimeType,
+          resource_key: file.data.resourceKey,
+          public_access: fileProps.publicAccess,
+          user: ownerId ? {
+            connect: {
+              id: ownerId
+            }
+          } : undefined
+        },
+      }),
+      drive.permissions.create({
+        fileId: file.data.id,
+        requestBody: {
+          type: 'anyone',
+          role: 'reader'
+        }
+      })
+    ])
+    
     return fileUpload
   } catch (err) {
     await drive.files.delete({
@@ -79,7 +101,7 @@ const uploadFile = async (fileProps: FileProps, ownerId: string) : Promise<FileU
   }
 }
 
-const deleteFile = async (fileId: string) : Promise<any> => {
+const deleteFile = async (fileId: string) : Promise<FileUpload | null> => {
   const file = await prisma.fileUpload.findFirst({
     where: {
       id: fileId
@@ -91,12 +113,14 @@ const deleteFile = async (fileId: string) : Promise<any> => {
       fileId: file.google_id
     })
   
-    await prisma.fileUpload.delete({
+    return await prisma.fileUpload.delete({
       where: {
         id: fileId
       }
     })
   }
+
+  return null
 }
 
 const deleteUnusedFiles = async () : Promise<any> => {
