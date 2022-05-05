@@ -1,4 +1,4 @@
-import prisma from "../../../../lib/prisma-client"
+import { prisma } from "../../../../lib/prisma-client"
 import injector from "../../../../lib/injectors/collection_api"
 
 import type { NextApiRequest, NextApiResponse } from 'next'
@@ -12,7 +12,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       prisma.instituteNews.findMany({
         skip,
         take,
-        where
+        where,
+        include: {
+          uploads: true
+        }
       })
     ])
   })

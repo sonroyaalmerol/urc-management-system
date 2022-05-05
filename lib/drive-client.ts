@@ -1,8 +1,7 @@
-import { google } from 'googleapis'
-import prisma from './prisma-client'
+import { drive_v3, google } from 'googleapis'
+import { prisma } from './prisma-client'
 import { nanoid } from 'nanoid/async'
 import path from 'path'
-import fetch, { Response } from 'node-fetch'
 import type { FileUpload } from '@prisma/client'
 import { Readable } from 'stream'
 
@@ -13,7 +12,11 @@ const auth = new google.auth.GoogleAuth({
     'https://www.googleapis.com/auth/drive.appdata',
     'https://www.googleapis.com/auth/drive.file'
   ],
-});
+})
+
+google.options({
+  // http2: true,
+})
 
 const drive = google.drive({
   version: 'v3',
@@ -23,13 +26,13 @@ const drive = google.drive({
 interface FileProps {
   mimeType: string
   body: Readable,
-  origName: string
+  origName: string,
+  publicAccess: boolean
 }
 
 const uploadFile = async (fileProps: FileProps, ownerId: string) : Promise<FileUpload | null> => {
   const extension = path.extname(fileProps.origName)
-
-  console.log(fileProps)
+  
   const randomFileName = await nanoid()
   const file = await drive.files.create({
     media: {
@@ -38,7 +41,7 @@ const uploadFile = async (fileProps: FileProps, ownerId: string) : Promise<FileU
     },
     requestBody: {
       parents: [process.env.GOOGLE_DRIVE_FOLDER],
-      name: `${ownerId}__${randomFileName}${extension}`
+      name: `${ownerId ?? 'root'}__${randomFileName}${extension}`
     },
   })
 
@@ -58,11 +61,12 @@ const uploadFile = async (fileProps: FileProps, ownerId: string) : Promise<FileU
         file_type: extension,
         mime_type: fileProps.mimeType,
         resource_key: file.data.resourceKey,
-        user: {
+        public_access: fileProps.publicAccess,
+        user: ownerId ? {
           connect: {
             id: ownerId
           }
-        }
+        } : undefined
       }
     })
 
@@ -95,30 +99,47 @@ const deleteFile = async (fileId: string) : Promise<any> => {
   }
 }
 
-const getFileDirectImage = async (fileId: string) : Promise<{ response: Response, metadata: FileUpload }> => {
-  const file = await prisma.fileUpload.findFirst({
-    where: {
-      id: fileId
+const deleteUnusedFiles = async () : Promise<any> => {
+  let pageToken: string = null
+  const allDriveFilesRaw: drive_v3.Schema$File[] = []
+
+  do {
+    try {
+      const files = await drive.files.list({
+        pageToken,
+        q: `'${process.env.GOOGLE_DRIVE_FOLDER}' in parents and trashed=false`
+      })
+
+      allDriveFilesRaw.push(...files.data.files)
+      pageToken = files.data.nextPageToken
+    } catch (err) {
+      pageToken = null
+    }
+  } while (pageToken)
+
+  const allDriveFiles: Array<{ google_id: string }> = allDriveFilesRaw.map((file) => {
+    return {
+      google_id: file.id
     }
   })
 
-  if (file) {
-    const response = await fetch(`https://drive.google.com/uc?export=view&id=${file.google_id}`, {
-      method: 'GET',
-      headers: {
-        'X-Goog-Drive-Resource-Keys': `${file.google_id}/${file.resource_key}`
-      },
-      redirect: 'follow'
+  const allUploads = await prisma.fileUpload.findMany({
+    select: {
+      google_id: true
+    }
+  })
+
+  const uselessDriveFiles = allDriveFiles.filter(file => !allUploads.includes(file))
+
+  await Promise.all(uselessDriveFiles.map(async (driveFile) => {
+    await drive.files.delete({
+      fileId: driveFile.google_id
     })
-
-    return { response, metadata: file }
-  }
-
-  return { response: null, metadata: null }
+  }))
 }
 
 export {
   uploadFile,
   deleteFile,
-  getFileDirectImage
+  deleteUnusedFiles
 }

@@ -1,4 +1,4 @@
-import prisma from "../../../../lib/prisma-client"
+import { prisma } from "../../../../lib/prisma-client"
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -15,13 +15,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           user: true
         }
       },
-      bridge_units: {
+      units: {
         include: {
-          unit: {
-            include: {
-              parent_unit: true
-            }
-          }
+          parent_unit: true
         }
       }
     },

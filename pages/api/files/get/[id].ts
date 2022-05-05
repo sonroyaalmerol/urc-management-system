@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/react'
-import prisma from '../../../../lib/prisma-client'
-import { getFileDirectImage } from '../../../../lib/drive-client'
+import { prisma } from '../../../../lib/prisma-client'
+import fetch from 'node-fetch'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query
@@ -16,31 +16,37 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const session = await getSession({ req })
-  if (!session && !file.public_access) {
+  if (!session && !file?.public_access) {
     res.status(401).json({ error: 'Authentication required.' })
   }
 
   try {
-    const { response, metadata } = await getFileDirectImage(id as string)
+    res.setHeader('Content-Type', file.mime_type)
+    res.setHeader('Content-Disposition', `inline; filename=${file.name}`)
+    
+    const response = await fetch(`https://drive.google.com/uc?export=view&id=${file.google_id}`, {
+      method: 'GET',
+      headers: {
+        'X-Goog-Drive-Resource-Keys': `${file.google_id}/${file.resource_key}`
+      },
+      redirect: 'follow'
+    })
 
-    if (file) {
-      res.setHeader('Content-Type', metadata.mime_type)
-      res.setHeader('Content-Disposition', `attachment; filename=${metadata.name}`)
-
-      const pipeResponse = (res: NextApiResponse) => new Promise<void>((resolve, reject) => {
-        response.body.pipe(res)
-        response.body.on('end', () => resolve())
-        response.body.on('error', (err) => reject(err))
-      })
-
-      try {
-        await pipeResponse(res)
-      } catch (err) {
-        res.status(500).json({ error: err.message })
+    /* const writableStream = new WritableStream({
+      write(chunk: Uint8Array) {
+        res.write(chunk)
+      },
+      close() {
+        res.end()
+      },
+      abort(err) {
+        res.end()
+        throw err
       }
-    } else {
-      res.status(404).json({ error: 'File not found!' })
-    }
+    }); */
+
+    response.body.pipe(res)
+
   } catch (err) {
     res.status(500).json({ error: err.message })
   }

@@ -2,6 +2,9 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 const cheerio = require('cheerio')
 const https = require('https')
+const FormData = require('form-data')
+const { PassThrough } = require('stream')
+// const { fetch } = require('undici')
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 const centers = require('./centers')
@@ -117,6 +120,20 @@ const scrapeNews = async () => {
         .map((i, element) => {
           let currentElement = $(element);
 
+          let description = ''
+          let files = []
+          currentElement.find('.entry-content').children().each(function () {
+            $(this).find('a').each(function () {
+              const href = $(this).attr('href')
+
+              if (href.includes('wp-content') && !files.includes(href)) {
+                files.push(href)
+                $(this).remove()
+              }
+            })
+            description = `${description}${$.html($(this))}`
+          })
+
           return {
             title: currentElement.find("header").find("h2").find("a").text().trim(),
             author: "AdDU - URC",
@@ -127,7 +144,8 @@ const scrapeNews = async () => {
               .find("time:nth-of-type(1)")
               .text()
               .trim(),
-            description: currentElement.find("div").find("p").text().trim(),
+            description,
+            files,
             link:
               currentElement
                 .find("div")
@@ -141,6 +159,49 @@ const scrapeNews = async () => {
   }
 
   return news
+}
+
+const uploadFile = async (fileUrl) => {
+  const response = await fetch(fileUrl.replace('http:', 'https:'), {
+    method: 'GET',
+    agent: httpsAgent,
+    redirect: 'follow'
+  })
+
+  const urlParts = fileUrl.split('/')
+
+  const filename = urlParts[urlParts.length - 1]
+  const mimeType = response.headers.get('content-type')
+
+  const buff = []
+  const getBuffer = () => new Promise((resolve, reject) => {
+    response.body.on('data', (chunk) => {
+      buff.push(chunk)
+    })
+
+    response.body.on('end', () => {
+      resolve(Buffer.concat(buff))
+    })
+
+    response.body.on('error', () => {
+      reject()
+    })
+  })
+
+  const buffer = await getBuffer()
+  
+  const formData = new FormData();
+  formData.append("file", buffer, {
+    contentType: mimeType,
+    filename: filename
+  })
+
+  const res = await fetch(`${process.env.BASE_URL}/api/files/upload?public_access=true`, {
+      method: "POST",
+      body: formData,
+  }).then((res) => res.json())
+
+  return res
 }
 
 async function main() {
@@ -232,22 +293,18 @@ async function main() {
       const unitTrimmed = unitDetail.trim()
       if (unitTrimmed.split('-').length > 1) {
         return {
-          unit: {
-            connectOrCreate: {
-              where: {
-                name: unitDetail.trim().split('-')[1].trim()
-              },
-              create: {
-                name: unitDetail.trim().split('-')[1].trim(),
-                parent_unit: {
-                  connectOrCreate: {
-                    where: {
-                      name: unitDetail.trim().split('-')[0].trim()
-                    },
-                    create:{ 
-                      name: unitDetail.trim().split('-')[0].trim()
-                    }
-                  }
+          where: {
+            name: unitDetail.trim().split('-')[1].trim()
+          },
+          create: {
+            name: unitDetail.trim().split('-')[1].trim(),
+            parent_unit: {
+              connectOrCreate: {
+                where: {
+                  name: unitDetail.trim().split('-')[0].trim()
+                },
+                create:{ 
+                  name: unitDetail.trim().split('-')[0].trim()
                 }
               }
             }
@@ -255,15 +312,11 @@ async function main() {
         }
       }
       return {
-        unit: {
-          connectOrCreate: {
-            where: {
-              name: unitDetail.trim().split('-')[0].trim()
-            },
-            create: {
-              name: unitDetail.trim().split('-')[0].trim()
-            }
-          }
+        where: {
+          name: unitDetail.trim().split('-')[0].trim()
+        },
+        create: {
+          name: unitDetail.trim().split('-')[0].trim()
         }
       }
     })
@@ -284,8 +337,8 @@ async function main() {
             cycle: research.cycle,
             budget: research.budget,
             approved: true,
-            bridge_units: {
-              create: extractUnits(research.unit)
+            units: {
+              connectOrCreate: extractUnits(research.unit)
             },
             slug: (slug_raw === undefined || slug_raw.length == 0) ? '' : slug_raw[slug_raw.length - 1],
             research_status_id: 'finished'
@@ -329,8 +382,8 @@ async function main() {
           is_external_research: presentation.fundSource !== 'AdDU-URC',
           event_title: presentation.title,
           location: presentation.place,
-          bridge_units: {
-            create: extractUnits(presentation.unit)
+          units: {
+            connectOrCreate: extractUnits(presentation.unit)
           },
           event_date: presentation.date,
           verified: true,
@@ -358,8 +411,8 @@ async function main() {
             url: publication.link,
             is_indexed: publication.indexed === 'Yes',
             verified: true,
-            bridge_units: {
-              create: extractUnits(publication.unit)
+            units: {
+              connectOrCreate: extractUnits(publication.unit)
             },
           },
         })
@@ -377,8 +430,8 @@ async function main() {
             publisher: publication.publisher,
             isbn: publication.isbn,
             verified: true,
-            bridge_units: {
-              create: extractUnits(publication.unit)
+            units: {
+              connectOrCreate: extractUnits(publication.unit)
             },
           },
         })
@@ -392,14 +445,33 @@ async function main() {
 
   for (const article of news) {
     try {
+      const uploads = []
+      for (const fileUrlIndex in article.files) {
+        const fileUrl = article.files[fileUrlIndex]
+        const res = await uploadFile(fileUrl)
+        uploads.push(res?.data)
+      }
+
+      //*/
+
+      const bridgeConstructor = uploads.map((upload) => (
+        {
+          id: upload.id
+        }
+      ))
+
       await prisma.instituteNews.upsert({
         where: { title: article.title },
         update: {},
         create: {
           title: article.title,
           content: article.description,
+          uploads: {
+            connect: bridgeConstructor
+          }
         },
       })
+      //*/
     } catch (err) {
       console.log(err)
     }
@@ -407,6 +479,9 @@ async function main() {
 
   for (const member of council) {
     try {
+      const res = await uploadFile(member.image)
+      const imageUrl = `${process.env.BASE_URL}/api/files/get/${res?.data?.id}`
+
       await prisma.user.upsert({
         where: { email: member.email },
         update: {},
@@ -417,7 +492,7 @@ async function main() {
           last_name: member.last_name,
           honorific: member.honorific,
           titles: member.titles,
-          image: member.image,
+          image: imageUrl,
           name: `${member.honorific ? `${member.honorific} ` : ''}${member.first_name} ${member.middle_initial} ${member.last_name}${member.titles ? `, ${member.titles}` : ''}`,
           bridge_institutes: {
             create: {
@@ -436,17 +511,13 @@ async function main() {
               duration: member.duration
             }
           },
-          bridge_roles: {
-            create: {
-              user_role: {
-                connectOrCreate: {
-                  where: {
-                    id: 'researcher',
-                  },
-                  create: {
-                    id: 'researcher',
-                  }
-                }
+          roles: {
+            connectOrCreate: {
+              where: {
+                id: 'researcher'
+              },
+              create: {
+                id: 'researcher',
               }
             }
           }
@@ -459,6 +530,33 @@ async function main() {
   
   for (const center of centers) {
     try {
+
+      const usersConstructor = await Promise.all(center.users.map(async (member) => {
+        const res = await uploadFile(member.image)
+        const imageUrl = `${process.env.BASE_URL}/api/files/get/${res?.data?.id}`
+        return ({
+          user: {
+            connectOrCreate: {
+              where: {
+                email: member.email,
+              },
+              create: {
+                email: member.email,
+                first_name: member.first_name,
+                middle_initial: member.middle_initial,
+                last_name: member.last_name,
+                honorific: member.honorific,
+                titles: member.titles,
+                image: imageUrl,
+                name: `${member.honorific ? `${member.honorific} ` : ''}${member.first_name} ${member.middle_initial} ${member.last_name}${member.titles ? `, ${member.titles}` : ''}`,
+              }
+            }
+          },
+          role_title: member.position,
+          duration: member.duration
+        })
+      }))
+      
       await prisma.institute.upsert({
         where: { name: center.name },
         update: {},
@@ -471,27 +569,7 @@ async function main() {
           description: center.description,
           research_areas: center.research_areas,
           bridge_users: {
-            create: center.users.map((member) => ({
-              user: {
-                connectOrCreate: {
-                  where: {
-                    email: member.email,
-                  },
-                  create: {
-                    email: member.email,
-                    first_name: member.first_name,
-                    middle_initial: member.middle_initial,
-                    last_name: member.last_name,
-                    honorific: member.honorific,
-                    titles: member.titles,
-                    image: member.image,
-                    name: `${member.honorific ? `${member.honorific} ` : ''}${member.first_name} ${member.middle_initial} ${member.last_name}${member.titles ? `, ${member.titles}` : ''}`,
-                  }
-                }
-              },
-              role_title: member.position,
-              duration: member.duration
-            }))
+            create: usersConstructor
           }
         },
       })

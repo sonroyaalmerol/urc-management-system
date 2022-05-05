@@ -16,9 +16,9 @@ export const config = {
 
 const upload = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req })
+  const { public_access } = req.query
   
-  if (req.method === 'POST' && session) {
-    const { userId } = session
+  if (req.method === 'POST') {
 
     const pass = new PassThrough()
     const form = new IncomingForm({
@@ -58,9 +58,9 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
           uploadFile({
             mimeType: fileMeta.type,
             body: pass,
-            origName: fileMeta.name
-          }, userId as string).then((file) => {
-            console.log(file)
+            origName: fileMeta.name,
+            publicAccess: public_access === 'true'
+          }, session?.userId as string).then((file) => {
             resolve(file)
           }).catch((err) => {
             console.error(err.message)
@@ -75,6 +75,7 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
 
       res.status(200).json({ data: fileUploaded })
     } catch(err) {
+      console.error(err.message)
       res.status(500).json({ error: err })
     }
 

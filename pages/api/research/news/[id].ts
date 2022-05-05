@@ -1,4 +1,4 @@
-import prisma from "../../../../lib/prisma-client"
+import { prisma } from "../../../../lib/prisma-client"
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 
@@ -8,6 +8,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const news = await prisma.instituteNews.findFirst({
     where: {
       id: id as string
+    },
+    include: {
+      uploads: true
     }
   })
 

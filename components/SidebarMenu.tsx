@@ -51,11 +51,11 @@ const SidebarMenu: React.FC<SidebarMenuProps> = (props) => {
       w='100%'
       backgroundColor='transparent'
       color={props.selected ? 'brand.blue' : 'white'}
-      h="4.375rem"
+      h="3.2rem"
       ref={target}
       {...divProps}
     >
-      <Center h="4.375rem">
+      <Center h="3.2rem">
         {props.children}
       </Center>
     </Button>

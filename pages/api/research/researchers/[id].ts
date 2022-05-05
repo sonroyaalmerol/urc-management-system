@@ -1,4 +1,4 @@
-import prisma from "../../../../lib/prisma-client"
+import { prisma } from "../../../../lib/prisma-client"
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 
@@ -8,11 +8,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const researcher = await prisma.user.findFirst({
     where: {
       id: id as string,
-      bridge_roles: {
+      roles: {
         some: {
-          user_role: {
-            id: 'researcher'
-          }
+          id: 'researcher'
         }
       }
     }

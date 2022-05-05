@@ -1,7 +1,7 @@
 import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
-import prisma from "../../../lib/prisma-client"
+import { prisma } from "../../../lib/prisma-client"
 
 export default NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -30,7 +30,18 @@ export default NextAuth({
       return true // Do different verification for other providers that don't have `email_verified`
     },
     async session({ session, user }) {
+      const userRoles = await prisma.user.findFirst({
+        where: {
+          id: user.id
+        },
+        select: {
+          id: true,
+          roles: true
+        }
+      })
       session.userId = user.id
+      session.userRoles = userRoles.roles
+
       return Promise.resolve(session)
     }
   }

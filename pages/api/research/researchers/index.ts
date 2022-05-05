@@ -1,4 +1,4 @@
-import prisma from "../../../../lib/prisma-client"
+import { prisma } from "../../../../lib/prisma-client"
 import injector from "../../../../lib/injectors/collection_api"
 
 import type { NextApiRequest, NextApiResponse } from 'next'
@@ -9,11 +9,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       prisma.user.count({
         where: {
           ...where,
-          bridge_roles: {
+          roles: {
             some: {
-              user_role: {
-                id: 'researcher'
-              }
+              id: 'researcher'
             }
           }
         }
@@ -23,13 +21,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         take,
         where: {
           ...where,
-          bridge_roles: {
+          roles: {
             some: {
-              user_role: {
-                id: 'researcher'
-              }
+              id: 'researcher'
             }
-          },
+          }
         }
       })
     ])
