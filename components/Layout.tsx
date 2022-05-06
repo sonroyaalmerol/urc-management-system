@@ -11,7 +11,7 @@ interface DashboardLayoutProps {
 
 const menus = [
   {
-    name: 'Home',
+    name: 'Dashboard',
     url: '/',
   },
   {
@@ -38,8 +38,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = (props) => {
             <Box
               w='100%'
               h='100%'
-              paddingY={{ base: '0.5rem', md: '2rem'}}
-              paddingX={{ base: '1.5rem', md: '2rem'}}
+              paddingY={{ base: '0.5rem', md: '2rem' }}
+              paddingX={{ base: '0.5rem', md: '2rem' }}
               paddingTop={{ base: '5rem', md: '2rem' }}
             >
               {props.children}

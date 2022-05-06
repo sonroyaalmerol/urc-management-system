@@ -1,10 +1,18 @@
+import { gmail_v1 } from "googleapis";
+
 const sendMail = async data => {
-  const res = await fetch("/api/mail/send", {
+  const response = await fetch("/api/mail/send", {
       method: "POST",
       body: JSON.stringify(data),
-  }).then((res) => res.json());
+  })
 
-  return res
+  const json = await response.json()
+  
+  if (response.ok) {
+    return json as gmail_v1.Schema$Message
+  }
+
+  throw new Error(json.error.errors[0].message)
 }
 
 export default sendMail

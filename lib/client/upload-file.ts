@@ -1,13 +1,21 @@
+import { FileUpload } from "@prisma/client"
+
 const upload = async (file) => {
   const formData = new FormData()
   formData.append("file", file)
 
-  const res: any = await fetch("/api/files/upload", {
+  const response = await fetch("/api/files/upload", {
       method: "POST",
       body: formData,
-  }).then((res) => res.json())
+  })
 
-  return res?.data
+  const json = await response.json()
+  
+  if (response.ok) {
+    return json as FileUpload
+  }
+
+  throw new Error(json.error)
 }
 
 export default upload

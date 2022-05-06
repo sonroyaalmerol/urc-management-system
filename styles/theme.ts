@@ -4,18 +4,18 @@ import { extendTheme } from '@chakra-ui/react'
 // 2. Extend the theme to include custom colors, fonts, etc
 const colors = {
   brand: {
-    900: '#1a365d',
-    800: '#153e75',
-    700: '#2a69ac',
-    blue: '#1A2B75'
+    blue: '#1A2B75',
+    yellow: '#D99C00',
+    red: '#C20000',
+    lightBlue: '#1673FF'
   },
 }
 
 const theme = extendTheme({ 
   colors,
   fonts: {
-    heading: 'Montserrat',
-    body: 'Open Sans',
+    heading: 'Montserrat, sans-serif',
+    body: 'Open Sans, sans-serif',
   },
   styles: {
     global: {

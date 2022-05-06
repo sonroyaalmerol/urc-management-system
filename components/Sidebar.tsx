@@ -3,7 +3,7 @@ import { VStack, chakra, Box, Center, Container, StackProps } from '@chakra-ui/r
 import SidebarMenu from './SidebarMenu'
 import { useRouter } from 'next/router'
 import { motion, useAnimation } from 'framer-motion'
-import type { Menu } from '../types/menu.type'
+import type { Menu } from '../types/menu'
 import NavigationAvatar from './NavigationAvatar'
 
 interface SidebarProps extends StackProps {
@@ -81,7 +81,7 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
         initial={{
           height: '100vh'
         }}
-        bgColor="#1A2B75"
+        bgColor="brand.blue"
         width="100%"
         height="100"
         position="absolute"
@@ -95,7 +95,7 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
         initial={{
           height: '100vh'
         }}
-        bgColor="#1A2B75"
+        bgColor="brand.blue"
         width="100%"
         height="100"
         position="absolute"

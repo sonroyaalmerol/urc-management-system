@@ -51,6 +51,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = (props) => {
       w='100%'
       backgroundColor='transparent'
       color={props.selected ? 'brand.blue' : 'white'}
+      fontWeight={props.selected ? 'semibold' : 'normal' }
       h="3.2rem"
       ref={target}
       {...divProps}

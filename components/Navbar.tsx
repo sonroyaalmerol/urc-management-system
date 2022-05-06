@@ -26,7 +26,7 @@ import { HamburgerIcon } from '@chakra-ui/icons'
 import { useRouter } from 'next/router'
 import NavigationAvatar from './NavigationAvatar'
 import { useSession, signOut } from 'next-auth/react'
-import type { Menu as MenuType } from '../types/menu.type'
+import type { Menu as MenuType } from '../types/menu'
 
 interface NavbarProps extends BoxProps {
   menus: MenuType[]
@@ -68,7 +68,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
   return (
     <>
       <Box
-        bgColor="#1A2B75"
+        bgColor="brand.blue"
         px={4}
         w="100%"
         margin={0}
@@ -101,8 +101,8 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                         onClick={() => changeMenu(menu)}
                         borderRadius="20px"
                         paddingY="2rem"
-                        bgColor={currentIndex === i ? "#1A2B75" : "transparent"}
-                        color={currentIndex === i ? "white" : "#1A2B75"}
+                        bgColor={currentIndex === i ? "brand.blue" : "transparent"}
+                        color={currentIndex === i ? "white" : "brand.blue"}
                         width="100%"
                       >
                         {menu.name}

@@ -71,10 +71,10 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       const fileUploaded = await formParseUpload(req)
 
-      res.status(200).json({ data: fileUploaded })
+      res.status(200).json(fileUploaded)
     } catch(err) {
       console.error(err.message)
-      res.status(500).json({ error: err })
+      res.status(500).json({ error: err.message })
     }
 
   } else {

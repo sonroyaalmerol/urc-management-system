@@ -1,8 +1,13 @@
 import { ChakraProvider } from '@chakra-ui/react'
 import theme from '../styles/theme'
-import DashboardLayout from '../components/DashboardLayout'
+import Layout from '../components/Layout'
 import { SessionProvider } from 'next-auth/react'
 import NextNProgress from 'nextjs-progressbar'
+
+import '@fontsource/montserrat/700.css'
+import '@fontsource/open-sans/300.css'
+import '@fontsource/open-sans/400.css'
+import '@fontsource/open-sans/700.css'
 
 import type { AppProps } from 'next/app'
 
@@ -12,9 +17,9 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps: { session, ...pagePro
       <NextNProgress />
       <SessionProvider session={session}>
         <ChakraProvider theme={theme}>
-          <DashboardLayout>
+          <Layout>
             <Component {...pageProps} />
-          </DashboardLayout>
+          </Layout>
         </ChakraProvider>
       </SessionProvider>
     </>

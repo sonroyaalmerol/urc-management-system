@@ -1,10 +1,18 @@
+import { FileUpload } from "@prisma/client";
+
 const deleteFile = async (id: string) => {
-  const res = await fetch("/api/files/delete", {
+  const response  = await fetch("/api/files/delete", {
       method: "POST",
       body: JSON.stringify({ id: id }),
-  }).then((res) => res.json());
+  });
 
-  return res
+  const json = await response.json()
+  
+  if (response.ok) {
+    return json as FileUpload
+  }
+
+  throw new Error(json.error)
 }
 
 export default deleteFile

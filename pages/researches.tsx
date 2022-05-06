@@ -1,5 +1,5 @@
 import React from 'react'
-import DashboardContentHeader from '../components/DashboardContentHeader'
+import ContentHeader from '../components/ContentHeader'
 import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
 
@@ -9,9 +9,9 @@ interface ResearchesProps {
 
 const Researches: React.FC<ResearchesProps> = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return (
-    <DashboardContentHeader>
+    <ContentHeader>
       Hello Researches!
-    </DashboardContentHeader>
+    </ContentHeader>
   )
 }
 

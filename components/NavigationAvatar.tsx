@@ -21,7 +21,7 @@ const NavigationAvatar: React.FC<NavigationAvatarProps> = (props) => {
             <Text zIndex={5} fontWeight="bold">{session.user.name}</Text>
             <Text zIndex={5} fontSize="xs" fontStyle="italic">{session.user.email}</Text>
           </VStack>
-          <Button color="white" variant="link" fontSize="xs" onClick={() => signOut()}>Log out</Button>
+          <Button color="white" variant="link" fontSize="xs" onClick={() => signOut()}>Log Out</Button>
         </VStack>
       </HStack>
     )

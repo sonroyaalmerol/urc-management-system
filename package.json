@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --hostname 0.0.0.0",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -15,14 +15,16 @@
     "npm": ">=8.5.5",
     "node": ">=16.15.0"
   },
-  "browser":{
+  "browser": {
     "child_process": false
-  },  
+  },
   "dependencies": {
     "@chakra-ui/icons": "^1.1.7",
     "@chakra-ui/react": "^2.0.0-next.0",
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
+    "@fontsource/montserrat": "^4.5.10",
+    "@fontsource/open-sans": "^4.5.8",
     "@next-auth/prisma-adapter": "^1.0.3",
     "@prisma/client": "^3.13.0",
     "cheerio": "^1.0.0-rc.10",
