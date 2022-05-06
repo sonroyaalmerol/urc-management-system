@@ -32,6 +32,39 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
+model Action {
+  id                     String        @id @default(cuid())
+
+  title                  String
+
+  table_name             String?
+  action_tags            ActionTag[]
+
+  user_id                String
+  timestamp              DateTime      @default(now())
+
+  acted_users            User[]        @relation("acted_users")
+  affected_user          User          @relation(fields: [user_id], references: [id], onDelete: NoAction)
+}
+
+model ActionTag {
+  id                     String        @id
+  comment                String?
+  color                  String?
+
+  actions                Action[]
+}
+
+model Audit {
+  id            String        @id @default(cuid())
+  
+  table_name    String
+  action        String
+  args          String
+
+  timestamp     DateTime      @default(now())
+}
+
 model CapsuleProposalRequirement {
   id                           String                        @id @default(cuid())
   deadline                     DateTime                     
@@ -111,8 +144,8 @@ model ExternalResearch {
   id                             String                           @id @default(cuid())
   title                          String                           @unique
   organization                   String?
-  main_proponents                String?
-  co_proponents                  String?
+  main_proponents                String[]
+  co_proponents                  String[]
   duration                       String?
   cycle                          String?
   budget                         Float?
@@ -171,13 +204,14 @@ model FullBlownProposalSubmission {
   created_at                       DateTime?                        @default(now())
   updated_at                       DateTime?                        @updatedAt
   upload_id                        String                           
-  full_blown_proposal_requirement  FullBlownProposalRequirement @relation(fields: [requirement_id], references: [id], onDelete: Cascade)
-  file_upload                      FileUpload?                     @relation(fields: [upload_id], references: [id], onDelete: SetNull)
+  full_blown_proposal_requirement  FullBlownProposalRequirement     @relation(fields: [requirement_id], references: [id], onDelete: Cascade)
+  file_upload                      FileUpload?                       @relation(fields: [upload_id], references: [id], onDelete: SetNull)
 }
 
 model InstituteNews {
   id           String        @id @default(cuid())
   title        String        @unique
+  slug         String?       @unique
   content      String
   created_at   DateTime      @default(now())
   updated_at   DateTime      @updatedAt
@@ -192,7 +226,7 @@ model InstituteNews {
 model Institute {
   id                  String                @id(map: "institute_pkey") @default(cuid())
   name                String                @unique
-  short_name          String?
+  short_name          String?               @unique
   contact_number      String?
   email               String?
   description         String?
@@ -238,16 +272,17 @@ model ResearchPresentation {
   is_external_research   Boolean                @default(false)
   urc_funded_research_id String?                
   external_research_id   String?                
-  event_title            String                 @unique
+  title                  String                 @unique
   location               String
   event_date             String?             
   created_at             DateTime               @default(now())
   updated_at             DateTime               @updatedAt
   verified               Boolean                @default(false)
-  presentor              String?
+  presentors             String[]
   conference             String?
   budget                 Float?
   url                    String?
+  slug                   String?                @unique
   external_research      ExternalResearch?   @relation(fields: [external_research_id], references: [id], onDelete: SetNull)
   urc_funded_research    URCFundedResearch? @relation(fields: [urc_funded_research_id], references: [id], onDelete: SetNull)
   bridge_users   UserToResearchPresentationBridge[]
@@ -273,6 +308,7 @@ model ResearchDissemination {
   location               String?
   organization           String?
   event_date             String?
+  slug                   String?                @unique
   created_at             DateTime               @default(now())
   updated_at             DateTime               @updatedAt
   verified               Boolean                @default(false)
@@ -304,11 +340,11 @@ model JournalPublication {
   updated_at             DateTime               @updatedAt
   date_published         DateTime?             
   title                  String                 @unique
-  authors                String?
+  authors                String[]
   issn                   String?
   journal                String?
   url                    String?
-  slug                   String?
+  slug                   String?                @unique
   is_indexed             Boolean                @default(false)
   external_researches    ExternalResearch?   @relation(fields: [external_research_id], references: [id], onDelete: SetNull)
   proof_upload           FileUpload?           @relation(fields: [proof_upload_id], references: [id], onDelete: SetNull)
@@ -334,11 +370,11 @@ model BookPublication {
   verified               Boolean                @default(false)
   updated_at             DateTime               @updatedAt
   title                  String                 @unique
-  authors                String?
+  authors                String[]
   publisher              String?
   isbn                   String?
-  slug                   String?
-  date_published         DateTime?             
+  slug                   String?                @unique
+  date_published         String?             
   proof_upload           FileUpload?           @relation(fields: [proof_upload_id], references: [id], onDelete: SetNull)
   bridge_users   UserToBookPublicationBridge[]
   units Unit[]
@@ -411,8 +447,10 @@ model Unit {
 model URCFundedResearch {
   id                               String                             @id @default(cuid())
   title                            String                             @unique
-  main_proponents                  String?
-  co_proponents                    String?
+  main_proponents                  String[]
+  co_proponents                    String[]
+  keywords                         String[]
+  abstract                         String?
   duration                         String?
   cycle                            String?
   budget                           Float?
@@ -420,9 +458,10 @@ model URCFundedResearch {
   approved                         Boolean                            @default(false)
   created_at                       DateTime?                          @default(now())
   updated_at                       DateTime?                          @updatedAt
+  completed_at                     String?
   research_status_id               String                             @default("not_implemented")
   research_status                  ResearchStatus?                     @relation(fields: [research_status_id], references: [id], onDelete: SetNull)
-  slug                             String?
+  slug                             String?                            @unique
   capsule_proposal_requirements    CapsuleProposalRequirement[]
   deliverables                     Deliverable[]
   full_blown_proposal_requirements FullBlownProposalRequirement[]
@@ -456,7 +495,7 @@ model User {
   created_at                     DateTime                         @default(now())
   updated_at                     DateTime                         @updatedAt                     
   units                          Unit[]
-  roles                 UserRole[]
+  roles                          UserRole[]
 
   accounts                       Account[]
   comments                       Comment[]
@@ -465,6 +504,8 @@ model User {
   institute_news                 InstituteNews[]
   research_event_attendances     ResearchEventAttendance[]
   sessions                       Session[]
+  actions_made                   Action[]     @relation("acted_users")
+  actions_involved               Action[]
 
   bridge_institutes            UserToInstituteBridge[]
   bridge_book_publications              UserToBookPublicationBridge[]

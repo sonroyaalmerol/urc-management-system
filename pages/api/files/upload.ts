@@ -17,7 +17,7 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req })
   const { public_access } = req.query
   
-  if (req.method === 'POST') {
+  if (req.method === 'POST' && (session || req.query.secret === process.env.GOOGLE_DRIVE_FOLDER)) {
     const form = new IncomingForm({
       multiples: false,
       keepExtensions: true
@@ -71,15 +71,15 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       const fileUploaded = await formParseUpload(req)
 
-      res.status(200).json(fileUploaded)
+      return res.status(200).json(fileUploaded)
     } catch(err) {
       console.error(err.message)
-      res.status(500).json({ error: err.message })
+      return res.status(500).json({ error: err.message })
     }
 
   } else {
     // Handle any other HTTP method
-    res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
+    return res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
   }
 }
 

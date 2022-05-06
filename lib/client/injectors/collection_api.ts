@@ -7,7 +7,7 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function)
   const per_page: number = raw_per_page ? parseInt(raw_per_page as string) : 10
 
   const returnError = (code: number, message: string) => {
-    res.status(code).json({
+    return res.status(code).json({
       error: message,
       page,
       per_page,
@@ -16,13 +16,11 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function)
   }
 
   if (per_page < 1) {
-    returnError(400, 'Invalid per_page value.');
-    return;
+    return returnError(400, 'Invalid per_page value.');
   }
 
   if (search && !fields) {
-    returnError(400, '"fields" selection required when searching.');
-    return;
+    return returnError(400, '"fields" selection required when searching.');
   }
 
   let count: number = 0;
@@ -107,17 +105,15 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function)
   try {
     [count, data] = await fn(args);
   } catch (err) {
-    returnError(500, err.message);
-    return;
+    return returnError(500, err.message);
   }
 
   const total_pages = Math.ceil(count / per_page)
   if (total_pages > 0 && (page > total_pages || page < 1)) {
-    returnError(400, 'Invalid page value.');
-    return;
+    return returnError(400, 'Invalid page value.');
   }
 
-  res.status(200).json({
+  return res.status(200).json({
     data,
     page,
     per_page,

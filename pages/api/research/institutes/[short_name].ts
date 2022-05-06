@@ -19,8 +19,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   })
 
   if (institute) {
-    res.status(200).json(institute)
+    return res.status(200).json(institute)
   } else {
-    res.status(404).json({ error: 'Resource not found.' })
+    return res.status(404).json({ error: 'Resource not found.' })
   }
 }

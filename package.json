@@ -44,7 +44,8 @@
     "react-dom": "18.1.0",
     "react-hook-form": "^7.30.0",
     "rooks": "^5.11.0",
-    "sharp": "^0.30.4"
+    "sharp": "^0.30.4",
+    "slugify": "^1.6.5"
   },
   "devDependencies": {
     "@babel/core": "^7.17.10",

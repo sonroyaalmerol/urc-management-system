@@ -1,14 +1,66 @@
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
+const slugify = require('slugify')
+
+prisma.$use(async (params, next) => {
+  // Manipulate params here
+  const manipulatedParams = Object.assign({}, params)
+  const AUDIT_ACTIONS = [
+    'create',
+    'createMany',
+    'delete',
+    'deleteMany',
+    'update',
+    'updateMany',
+    'upsert'
+  ]
+  if (AUDIT_ACTIONS.includes(params.action) && params.model !== 'Audit') {
+    prisma.audit.create({
+      data: {
+        table_name: params.model,
+        action: params.action,
+        args: JSON.stringify(params.args)
+      }
+    })
+
+    // add slug
+    const SLUGIFY_MODELS = [
+      'ExternalResearch',
+      'InstituteNews',
+      'ResearchPresentation',
+      'ResearchDissemination',
+      'JournalPublication',
+      'BookPublication',
+      'URCFundedResearch'
+    ]
+    if (SLUGIFY_MODELS.includes(params.model)) {
+      if (params.action === 'create') {
+        if (!params.args.data.slug && params.args.data.title) {
+          const slug = slugify(`${params.args.data.title}`, { lower: true, strict: true, remove: /[*+~.()'"!:@]/g })
+          manipulatedParams.args.data.slug = slug
+        }
+      } else if (params.action === 'upsert') {
+        if (!params.args.create.slug && params.args.create.title) {
+          const slug = slugify(`${params.args.create.title}`, { lower: true, strict: true, remove: /[*+~.()'"!:@]/g })
+          manipulatedParams.args.create.slug = slug
+        }
+      }
+    }
+
+  }
+  const result = await next(manipulatedParams)
+  // See results here
+  return result
+})
+
 const cheerio = require('cheerio')
 const https = require('https')
 const FormData = require('form-data')
-const { PassThrough } = require('stream')
 // const { fetch } = require('undici')
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
-const centers = require('./centers')
-const council = require('./council')
+const centers = require('./data/centers')
+const council = require('./data/council')
 
 const httpsAgent = new https.Agent({
   rejectUnauthorized: false,
@@ -82,11 +134,56 @@ const scrapeResearches = async () => {
   const URL = 'https://research.addu.edu.ph/university-funded-researches';
   const html = await rp(URL);
   const $ = cheerio.load(html);
-  const result = $('#tablepress-3 > tbody').children('tr').map((i, element) => {
-    let slug = $(element).find('td:nth-of-type(1)').find('a').attr('href')?.replace('http://research.addu.edu.ph/', '') ?? null;
+  const result = await Promise.all($('#tablepress-3 > tbody').children('tr').map(async (i, element) => {
+    const moreDetailsUrl = $(element).find('td:nth-of-type(1)').find('a').attr('href')?.replace('http:', 'https:') ?? null;
+    const name = $(element).find('td:nth-of-type(1)').text().trim()
+
+    let dateCompleted = ""
+    let keywords = []
+    let abstract = ""
+
+    if (moreDetailsUrl) {
+      const moreHtml = await rp(moreDetailsUrl)
+      const $$ = cheerio.load(moreHtml)
+
+      let entryContent = $$('article > .entry-content').children('p')
+      
+      keywords = entryContent.filter((i, entry) => {
+        const textEntry = $$.html(entry)
+        return textEntry.includes('KEYWORDS:')
+      }).text().replace('KEYWORDS:', '').split(',').map((i) => i.trim()).filter((i) => i)
+
+      dateCompleted = entryContent.filter((i, entry) => {
+        const textEntry = $$.html(entry)
+        return textEntry.includes('DATE COMPLETED:')
+      }).text().replace('DATE COMPLETED:', '').trim()
+
+      abstract = entryContent.toArray().filter((entry) => {
+        const FORBIDDEN_WORDS = [
+          'AUTHOR',
+          'ABSTRACT',
+          'KEYWORDS:',
+          'DATE COMPLETED:',
+          'contact-form-7',
+          'Request for Full Article'
+        ]
+        const textEntry = $$.html(entry)
+
+        let hasForbidden = false
+        for (let wordIndex in FORBIDDEN_WORDS) {
+          const word = FORBIDDEN_WORDS[wordIndex]
+          if (textEntry.includes(word)) {
+            hasForbidden = true
+            break
+          }
+        }
+
+        return !hasForbidden
+      }).map((entry) => $$.html(entry)).join('')
+    }
+
     return ({
-      slug,
-      name: $(element).find('td:nth-of-type(1)').text().trim(),
+      name,
       mainProponent: $(element).find('td:nth-of-type(2)').text().trim(),
       coProponents: $(element).find('td:nth-of-type(3)').text().trim().replace('\n', ', '),
       unit: $(element).find('td:nth-of-type(4)').text().trim(),
@@ -94,8 +191,11 @@ const scrapeResearches = async () => {
       cycle: $(element).find('td:nth-of-type(6)').text().trim(),
       budget: parseFloat($(element).find('td:nth-of-type(7)').text().trim().replace(',', '')),
       fundSource: $(element).find('td:nth-of-type(8)').text().trim(),
+      dateCompleted,
+      keywords,
+      abstract
     })
-  }).get()
+  }).get())
 
   return result
 }
@@ -196,7 +296,7 @@ const uploadFile = async (fileUrl) => {
     filename: filename
   })
 
-  const res = await fetch(`${process.env.BASE_URL}/api/files/upload?public_access=true`, {
+  const res = await fetch(`${process.env.BASE_URL}/api/files/upload?public_access=true&secret=${process.env.GOOGLE_DRIVE_FOLDER}`, {
       method: "POST",
       body: formData,
   }).then((res) => res.json())
@@ -206,50 +306,98 @@ const uploadFile = async (fileUrl) => {
 
 async function main() {
   try {
-    await prisma.researchStatus.upsert({
-      where: { id: 'not_implemented' },
-      update: {},
-      create: {
-        id: 'not_implemented',
-        comment: 'Not implemented'
-      }
-    })
-  
-    await prisma.researchStatus.upsert({
-      where: { id: 'on_going' },
-      update: {},
-      create: {
-        id: 'on_going',
-        comment: 'On-going'
-      }
-    })
-  
-    await prisma.researchStatus.upsert({
-      where: { id: 'finished' },
-      update: {},
-      create: {
-        id: 'finished',
-        comment: 'Finished'
-      }
-    })
-  
-    await prisma.researchStatus.upsert({
-      where: { id: 'cancelled' },
-      update: {},
-      create: {
-        id: 'cancelled',
-        comment: 'Cancelled'
-      }
-    })
 
-    await prisma.institute.upsert({
-      where: { name: 'The Council' },
-      update: {},
-      create: {
-        name: 'The Council',
-        short_name: 'URC'
-      }
-    })
+    await prisma.$transaction([
+      prisma.researchStatus.upsert({
+        where: { id: 'not_implemented' },
+        update: {},
+        create: {
+          id: 'not_implemented',
+          comment: 'Not implemented'
+        }
+      }),
+      prisma.researchStatus.upsert({
+        where: { id: 'on_going' },
+        update: {},
+        create: {
+          id: 'on_going',
+          comment: 'On-going'
+        }
+      }),
+      prisma.researchStatus.upsert({
+        where: { id: 'finished' },
+        update: {},
+        create: {
+          id: 'finished',
+          comment: 'Finished'
+        }
+      }),
+      prisma.researchStatus.upsert({
+        where: { id: 'cancelled' },
+        update: {},
+        create: {
+          id: 'cancelled',
+          comment: 'Cancelled'
+        }
+      }),
+      prisma.institute.upsert({
+        where: { name: 'The Council' },
+        update: {},
+        create: {
+          name: 'The Council',
+          short_name: 'URC'
+        }
+      }),
+      prisma.userRole.upsert({
+        where: { id: 'default' },
+        update: {},
+        create: {
+          id: 'default',
+          comment: 'Default Role'
+        }
+      }),
+      prisma.userRole.upsert({
+        where: { id: 'urc_chairperson' },
+        update: {},
+        create: {
+          id: 'urc_chairperson',
+          comment: 'URC Chairperson'
+        }
+      }),
+      prisma.userRole.upsert({
+        where: { id: 'urc_executive_secretary' },
+        update: {},
+        create: {
+          id: 'urc_executive_secretary',
+          comment: 'URC Executive Secretary'
+        }
+      }),
+      prisma.userRole.upsert({
+        where: { id: 'urc_staff' },
+        update: {},
+        create: {
+          id: 'urc_staff',
+          comment: 'URC Staff'
+        }
+      }),
+      prisma.userRole.upsert({
+        where: { id: 'urc_board_member' },
+        update: {},
+        create: {
+          id: 'urc_board_member',
+          comment: 'URC Board Member'
+        }
+      }),
+      prisma.userRole.upsert({
+        where: { id: 'researcher' },
+        update: {},
+        create: {
+          id: 'researcher',
+          comment: 'Researcher'
+        }
+      })
+    ])
+
   } catch (err) {
     console.log(err)
   }
@@ -323,7 +471,6 @@ async function main() {
   }
 
   for (const research of researches) {
-    const slug_raw = research.slug?.split("/")
     if (research.fundSource === 'AdDU-URC') {
       try {
         await prisma.uRCFundedResearch.upsert({
@@ -331,16 +478,18 @@ async function main() {
           update: {},
           create: {
             title: research.name,
-            main_proponents: research.mainProponent,
-            co_proponents: research.coProponents,
+            main_proponents: research.mainProponent.split(',').map((i) => i.trim()).filter((i) => i),
+            co_proponents: research.coProponents.split(',').map((i) => i.trim()).filter((i) => i),
             duration: research.duration,
             cycle: research.cycle,
             budget: research.budget,
             approved: true,
+            completed_at: research.dateCompleted,
+            abstract: research.abstract,
+            keywords: research.keywords,
             units: {
               connectOrCreate: extractUnits(research.unit)
             },
-            slug: (slug_raw === undefined || slug_raw.length == 0) ? '' : slug_raw[slug_raw.length - 1],
             research_status_id: 'finished'
           },
         })
@@ -357,13 +506,12 @@ async function main() {
           create: {
             title: research.name,
             organization: research.fundSource,
-            main_proponents: research.mainProponent,
-            co_proponents: research.coProponents,
+            main_proponents: research.mainProponent.split(',').map((i) => i.trim()).filter((i) => i),
+            co_proponents: research.coProponents.split(',').map((i) => i.trim()).filter((i) => i),
             duration: research.duration,
             cycle: research.cycle,
             budget: research.budget,
             verified: true,
-            slug: (slug_raw === undefined || slug_raw.length == 0) ? '' : slug_raw[slug_raw.length - 1],
             research_status_id: 'finished'
           },
         })
@@ -376,23 +524,24 @@ async function main() {
   for (const presentation of presentations) {
     try {
       await prisma.researchPresentation.upsert({
-        where: { event_title: presentation.title },
+        where: { title: presentation.title },
         update: {},
         create: {
           is_external_research: presentation.fundSource !== 'AdDU-URC',
-          event_title: presentation.title,
+          title: presentation.title,
           location: presentation.place,
           units: {
             connectOrCreate: extractUnits(presentation.unit)
           },
           event_date: presentation.date,
           verified: true,
-          presentor: presentation.presentor,
+          presentors: presentation.presentor.split(',').map((i) => i.trim()).filter((i) => i),
           conference: presentation.conference,
           budget: presentation.budget
         },
       })
     } catch (err) {
+      console.log(presentation.title)
       console.log(err)
     }
   }
@@ -405,7 +554,7 @@ async function main() {
           update: {},
           create: {
             title: publication.title,
-            authors: publication.authors,
+            authors: publication.authors.split(',').map((i) => i.trim()).filter((i) => i),
             issn: publication.issn,
             journal: publication.journal,
             url: publication.link,
@@ -417,6 +566,7 @@ async function main() {
           },
         })
       } catch (err) {
+        console.log(publication.title)
         console.log(err)
       }
     } else {
@@ -426,7 +576,7 @@ async function main() {
           update: {},
           create: {
             title: publication.title,
-            authors: publication.authors,
+            authors: publication.authors.split(',').map((i) => i.trim()).filter((i) => i),
             publisher: publication.publisher,
             isbn: publication.isbn,
             verified: true,
@@ -449,11 +599,10 @@ async function main() {
       for (const fileUrlIndex in article.files) {
         const fileUrl = article.files[fileUrlIndex]
         const res = await uploadFile(fileUrl)
-        uploads.push(res?.data)
+        uploads.push(res)
       }
 
       //*/
-
       const bridgeConstructor = uploads.map((upload) => (
         {
           id: upload.id
@@ -480,7 +629,7 @@ async function main() {
   for (const member of council) {
     try {
       const res = await uploadFile(member.image)
-      const imageUrl = `${process.env.BASE_URL}/api/files/get/${res?.data?.id}`
+      const imageUrl = `${process.env.BASE_URL}/api/files/get/${res?.id}`
 
       await prisma.user.upsert({
         where: { email: member.email },
@@ -533,7 +682,7 @@ async function main() {
 
       const usersConstructor = await Promise.all(center.users.map(async (member) => {
         const res = await uploadFile(member.image)
-        const imageUrl = `${process.env.BASE_URL}/api/files/get/${res?.data?.id}`
+        const imageUrl = `${process.env.BASE_URL}/api/files/get/${res?.id}`
         return ({
           user: {
             connectOrCreate: {
