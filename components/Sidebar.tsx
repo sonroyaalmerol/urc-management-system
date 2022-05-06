@@ -103,7 +103,7 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
         borderTopRightRadius="2rem"
         bottom={0}
       />
-      <Container zIndex={5} padding={0}>
+      <Container zIndex={5} padding={0} w="300px">
         <Center padding="1.5rem" marginBottom='2rem'>
           <VStack spacing={8} color="white">
             <chakra.img zIndex={5} src="./urc_header.png"></chakra.img>
