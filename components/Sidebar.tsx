@@ -114,11 +114,11 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
         { menus.map((menu, i) => (
           <SidebarMenu
             key={`top-${menu.url}`}
-            selected={currentMenu.url === menu.url}
+            selected={currentMenu?.url === menu.url}
             onClick={() => changeMenu(menu)}
             borderRadius={0}
-            borderTopRightRadius={currentMenu.url === menu.url || currentIndex + 1 === i ? '2rem' : 0}
-            borderBottomRightRadius={currentMenu.url === menu.url || currentIndex - 1 === i ? '2rem' : 0}
+            borderTopRightRadius={currentMenu?.url === menu.url || currentIndex + 1 === i ? '2rem' : 0}
+            borderBottomRightRadius={currentMenu?.url === menu.url || currentIndex - 1 === i ? '2rem' : 0}
             updateCurrentPosition={updateCurrentPosition}
           >
             {menu.name}

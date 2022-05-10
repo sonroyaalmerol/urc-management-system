@@ -30,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const session = await getSession({ req })
   if (!session && !file?.public_access) {
-    return res.status(401).json({ error: 'Authentication required.' })
+    return res.redirect(`/login?redirect=${req.url}`)
   }
 
   try {

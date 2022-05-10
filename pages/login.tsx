@@ -7,8 +7,6 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const { providers } = props
-
   return (
     <>
       <Center h="100vh">
@@ -18,14 +16,14 @@ const Login: React.FC<LoginProps> = (props: InferGetServerSidePropsType<typeof g
             <Text fontSize="md" color="brand.blue">Management System for Council and Researchers</Text>
           </VStack>
           <VStack spacing={2}>
-            <Text fontSize="sm" fontWeight="bold" color="brand.blue">AdDU {providers.google.name} Mail</Text>
+            <Text fontSize="sm" fontWeight="bold" color="brand.blue">AdDU Google Mail</Text>
             <Button
               leftIcon={
                 <Container padding={0.5} backgroundColor="white" borderRadius={100}>
                   <chakra.img src="/google.png" w="16px" />
                 </Container>
               }
-              onClick={() => signIn(providers.google.id)}
+              onClick={() => signIn('google')}
               color="white"
               bgColor="brand.blue"
               padding="1.5rem"
@@ -46,13 +44,13 @@ const Login: React.FC<LoginProps> = (props: InferGetServerSidePropsType<typeof g
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const { req } = context
+  const { req, query } = context
   const session = await getSession({ req })
 
   if (session) {
     return {
       redirect: {
-        destination: '/',
+        destination: query.redirect ?? '/',
         permanent: false
       }
     }
