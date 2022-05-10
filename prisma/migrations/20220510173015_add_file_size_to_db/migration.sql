@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "FileUpload" ADD COLUMN     "size" DOUBLE PRECISION NOT NULL DEFAULT 0;

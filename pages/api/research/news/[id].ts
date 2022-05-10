@@ -1,22 +1,17 @@
 import { prisma } from "../../../../lib/server/prisma"
+import injector from "../../../../lib/client/injectors/individual_api"
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = req.query
-  
-  const news = await prisma.instituteNews.findFirst({
-    where: {
-      id: id as string
-    },
-    include: {
-      uploads: true
-    }
+  await injector(req, res, async ({ where }) => {
+    return await prisma.instituteNews.findFirst({
+      where: {
+        ...where
+      },
+      include: {
+        uploads: true
+      }
+    })
   })
-
-  if (news) {
-    return res.status(200).json(news)
-  } else {
-    return res.status(404).json({ error: 'Resource not found.' })
-  }
 }

@@ -1764,6 +1764,11 @@ charm@~0.1.1:
   resolved "https://registry.npmjs.org/charm/-/charm-0.1.2.tgz"
   integrity sha1-BsIe7RobBq62dVPNxT4jJ0usIpY=
 
+check-disk-space@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/check-disk-space/-/check-disk-space-3.3.0.tgz#2a8f4c9542ed71a70878fc28fda7e265d40942ec"
+  integrity sha512-Hvr+Nr01xSSvuCpXvJ8oZ2iXjIu4XT3uHbw3g7F/Uiw6O5xk8c/Ot7ZGFDaTRDf2Bz8AdWA4DvpAgCJVKt8arw==
+
 cheerio-select@^1.5.0:
   version "1.6.0"
   resolved "https://registry.npmjs.org/cheerio-select/-/cheerio-select-1.6.0.tgz"

@@ -1,27 +1,22 @@
 import { prisma } from "../../../../lib/server/prisma"
+import injector from "../../../../lib/client/injectors/individual_api"
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = req.query
-
-  const research = await prisma.externalResearch.findFirst({ 
-    where: {
-      id: id as string,
-      verified: true
-    },
-    include: {
-      bridge_users: {
-        include: {
-          user: true
+  await injector(req, res, async ({ where }) => {
+    return await prisma.externalResearch.findFirst({ 
+      where: {
+        ...where,
+        verified: true
+      },
+      include: {
+        bridge_users: {
+          include: {
+            user: true
+          }
         }
       }
-    }
+    })
   })
-
-  if (research) {
-    return res.status(200).json(research)
-  } else {
-    return res.status(404).json({ error: 'Resource not found.' })
-  }
 }

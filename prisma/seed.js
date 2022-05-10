@@ -15,7 +15,7 @@ prisma.$use(async (params, next) => {
     'upsert'
   ]
   if (AUDIT_ACTIONS.includes(params.action) && params.model !== 'Audit') {
-    prisma.audit.create({
+    await prisma.audit.create({
       data: {
         table_name: params.model,
         action: params.action,
@@ -31,7 +31,7 @@ prisma.$use(async (params, next) => {
       'ResearchDissemination',
       'JournalPublication',
       'BookPublication',
-      'URCFundedResearch'
+      'Project'
     ]
     if (SLUGIFY_MODELS.includes(params.model)) {
       if (params.action === 'create') {
@@ -308,7 +308,7 @@ async function main() {
   try {
 
     await prisma.$transaction([
-      prisma.researchStatus.upsert({
+      prisma.projectStatus.upsert({
         where: { id: 'not_implemented' },
         update: {},
         create: {
@@ -316,7 +316,7 @@ async function main() {
           comment: 'Not implemented'
         }
       }),
-      prisma.researchStatus.upsert({
+      prisma.projectStatus.upsert({
         where: { id: 'on_going' },
         update: {},
         create: {
@@ -324,7 +324,7 @@ async function main() {
           comment: 'On-going'
         }
       }),
-      prisma.researchStatus.upsert({
+      prisma.projectStatus.upsert({
         where: { id: 'finished' },
         update: {},
         create: {
@@ -332,7 +332,7 @@ async function main() {
           comment: 'Finished'
         }
       }),
-      prisma.researchStatus.upsert({
+      prisma.projectStatus.upsert({
         where: { id: 'cancelled' },
         update: {},
         create: {
@@ -473,7 +473,7 @@ async function main() {
   for (const research of researches) {
     if (research.fundSource === 'AdDU-URC') {
       try {
-        await prisma.uRCFundedResearch.upsert({
+        await prisma.project.upsert({
           where: { title: research.name },
           update: {},
           create: {
@@ -490,7 +490,7 @@ async function main() {
             units: {
               connectOrCreate: extractUnits(research.unit)
             },
-            research_status_id: 'finished'
+            project_status_id: 'finished'
           },
         })
       } catch (err) {
@@ -512,7 +512,7 @@ async function main() {
             cycle: research.cycle,
             budget: research.budget,
             verified: true,
-            research_status_id: 'finished'
+            project_status_id: 'finished'
           },
         })
       } catch (err) {

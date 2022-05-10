@@ -5,13 +5,16 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   await injector(req, res, async ({ where }) => {
-    return await prisma.unit.findFirst({
+    return await prisma.institute.findFirst({
       where: {
-        ...where.OR[0]
+        short_name: where.OR[0].id
       },
       include: {
-        parent_unit: true,
-        sub_units: true
+        bridge_users: {
+          include: {
+            user: true
+          }
+        }
       }
     })
   })

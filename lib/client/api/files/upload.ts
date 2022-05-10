@@ -1,4 +1,4 @@
-import { FileUpload } from "@prisma/client"
+import type { FileUpload } from "@prisma/client"
 
 const upload = async (file) => {
   const formData = new FormData()

@@ -31,7 +31,7 @@ export const prisma =
       'upsert'
     ]
     if (AUDIT_ACTIONS.includes(params.action) && params.model !== 'Audit') {
-      prisma.audit.create({
+      await prisma.audit.create({
         data: {
           table_name: params.model,
           action: params.action,

@@ -1,8 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/react'
 import { prisma } from '../../../../lib/server/prisma'
-import fetch from 'node-fetch-cache'
-import { Response } from 'node-fetch'
+
+import path from 'path'
+import fs from 'fs/promises'
+import { PassThrough } from 'stream'
 
 export const config = {
   api: {
@@ -32,17 +34,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const response: Response = await fetch(`https://drive.google.com/uc?export=view&id=${file.google_id}`, {
-      method: 'GET',
-      headers: {
-        'X-Goog-Drive-Resource-Keys': `${file.google_id}/${file.resource_key}`
-      },
-      redirect: 'follow'
-    })
+    const response = await fs.readFile(path.join(
+      process.cwd(),
+      `/storage/${file.user_id ?? 'root'}/${file.file_type.replace('.', '')}/${file.id}${file.file_type}`
+    ))
+
+    const pass = new PassThrough()
+    pass.end(response)
     
-    return response.body.pipe(res)
+    return pass.pipe(res)
       .setHeader('Content-Type', file.mime_type)
       .setHeader('Content-Disposition', `${req.query.export === 'view' ? 'inline' : 'attachment'}; filename=${file.name}`)
+      .setHeader(
+        'Cache-Control',
+        'public, s-maxage=10, stale-while-revalidate=59'
+      )
 
   } catch (err) {
     return res.status(500).json({ error: err.message })

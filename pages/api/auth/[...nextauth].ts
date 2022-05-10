@@ -30,18 +30,24 @@ export default NextAuth({
       return true // Do different verification for other providers that don't have `email_verified`
     },
     async session({ session, user }) {
-      const userRoles = await prisma.user.findFirst({
+      const prismaUser = await prisma.user.findFirst({
         where: {
           id: user.id
         },
         select: {
           id: true,
-          roles: true
+          name: true,
+          first_name: true,
+          last_name: true,
+          middle_initial: true,
+          image: true,
+          roles: true,
+          email: true,
+          bridge_institutes: true
         }
       })
-      session.userId = user.id
-      session.userRoles = userRoles.roles
 
+      session.user = prismaUser
       return Promise.resolve(session)
     }
   }

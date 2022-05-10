@@ -1,4 +1,4 @@
-import { FileUpload } from "@prisma/client";
+import type { FileUpload } from "@prisma/client";
 
 const deleteFile = async (id: string) => {
   const response  = await fetch("/api/files/delete", {

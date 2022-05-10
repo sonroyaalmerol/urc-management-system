@@ -6,13 +6,13 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   await injector(req, res, async ({ skip, take, where }) => {
     return await prisma.$transaction([
-      prisma.uRCFundedResearch.count({
+      prisma.project.count({
         where: {
           ...where,
           approved: true
         }
       }),
-      prisma.uRCFundedResearch.findMany({
+      prisma.project.findMany({
         skip,
         take,
         include: {

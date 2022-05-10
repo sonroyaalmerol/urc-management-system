@@ -1,4 +1,4 @@
-import { gmail_v1 } from "googleapis";
+import type { gmail_v1 } from "googleapis";
 
 const sendMail = async data => {
   const response = await fetch("/api/mail/send", {

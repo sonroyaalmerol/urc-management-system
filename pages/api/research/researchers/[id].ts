@@ -1,24 +1,19 @@
 import { prisma } from "../../../../lib/server/prisma"
+import injector from "../../../../lib/client/injectors/individual_api"
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = req.query
-  
-  const researcher = await prisma.user.findFirst({
-    where: {
-      id: id as string,
-      roles: {
-        some: {
-          id: 'researcher'
+  await injector(req, res, async ({ where }) => {
+    return await prisma.user.findFirst({
+      where: {
+        ...where.OR[0],
+        roles: {
+          some: {
+            id: 'researcher'
+          }
         }
       }
-    }
+    })
   })
-
-  if (researcher) {
-    return res.status(200).json(researcher)
-  } else {
-    return res.status(404).json({ error: 'Resource not found.' })
-  }
 }

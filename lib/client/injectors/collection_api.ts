@@ -24,7 +24,8 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function)
   }
 
   let count: number = 0;
-  let data: any = [];
+  let rawData: any[] = [];
+  let data: any[] = []
 
   const ORarray = [];
 
@@ -103,7 +104,29 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function)
   }
 
   try {
-    [count, data] = await fn(args);
+    [count, rawData] = await fn(args);
+
+    data = rawData.map((entry) => {
+      let processedEntry = { ...entry }
+      Object.keys(processedEntry).forEach((key) => {
+        if (key === 'bridge_users') {
+          processedEntry.users = processedEntry[key].map((user) => {
+            let processedUser = { ...user }
+            delete processedUser.user
+
+            let userObject = user.user
+            delete userObject.id
+            delete userObject.created_at
+            delete userObject.updated_at
+
+            return { ...processedUser, ...userObject }
+          })
+
+          delete processedEntry[key]
+        }
+      })
+      return processedEntry
+    })
   } catch (err) {
     return returnError(500, err.message);
   }

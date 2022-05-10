@@ -27,6 +27,7 @@
     "@fontsource/open-sans": "^4.5.8",
     "@next-auth/prisma-adapter": "^1.0.3",
     "@prisma/client": "^3.13.0",
+    "check-disk-space": "^3.3.0",
     "cheerio": "^1.0.0-rc.10",
     "class-validator": "^0.13.2",
     "date-fns": "^2.28.0",

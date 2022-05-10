@@ -3,34 +3,19 @@ import ContentHeader from '../components/ContentHeader'
 import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
 import { VStack } from '@chakra-ui/react'
+import { usePrisma } from '../lib/client/usePrisma'
 
 import ActivityCard from '../components/dashboard/ActivityCard'
+import type { FileUpload, Project, User, Prisma } from '@prisma/client'
 interface IndexProps {
 
 }
 
 const Home: React.FC<IndexProps> = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  // const { register, handleSubmit } = useForm()
-  // const { register: registerMail, handleSubmit: handleSubmitMail } = useForm()
-  // const { register: registerDelete, handleSubmit: handleDelete } = useForm()
+  const testUsers: [User] = JSON.parse(props.testUsers)
+  const testProject: Project = JSON.parse(props.testProject)
 
-  /* const toast = useToast()
-  
-  const onSubmit = (data) => uploadFile(data.file[0])
-    .then((res) => toast({ title: 'File upload success!', description: `Uploaded ${res.name}!`, status: 'success' }))
-    .catch((err) => toast({ title: 'Error', description: err.message, status: 'error' }))
-  const onTestMail = (data) => sendMail(data)
-    .then((res) => toast({ title: 'Test mail success!', description: `Sent mail id:${res.id}!`, status: 'success' }))
-    .catch((err) => toast({ title: 'Error', description: err.message, status: 'error' }))
-  const onDelete = (data) => deleteFile(data.id)
-    .then((res) => toast({ title: 'File deletion success!', description: `Deleted ${res.name}!`, status: 'success' }))
-    .catch((err) => toast({ title: 'Error', description: err.message, status: 'error' }))
-
-  */
-
-  const testUsers = React.useMemo(() => {
-    return JSON.parse(props.testUsers)
-  }, [props.testUsers])
+  // const uploadsPrisma = usePrisma('fileUpload')
 
   return (
     <VStack spacing={5}>
@@ -38,7 +23,7 @@ const Home: React.FC<IndexProps> = (props: InferGetServerSidePropsType<typeof ge
         Activities Dashboard
       </ContentHeader>
       <ActivityCard
-        title="Roosting Behavior and Roost Site Characterization of Pteropus Vampyrus in Malagos Watershed, Davao City, Philippines"
+        title={testProject.title}
         action="approved"
         users={testUsers}
         tags={[
@@ -59,6 +44,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     take: 3
   })
 
+  const testProject = await prisma.project.findFirst()
+
   if (!session) {
     return {
       redirect: {
@@ -71,7 +58,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   return {
     props: { 
       session,
-      testUsers: JSON.stringify(testUsers)
+      testUsers: JSON.stringify(testUsers),
+      testProject: JSON.stringify(testProject)
     }
   }
 }
