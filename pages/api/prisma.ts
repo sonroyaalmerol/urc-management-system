@@ -9,10 +9,10 @@ import type {
 } from '../../types/client-prisma'
 
 const PERMISSIONS: { [K in PrismaModel]?: { [K in PrismaAction]?: boolean } } = {
-  externalResearch: {
-    create: false
-  },
   instituteNews: {
+    findMany: true
+  },
+  project: {
     findMany: true
   }
 }

@@ -4,20 +4,17 @@ import { InstituteNews, User, FileUpload, Institute } from '@prisma/client'
 import { 
   Text, 
   VStack,
-  Avatar,
-  HStack,
   Tag,
   Wrap,
   WrapItem,
   Box,
-  UnorderedList,
-  ListItem,
-  OrderedList,
   Button,
   Heading
 } from '@chakra-ui/react'
 
-import parse, { HTMLReactParserOptions, Element, domToReact, attributesToProps } from 'html-react-parser'
+import SmallAvatar from '../SmallAvatar'
+
+import parse from '../../lib/client/parseHTML'
 import { DownloadIcon } from '@chakra-ui/icons'
 import format from 'date-fns/format'
 
@@ -27,57 +24,6 @@ interface MemoCardProps extends CardProps {
     uploads: FileUpload[];
     institute: Institute;
   })
-}
-
-const SmallAvatar: React.FC<User> = (props) => {
-  return (
-    <HStack>
-      <Avatar size="xs" src={props.image} />
-      <Text fontSize="xs" fontWeight="bold">
-        {props.name ?? "University Research Council"}
-      </Text>
-    </HStack>
-  )
-}
-
-const parseOptions: HTMLReactParserOptions = {
-  replace: domNode => {
-    if (domNode instanceof Element) {
-      const props = attributesToProps(domNode.attribs)
-
-      if (domNode.name === 'p') {
-        return (
-          <Text marginBottom="1rem" {...props}>{domToReact(domNode.children, parseOptions)}</Text>
-        )
-      }
-
-      if (domNode.name === 'ul') {
-        return (
-          <UnorderedList marginBottom="1rem" {...props}>{domToReact(domNode.children, parseOptions)}</UnorderedList>
-        )
-      }
-
-      if (domNode.name === 'li') {
-        return (
-          <ListItem {...props}>{domToReact(domNode.children, parseOptions)}</ListItem>
-        )
-      }
-
-      if (domNode.name === 'ol') {
-        return (
-          <OrderedList marginBottom="1rem" {...props}>{domToReact(domNode.children, parseOptions)}</OrderedList>
-        )
-      }
-
-      if (domNode.name === 'hr') {
-        return <></>
-      }
-
-      if (domNode.attribs.class === 'wp-block-file') {
-        return <></>
-      }
-    }
-  }
 }
 
 const MemoCard: React.FC<MemoCardProps> = (props) => {
@@ -95,7 +41,7 @@ const MemoCard: React.FC<MemoCardProps> = (props) => {
         <Wrap>
           <WrapItem>
             <Tag
-              bgColor="brand.red"
+              bgColor="brand.lightBlue"
               textColor="white"
               borderRadius="20px"
               fontSize="xs"
@@ -161,7 +107,7 @@ const MemoCard: React.FC<MemoCardProps> = (props) => {
         </VStack>
 
         <Box fontSize="sm">
-          { parse(props.memo.content, parseOptions) }
+          { parse(props.memo.content) }
         </Box>
 
         <Wrap>

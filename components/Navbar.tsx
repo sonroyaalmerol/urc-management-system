@@ -120,7 +120,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                 </DrawerBody>
               </DrawerContent>
             </Drawer>
-            <chakra.img zIndex={5} src="./urc_header.png" maxWidth="50vw"></chakra.img>
+            <chakra.img zIndex={5} src="/urc_header.png" maxWidth="50vw"></chakra.img>
           </HStack>
 
           <Flex alignItems={'center'}>

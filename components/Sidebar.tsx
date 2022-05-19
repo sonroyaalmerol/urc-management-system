@@ -108,7 +108,7 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
       <Container zIndex={5} padding={0} w="300px">
         <Center padding="1.5rem" marginBottom='2rem'>
           <VStack spacing={8} color="white">
-            <chakra.img zIndex={5} src="./urc_header.png"></chakra.img>
+            <chakra.img zIndex={5} src="/urc_header.png"></chakra.img>
             <NavigationAvatar avatarSize="small" />
           </VStack>
         </Center>
@@ -122,8 +122,8 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
             }}
             href={menu.url}
             borderRadius={0}
-            borderTopRightRadius={currentMenu?.url === menu.url || currentIndex + 1 === i ? '2rem' : 0}
-            borderBottomRightRadius={currentMenu?.url === menu.url || currentIndex - 1 === i ? '2rem' : 0}
+            borderTopRightRadius={currentIndex !== -1 && (currentMenu?.url === menu.url || currentIndex + 1 === i) ? '2rem' : 0}
+            borderBottomRightRadius={currentIndex !== -1 && (currentMenu?.url === menu.url || currentIndex - 1 === i) ? '2rem' : 0}
             updateCurrentPosition={updateCurrentPosition}
           >
             {menu.name}
