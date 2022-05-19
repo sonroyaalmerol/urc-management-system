@@ -50,7 +50,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   if (session) {
     return {
       redirect: {
-        destination: query.redirect ?? '/',
+        destination: query.redirect ?? '/dashboard',
         permanent: false
       }
     }

@@ -56,7 +56,7 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
   }, [router.pathname, router.push])
 
   const [currentMenu, currentIndex] = React.useMemo(() => {
-    const currentIndex = menus.findIndex((menu) => menu.url === selectedMenu)
+    const currentIndex = menus.findIndex((menu) => selectedMenu.includes(menu.url))
     const current = menus[currentIndex]
 
     return [current, currentIndex]
@@ -84,7 +84,7 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
           height: '60vh'
         }}
         bgColor="brand.blue"
-        width="100%"
+        w="full"
         height="100"
         position="absolute"
         zIndex={0}
@@ -98,7 +98,7 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
           height: '60vh'
         }}
         bgColor="brand.blue"
-        width="100%"
+        w="full"
         height="100"
         position="absolute"
         zIndex={0}

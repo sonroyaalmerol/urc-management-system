@@ -9,7 +9,7 @@ interface SearchInputProps extends InputProps {
 
 const SearchInput: React.FC<SearchInputProps> = (props) => {
   return (
-    <InputGroup w="100%" size="lg" >
+    <InputGroup w="full" size="lg" >
       <InputLeftElement
         pointerEvents="none"
       >

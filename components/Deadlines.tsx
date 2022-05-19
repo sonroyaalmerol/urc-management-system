@@ -11,10 +11,10 @@ const Deadlines: React.FC<DeadlinesProps> = (props) => {
       backgroundColor="brand.cardBackground"
       borderRadius={10}
       padding="1.5rem"
-      w="100%"
+      w="full"
       {...props}
     >
-      <VStack w="100%" spacing={6} alignItems="baseline">
+      <VStack w="full" spacing={6} alignItems="baseline">
         <Heading
           color="brand.blue"
           size="md"
@@ -26,7 +26,7 @@ const Deadlines: React.FC<DeadlinesProps> = (props) => {
           columns={2}
           spacingX={8}
           spacingY={6}
-          w="100%"
+          w="full"
         >
           <Text>Call for Proposal 1</Text>
           <Text color="brand.blue">May 28</Text>

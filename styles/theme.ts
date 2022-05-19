@@ -32,8 +32,8 @@ const theme = extendTheme({
         _focus: { 
           boxShadow: 'none' 
         }
-      } 
-    } 
+      }
+    }
   }
 })
 

@@ -12,7 +12,7 @@ interface DashboardLayoutProps {
 const menus = [
   {
     name: 'Dashboard',
-    url: '/',
+    url: '/dashboard',
   },
   {
     name: 'Projects',
@@ -32,11 +32,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = (props) => {
       <>
         {/*<Head></Head>*/}
         <Sidebar menus={menus} display={{ base: 'none', md: 'initial' }} />
-        <VStack maxW="100%" marginLeft={{ base: 0, md: '18.75rem' }}>
+        <VStack maxW="full" marginLeft={{ base: 0, md: '18.75rem' }}>
           <Navbar menus={menus} display={{ base: 'initial', md: 'none' }} />
           <Box
-            w='100%'
-            h='100%'
+            w="full"
+            h="full"
             paddingY={{ base: '0.5rem', md: '2rem' }}
             paddingX={{ base: '0.5rem', md: '2rem' }}
             paddingTop={{ base: '5rem', md: '2rem' }}

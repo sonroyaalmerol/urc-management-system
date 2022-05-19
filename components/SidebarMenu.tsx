@@ -51,7 +51,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = (props) => {
   return (
     <Button
       as="a"
-      w='100%'
+      w="full"
       backgroundColor='transparent'
       color={props.selected ? 'brand.blue' : 'white'}
       fontWeight={props.selected ? 'semibold' : 'normal' }

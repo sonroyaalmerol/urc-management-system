@@ -70,7 +70,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
       <Box
         bgColor="brand.blue"
         px={4}
-        w="100%"
+        w="full"
         margin={0}
         boxShadow="0px 1px 10px"
         position="fixed"
@@ -111,7 +111,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                         fontWeight={currentIndex === i ? 'bold' : 'normal'}
                         bgColor={currentIndex === i ? "brand.blue" : "transparent"}
                         color={currentIndex === i ? "white" : "brand.blue"}
-                        width="100%"
+                        w="full"
                       >
                         {menu.name}
                       </Button>

@@ -4,7 +4,7 @@ import type { CardProps } from '../types/cardprops'
 const Card: React.FC<CardProps> = (props) => {
   return (
     <Box
-      w="100%"
+      w="full"
       margin='0'
       boxShadow="-5px 5px 30px -20px"
       borderRadius="10px"
