@@ -33,14 +33,16 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
       topControls.start({
         height: currMenuPos.offsetTop,
         transition: {
-          ease: [0.17, 0.67, 0.83, 0.67]
+          ease: [0.17, 0.67, 0.83, 0.67],
+          duration: 0.3
         }
       })
 
       bottomControls.start({
         height: currMenuPos.offsetBottom,
         transition: {
-          ease: [0.17, 0.67, 0.83, 0.67]
+          ease: [0.17, 0.67, 0.83, 0.67],
+          duration: 0.3
         }
       })
     }
@@ -69,17 +71,17 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
 
   return (
     <VStack
-      maxW='21.25rem'
+      w='18.75rem'
       h='100vh'
       spacing={0}
-      position="relative"
+      position="fixed"
       {...divProps}
     >
       <Box
         as={motion.div}
         animate={topControls}
         initial={{
-          height: '100vh'
+          height: '60vh'
         }}
         bgColor="brand.blue"
         width="100%"
@@ -93,7 +95,7 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
         as={motion.div}
         animate={bottomControls}
         initial={{
-          height: '100vh'
+          height: '60vh'
         }}
         bgColor="brand.blue"
         width="100%"
@@ -115,7 +117,10 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
           <SidebarMenu
             key={`top-${menu.url}`}
             selected={currentMenu?.url === menu.url}
-            onClick={() => changeMenu(menu)}
+            onClick={() => {
+              changeMenu(menu)
+            }}
+            href={menu.url}
             borderRadius={0}
             borderTopRightRadius={currentMenu?.url === menu.url || currentIndex + 1 === i ? '2rem' : 0}
             borderBottomRightRadius={currentMenu?.url === menu.url || currentIndex - 1 === i ? '2rem' : 0}

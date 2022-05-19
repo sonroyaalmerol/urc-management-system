@@ -7,7 +7,8 @@ const colors = {
     blue: '#1A2B75',
     yellow: '#D99C00',
     red: '#C20000',
-    lightBlue: '#1673FF'
+    lightBlue: '#1673FF',
+    cardBackground: '#F0F1F2'
   },
 }
 

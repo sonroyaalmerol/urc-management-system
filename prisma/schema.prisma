@@ -37,7 +37,7 @@ model Action {
 
   title                  String
 
-  table_name             String?
+  url                    String?
   action_tags            ActionTag[]
 
   user_id                String

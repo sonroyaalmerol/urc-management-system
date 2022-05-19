@@ -11,6 +11,9 @@ import type {
 const PERMISSIONS: { [K in PrismaModel]?: { [K in PrismaAction]?: boolean } } = {
   externalResearch: {
     create: false
+  },
+  instituteNews: {
+    findMany: true
   }
 }
 

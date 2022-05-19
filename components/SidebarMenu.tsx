@@ -4,6 +4,7 @@ import { Button, ButtonProps, Center } from '@chakra-ui/react'
 interface SidebarMenuProps extends ButtonProps {
   selected?: boolean,
   ref?: LegacyRef<HTMLButtonElement>,
+  href: string,
   updateCurrentPosition?: (data: { offsetTop: number, offsetBottom: number }) => void
 }
 
@@ -37,6 +38,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = (props) => {
   const size = useSize(target)
 
   const divProps = Object.assign({}, props)
+  delete divProps.onClick
   delete divProps.updateCurrentPosition
 
   React.useEffect(() => {
@@ -47,13 +49,22 @@ const SidebarMenu: React.FC<SidebarMenuProps> = (props) => {
   }, [size, selected])
 
   return (
-    <Button 
+    <Button
+      as="a"
       w='100%'
       backgroundColor='transparent'
       color={props.selected ? 'brand.blue' : 'white'}
       fontWeight={props.selected ? 'semibold' : 'normal' }
+      _hover={{
+        color: "brand.blue",
+        backgroundColor: "brand.cardBackground"
+      }}
       h="3.2rem"
       ref={target}
+      onClick={(e) => {
+        e.preventDefault()
+        props.onClick(e)
+      }}
       {...divProps}
     >
       <Center h="3.2rem">

@@ -74,6 +74,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
         margin={0}
         boxShadow="0px 1px 10px"
         position="fixed"
+        zIndex={1}
         {...divProps}
       >
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
@@ -90,6 +91,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
               placement="left"
               onClose={onClose}
               isOpen={isOpen}
+              blockScrollOnMount={false}
             >
               <DrawerOverlay />
               <DrawerContent paddingY={4} maxW="45vw">
@@ -97,10 +99,16 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                   <VStack>
                     { menus.map((menu, i) => (
                       <Button
+                        as="a"
                         key={`top-${menu.url}`}
-                        onClick={() => changeMenu(menu)}
+                        href={menu.url}
+                        onClick={(e) => {
+                          e.preventDefault()
+                          changeMenu(menu)
+                        }}
                         borderRadius="20px"
                         paddingY="2rem"
+                        fontWeight={currentIndex === i ? 'bold' : 'normal'}
                         bgColor={currentIndex === i ? "brand.blue" : "transparent"}
                         color={currentIndex === i ? "white" : "brand.blue"}
                         width="100%"

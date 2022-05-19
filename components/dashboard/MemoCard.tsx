@@ -1,0 +1,188 @@
+import Card from '../Card'
+import type { CardProps } from '../../types/cardprops'
+import { InstituteNews, User, FileUpload, Institute } from '@prisma/client'
+import { 
+  Text, 
+  VStack,
+  Avatar,
+  HStack,
+  Tag,
+  Wrap,
+  WrapItem,
+  Box,
+  UnorderedList,
+  ListItem,
+  OrderedList,
+  Button,
+  Heading
+} from '@chakra-ui/react'
+
+import parse, { HTMLReactParserOptions, Element, domToReact, attributesToProps } from 'html-react-parser'
+import { DownloadIcon } from '@chakra-ui/icons'
+import format from 'date-fns/format'
+
+interface MemoCardProps extends CardProps {
+  memo: (InstituteNews & {
+    user: User;
+    uploads: FileUpload[];
+    institute: Institute;
+  })
+}
+
+const SmallAvatar: React.FC<User> = (props) => {
+  return (
+    <HStack>
+      <Avatar size="xs" src={props.image} />
+      <Text fontSize="xs" fontWeight="bold">
+        {props.name ?? "University Research Council"}
+      </Text>
+    </HStack>
+  )
+}
+
+const parseOptions: HTMLReactParserOptions = {
+  replace: domNode => {
+    if (domNode instanceof Element) {
+      const props = attributesToProps(domNode.attribs)
+
+      if (domNode.name === 'p') {
+        return (
+          <Text marginBottom="1rem" {...props}>{domToReact(domNode.children, parseOptions)}</Text>
+        )
+      }
+
+      if (domNode.name === 'ul') {
+        return (
+          <UnorderedList marginBottom="1rem" {...props}>{domToReact(domNode.children, parseOptions)}</UnorderedList>
+        )
+      }
+
+      if (domNode.name === 'li') {
+        return (
+          <ListItem {...props}>{domToReact(domNode.children, parseOptions)}</ListItem>
+        )
+      }
+
+      if (domNode.name === 'ol') {
+        return (
+          <OrderedList marginBottom="1rem" {...props}>{domToReact(domNode.children, parseOptions)}</OrderedList>
+        )
+      }
+
+      if (domNode.name === 'hr') {
+        return <></>
+      }
+
+      if (domNode.attribs.class === 'wp-block-file') {
+        return <></>
+      }
+    }
+  }
+}
+
+const MemoCard: React.FC<MemoCardProps> = (props) => {
+  const divProps = Object.assign({}, props)
+  delete divProps.memo
+
+  return (
+    <Card
+      {...divProps}
+    >
+      <VStack
+        align="normal"
+        spacing={4}
+      >
+        <Wrap>
+          <WrapItem>
+            <Tag
+              bgColor="brand.red"
+              textColor="white"
+              borderRadius="20px"
+              fontSize="xs"
+              fontWeight="bold"
+              paddingX="0.8rem"
+            >
+              Memo
+            </Tag>
+          </WrapItem>
+          <WrapItem>
+            {
+              props.memo.institute ? (
+                <Tag
+                  bgColor="brand.blue"
+                  textColor="white"
+                  borderRadius="20px"
+                  fontSize="xs"
+                  fontWeight="bold"
+                  paddingX="0.8rem"
+                >
+                  {props.memo.institute.short_name}
+                </Tag>
+              ) : (
+                <Tag
+                  bgColor="brand.blue"
+                  textColor="white"
+                  borderRadius="20px"
+                  fontSize="xs"
+                  fontWeight="bold"
+                  paddingX="0.8rem"
+                >
+                  URC
+                </Tag>
+              )
+            }
+          </WrapItem>
+        </Wrap>
+        
+        <Wrap align="center" spacing="2">
+          <WrapItem>
+            <SmallAvatar
+              {...props.memo.user}
+            />
+          </WrapItem>
+          <WrapItem as="span">
+            <Text fontSize="xs" fontStyle="italic">
+              posted
+            </Text>
+          </WrapItem>
+        </Wrap>
+        
+        <VStack
+          align="normal"
+          spacing={2}
+        >
+          <Heading fontFamily="body" size="md">
+            {props.memo.title}
+          </Heading>
+
+          <Text fontSize="xs" fontStyle="italic">
+            { format(new Date(props.memo.created_at), 'MMM dd, yyyy h:mm a') }
+          </Text>
+        </VStack>
+
+        <Box fontSize="sm">
+          { parse(props.memo.content, parseOptions) }
+        </Box>
+
+        <Wrap>
+          {props.memo.uploads.map((upload) => (
+            <WrapItem key={upload.id}>
+              <Button
+                as="a"
+                whiteSpace="normal"
+                wordBreak="break-word"
+                href={`/api/files/get/${upload.id}`}
+                target="_blank"
+                leftIcon={<DownloadIcon />}
+              >
+                {upload.name}
+              </Button>
+            </WrapItem>
+          ))}
+        </Wrap>
+      </VStack>
+    </Card>
+  )
+}
+
+export default MemoCard

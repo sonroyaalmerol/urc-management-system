@@ -2,37 +2,106 @@ import React from 'react'
 import ContentHeader from '../components/ContentHeader'
 import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
-import { VStack } from '@chakra-ui/react'
+import { Center, HStack, Spinner, VStack } from '@chakra-ui/react'
 import { usePrisma } from '../lib/client/usePrisma'
 
-import ActivityCard from '../components/dashboard/ActivityCard'
-import type { FileUpload, Project, User, Prisma } from '@prisma/client'
+import MemoCard from '../components/dashboard/MemoCard'
+import type { InstituteNews, User, FileUpload, Institute } from '@prisma/client'
+import Deadlines from '../components/Deadlines'
+
+import InfiniteScroll from 'react-infinite-scroller'
+
+interface MemosProps {
+  memos: (InstituteNews & {
+    user: User;
+    uploads: FileUpload[];
+    institute: Institute;
+  })[],
+  loadMore: () => Promise<void>,
+  max: Number
+}
+
+const Memos: React.FC<MemosProps> = (props) => {
+  return (
+    <>
+      <InfiniteScroll
+        pageStart={0}
+        loadMore={props.loadMore}
+        hasMore={props.memos.length < props.max}
+        loader={
+          <Center marginTop="2rem">
+            <Spinner color="brand.blue" />
+          </Center>
+        }
+      >
+        { props.memos.map((memo) => (
+          <MemoCard
+            key={memo.id}
+            memo={memo}
+          />
+        )) }
+      </InfiniteScroll>
+    </>
+  )
+}
+
 interface IndexProps {
 
 }
 
 const Home: React.FC<IndexProps> = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const testUsers: [User] = JSON.parse(props.testUsers)
-  const testProject: Project = JSON.parse(props.testProject)
+  const propsMemos: (InstituteNews & {
+    user: User;
+    uploads: FileUpload[];
+    institute: Institute;
+  })[] = JSON.parse(props.memos)
 
-  // const uploadsPrisma = usePrisma('fileUpload')
+  const newsPrisma = usePrisma('instituteNews')
+
+  const [memos, setMemos] = React.useState(propsMemos)
+
+  const onLoadNewMemo = async () => {
+    const newMemos = (await newsPrisma.findMany({
+      take: 5,
+      skip: 1,
+      cursor: {
+        id: memos[memos.length - 1].id
+      },
+      include: {
+        uploads: true,
+        user: true,
+        institute: true,
+      }
+    })) as (InstituteNews & {
+      user: User;
+      uploads: FileUpload[];
+      institute: Institute;
+    })[]
+
+    setMemos((currMemos) => [...currMemos, ...newMemos])
+  }
 
   return (
     <VStack spacing={5}>
       <ContentHeader>
-        Activities Dashboard
+        Dashboard
       </ContentHeader>
-      <ActivityCard
-        title={testProject.title}
-        action="approved"
-        users={testUsers}
-        tags={[
-          {
-            content: 'University Research',
-            color: "brand.blue"
-          }
-        ]}
-      />
+
+      {/* Mobile view */}
+      <VStack w="100%" display={{ base: 'initial', xl: 'none' }}>
+        <Deadlines />
+        <Memos memos={memos} loadMore={onLoadNewMemo} max={props.memoCount} />
+      </VStack>
+      
+      {/* Desktop view */}
+      <HStack spacing={8} alignItems="flex-start" w="100%" display={{ base: 'none', xl: 'flex' }}>
+        <VStack spacing={5} w="75%">
+          <Memos memos={memos} loadMore={onLoadNewMemo} max={props.memoCount} />
+        </VStack>
+        <VStack w="25%" spacing={5}>
+          <Deadlines />
+        </VStack>
+      </HStack>
     </VStack>
   )
 }
@@ -40,11 +109,17 @@ const Home: React.FC<IndexProps> = (props: InferGetServerSidePropsType<typeof ge
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getSession(context)
 
-  const testUsers = await prisma.user.findMany({
-    take: 3
-  })
-
-  const testProject = await prisma.project.findFirst()
+  const [memoCount, memos] = await prisma.$transaction([
+    prisma.instituteNews.count(),
+    prisma.instituteNews.findMany({
+      include: {
+        uploads: true,
+        user: true,
+        institute: true,
+      },
+      take: 5
+    })
+  ])
 
   if (!session) {
     return {
@@ -58,8 +133,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   return {
     props: { 
       session,
-      testUsers: JSON.stringify(testUsers),
-      testProject: JSON.stringify(testProject)
+      memoCount: memoCount,
+      memos: JSON.stringify(memos)
     }
   }
 }
