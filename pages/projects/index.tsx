@@ -2,23 +2,18 @@ import React from 'react'
 import ContentHeader from '../../components/ContentHeader'
 import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
-import { VStack, HStack, Heading, Text, Tag, Button, Wrap, WrapItem, Box, Center, Spinner } from '@chakra-ui/react'
+import { VStack, HStack, chakra, Button, Center, Spinner } from '@chakra-ui/react'
 
-import Card from '../../components/Card'
 import SearchInput from '../../components/SearchInput'
-import SmallAvatar from '../../components/SmallAvatar'
 
 import { AddIcon } from '@chakra-ui/icons'
-import { format } from 'date-fns'
-
-import parse from '../../lib/client/parseHTML'
 
 import type { Project, UserToProjectBridge, User } from '@prisma/client'
 import { usePrisma } from '../../lib/client/usePrisma'
+import { useDebounce } from 'use-debounce'
 
 import InfiniteScroll from 'react-infinite-scroller'
 
-import { useRouter } from 'next/router'
 import ProjectCard from '../../components/projects/ProjectCard'
 
 interface ProjectsProps {
@@ -31,36 +26,76 @@ const Projects: React.FC<ProjectsProps> = (props: InferGetServerSidePropsType<ty
         user: User;
     })[];
   })[] = JSON.parse(props.projects)
+  
+  const [search, setSearch] = React.useState('')
+  const [count, setCount] = React.useState(props.projectCount)
+  const [deferredSearch] = useDebounce(search, 500)
 
   const projectsPrisma = usePrisma('project')
-  const router = useRouter()
 
   const [projects, setProjects] = React.useState(propsProjects)
-  const onLoadNewProject = async () => {
-    const newProjects = (await projectsPrisma.findMany({
-      take: 5,
-      skip: 1,
-      include: {
-        bridge_users: {
-          include: {
-            user: true
+
+  React.useEffect(() => {
+    getProjects(true).then(([newProjects, count]) => {
+      setProjects(newProjects)
+      setCount(count as number)
+    })
+  }, [deferredSearch])
+
+  const getProjects: (isNew: boolean) => Promise<[(Project & {
+    bridge_users: (UserToProjectBridge & {
+        user: User;
+    })[];
+  })[], number]> = async (isNew) => {
+    const whereQuery = deferredSearch.trim().length > 0 ? {
+      OR: [
+        {
+          title: {
+            search: deferredSearch.split(' ').filter(s => s.trim().length > 0).join(' | ')
+          }
+        },
+        {
+          keywords: {
+            has: deferredSearch
+          }
+        },
+        {
+          abstract: {
+            search: deferredSearch.split(' ').filter(s => s.trim().length > 0).join(' | ')
           }
         }
-      },
-      cursor: {
-        id: projects[projects.length - 1].id
-      },
-      orderBy: [
-        {
-          updated_at: 'desc'
-        }
       ]
-    })) as (Project & {
-      bridge_users: (UserToProjectBridge & {
-          user: User;
-      })[];
-    })[]
+    } : undefined
 
+    return await Promise.all<[any, any]>([
+      projectsPrisma.findMany({
+        take: 5,
+        skip: isNew ? undefined : 1,
+        include: {
+          bridge_users: {
+            include: {
+              user: true
+            }
+          }
+        },
+        cursor: isNew ? undefined : {
+          id: projects[projects.length - 1].id
+        },
+        orderBy: [
+          {
+            updated_at: 'desc'
+          }
+        ],
+        where: whereQuery
+      }),
+      projectsPrisma.count({
+        where: whereQuery
+      })
+    ])
+  }
+
+  const onLoadNewProject = async () => {
+    const [newProjects] = await getProjects(false)
     setProjects((currProjects) => [...currProjects, ...newProjects])
   }
 
@@ -71,7 +106,12 @@ const Projects: React.FC<ProjectsProps> = (props: InferGetServerSidePropsType<ty
       </ContentHeader>
       <VStack spacing={5} w="full">
         <HStack w="full" spacing={8}>
-          <SearchInput />
+          <SearchInput
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value)
+            }}
+          />
           <Button
             backgroundColor="brand.blue"
             borderRadius={10}
@@ -90,12 +130,14 @@ const Projects: React.FC<ProjectsProps> = (props: InferGetServerSidePropsType<ty
         <InfiniteScroll
           pageStart={0}
           loadMore={onLoadNewProject}
-          hasMore={projects.length < props.projectCount}
+          hasMore={projects.length < count}
           loader={
             <Center marginTop="2rem">
               <Spinner color="brand.blue" />
             </Center>
           }
+          element={chakra.div}
+          w="full"
         >
           <VStack w="full">
             { projects.map((project) => (

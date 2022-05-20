@@ -2,7 +2,7 @@ import React from 'react'
 import ContentHeader from '../components/ContentHeader'
 import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
-import { Center, HStack, Spinner, VStack } from '@chakra-ui/react'
+import { Center, HStack, Spinner, VStack, chakra } from '@chakra-ui/react'
 import { usePrisma } from '../lib/client/usePrisma'
 
 import MemoCard from '../components/dashboard/MemoCard'
@@ -29,10 +29,12 @@ const Memos: React.FC<MemosProps> = (props) => {
         loadMore={props.loadMore}
         hasMore={props.memos.length < props.max}
         loader={
-          <Center marginTop="2rem">
+          <Center marginTop="2rem" key="infinite-scroll-load">
             <Spinner color="brand.blue" />
           </Center>
         }
+        element={chakra.div}
+        w="full"
       >
         { props.memos.map((memo) => (
           <MemoCard

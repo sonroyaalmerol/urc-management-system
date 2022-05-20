@@ -13,7 +13,8 @@ const PERMISSIONS: { [K in PrismaModel]?: { [K in PrismaAction]?: boolean } } = 
     findMany: true
   },
   project: {
-    findMany: true
+    findMany: true,
+    count: true
   }
 }
 
