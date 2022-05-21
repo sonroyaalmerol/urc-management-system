@@ -296,7 +296,7 @@ const uploadFile = async (fileUrl) => {
     filename: filename
   })
 
-  const res = await fetch(`${process.env.BASE_URL}/api/files/upload?public_access=true&secret=${process.env.GOOGLE_DRIVE_FOLDER}`, {
+  const res = await fetch(`${process.env.LOCAL_URL}/api/files/upload?public_access=true&secret=${process.env.GOOGLE_DRIVE_FOLDER}`, {
       method: "POST",
       body: formData,
   }).then((res) => res.json())
