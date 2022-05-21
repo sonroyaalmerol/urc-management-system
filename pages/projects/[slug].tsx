@@ -60,6 +60,7 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
                       _focus={{
                         boxShadow: "none"
                       }}
+                      cursor="pointer"
                     />
                   </WrapItem>
                   <WrapItem>
@@ -71,6 +72,7 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
                       _focus={{
                         boxShadow: "none"
                       }}
+                      cursor="pointer"
                     />
                   </WrapItem>
                 </Wrap>

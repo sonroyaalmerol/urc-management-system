@@ -15,6 +15,7 @@ import { useDebounce } from 'use-debounce'
 import InfiniteScroll from 'react-infinite-scroller'
 
 import ProjectCard from '../../components/projects/ProjectCard'
+import NewProjectButton from '../../components/projects/NewProjectButton'
 
 interface ProjectsProps {
 
@@ -28,6 +29,7 @@ const Projects: React.FC<ProjectsProps> = (props: InferGetServerSidePropsType<ty
   })[] = JSON.parse(props.projects)
   
   const [search, setSearch] = React.useState('')
+  const [loading, setLoading] = React.useState(false)
   const [count, setCount] = React.useState(props.projectCount)
   const [deferredSearch] = useDebounce(search, 500)
 
@@ -36,9 +38,13 @@ const Projects: React.FC<ProjectsProps> = (props: InferGetServerSidePropsType<ty
   const [projects, setProjects] = React.useState(propsProjects)
 
   React.useEffect(() => {
+    setLoading(true)
+  }, [search])
+  React.useEffect(() => {
     getProjects(true).then(([newProjects, count]) => {
       setProjects(newProjects)
       setCount(count as number)
+      setLoading(false)
     })
   }, [deferredSearch])
 
@@ -51,7 +57,7 @@ const Projects: React.FC<ProjectsProps> = (props: InferGetServerSidePropsType<ty
       OR: [
         {
           title: {
-            search: deferredSearch.split(' ').filter(s => s.trim().length > 0).join(' | ')
+            search: deferredSearch.split(' ').filter(s => s.trim().length > 0).join(' & ')
           }
         },
         {
@@ -61,7 +67,7 @@ const Projects: React.FC<ProjectsProps> = (props: InferGetServerSidePropsType<ty
         },
         {
           abstract: {
-            search: deferredSearch.split(' ').filter(s => s.trim().length > 0).join(' | ')
+            search: deferredSearch.split(' ').filter(s => s.trim().length > 0).join(' & ')
           }
         }
       ]
@@ -112,39 +118,32 @@ const Projects: React.FC<ProjectsProps> = (props: InferGetServerSidePropsType<ty
               setSearch(e.target.value)
             }}
           />
-          <Button
-            backgroundColor="brand.blue"
-            borderRadius={10}
-            color="white"
-            fontWeight="bold"
-            padding="1.5rem"
-            _hover={{
-              color: "brand.blue",
-              backgroundColor: "brand.cardBackground"
-            }}
-            leftIcon={<AddIcon />}
-          >
-            New
-          </Button>
+          <NewProjectButton />
         </HStack>
-        <InfiniteScroll
-          pageStart={0}
-          loadMore={onLoadNewProject}
-          hasMore={projects.length < count}
-          loader={
-            <Center marginTop="2rem">
-              <Spinner color="brand.blue" />
-            </Center>
-          }
-          element={chakra.div}
-          w="full"
-        >
-          <VStack w="full">
-            { projects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            )) }
-          </VStack>
-        </InfiniteScroll>
+        { !loading ? (
+          <InfiniteScroll
+            pageStart={0}
+            loadMore={onLoadNewProject}
+            hasMore={projects.length < count}
+            loader={
+              <Center marginTop="2rem">
+                <Spinner color="brand.blue" />
+              </Center>
+            }
+            element={chakra.div}
+            w="full"
+          >
+            <VStack w="full">
+              { projects.map((project) => (
+                <ProjectCard key={project.id} project={project} />
+              )) }
+            </VStack>
+          </InfiniteScroll>
+        ) : (
+          <Center marginTop="2rem">
+            <Spinner color="brand.blue" />
+          </Center>
+        ) }
       </VStack>
     </VStack>
   )
