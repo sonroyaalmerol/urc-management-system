@@ -4,6 +4,7 @@ import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
 import { Center, HStack, Spinner, VStack, chakra } from '@chakra-ui/react'
 import { usePrisma } from '../lib/client/usePrisma'
+import { prisma } from '../lib/server/prisma'
 
 import MemoCard from '../components/dashboard/MemoCard'
 import type { InstituteNews, User, FileUpload, Institute } from '@prisma/client'

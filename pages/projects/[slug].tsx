@@ -13,6 +13,8 @@ import { format } from 'date-fns'
 
 import parse from '../../lib/client/parseHTML'
 
+import { prisma } from '../../lib/server/prisma'
+
 import type { Project, BudgetProposalSubmission, CapsuleProposalSubmission, FullBlownProposalSubmission } from '@prisma/client'
 import { usePrisma } from '../../lib/client/usePrisma'
 

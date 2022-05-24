@@ -6,7 +6,7 @@ import { VStack, HStack, chakra, Button, Center, Spinner } from '@chakra-ui/reac
 
 import SearchInput from '../../components/SearchInput'
 
-import { AddIcon } from '@chakra-ui/icons'
+import { prisma } from '../../lib/server/prisma'
 
 import type { Project, UserToProjectBridge, User } from '@prisma/client'
 import { usePrisma } from '../../lib/client/usePrisma'
