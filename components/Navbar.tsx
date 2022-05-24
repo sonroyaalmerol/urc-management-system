@@ -51,7 +51,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const [currentMenu, currentIndex] = React.useMemo(() => {
-    const currentIndex = menus.findIndex((menu) => menu.url === selectedMenu)
+    const currentIndex = menus.findIndex((menu) => selectedMenu.includes(menu.url))
     const current = menus[currentIndex]
 
     return [current, currentIndex]

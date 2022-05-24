@@ -3,23 +3,27 @@ import { VStack, HStack, Avatar, Text, Tag, Button, Wrap, WrapItem, Box, Center,
 
 import Card from '../Card'
 
-import type { Project, UserToProjectBridge, User } from '@prisma/client'
+import type { BudgetProposalSubmission, CapsuleProposalSubmission, FullBlownProposalSubmission, FileUpload } from '@prisma/client'
 
 import { useRouter } from 'next/router'
 
 interface SubmissionCardProps extends BoxProps {
-  submission?: (Project & {
-    bridge_users: (UserToProjectBridge & {
-        user: User;
-    })[];
-  })
+  budgetProposal?: Partial<(BudgetProposalSubmission & {
+    file_upload: FileUpload;
+  })>,
+  capsuleProposal?: Partial<CapsuleProposalSubmission>,
+  fullBlownProposal?: Partial<(FullBlownProposalSubmission & {
+    file_upload: FileUpload;
+  })>
 }
 
 const SubmissionCard: React.FC<SubmissionCardProps> = (props) => {
-  const { submission } = props
+  const { budgetProposal, capsuleProposal, fullBlownProposal } = props
 
   const divProps = Object.assign({}, props)
-  delete divProps.submission
+  delete divProps.budgetProposal
+  delete divProps.capsuleProposal
+  delete divProps.fullBlownProposal
 
   const router = useRouter()
 

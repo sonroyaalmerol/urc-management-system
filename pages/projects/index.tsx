@@ -40,6 +40,7 @@ const Projects: React.FC<ProjectsProps> = (props: InferGetServerSidePropsType<ty
   React.useEffect(() => {
     setLoading(true)
   }, [search])
+  
   React.useEffect(() => {
     getProjects(true).then(([newProjects, count]) => {
       setProjects(newProjects)
