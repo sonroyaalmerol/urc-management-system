@@ -40,21 +40,30 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
   const [capsuleProposalSubmissions, setCapsuleProposalSubmissions] = React.useState(project.capsule_proposal_submissions)
   const [fullBlownProposalSubmissions, setFullBlownProposalSubmissions] = React.useState(project.full_blown_proposal_submissions)
 
+  const [typeFilter, setTypeFilter] = React.useState('')
+  const [loading, setLoading] = React.useState(false)
+
   const submissions = React.useMemo(() => {
     return [
-      ...budgetProposalSubmissions.map((submission) => ({
+      ...budgetProposalSubmissions?.map((submission) => ({
         type: 'budget', ...submission
       })),
-      ...capsuleProposalSubmissions.map((submission) => ({
+      ...capsuleProposalSubmissions?.map((submission) => ({
         type: 'capsule', ...submission
       })),
-      ...fullBlownProposalSubmissions.map((submission) => ({
+      ...fullBlownProposalSubmissions?.map((submission) => ({
         type: 'full', ...submission
       })),
     ].sort((a, b) => {
       return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+    }).filter((submission) => {
+      if (typeFilter === '') {
+        return true
+      }
+
+      return submission.type === typeFilter
     })
-  }, [budgetProposalSubmissions, capsuleProposalSubmissions, fullBlownProposalSubmissions])
+  }, [budgetProposalSubmissions, capsuleProposalSubmissions, fullBlownProposalSubmissions, typeFilter])
 
   const budgetProposalPrisma = usePrisma('budgetProposalSubmission')
   const capsuleProposalPrisma = usePrisma('capsuleProposalSubmission')
@@ -69,11 +78,7 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
         take: 5,
         skip: isNew ? undefined : 1,
         include: {
-          bridge_users: {
-            include: {
-              user: true
-            }
-          }
+          file_upload: true
         },
         cursor: isNew ? undefined : {
           id: budgetProposalSubmissions[budgetProposalSubmissions.length - 1].id
@@ -101,13 +106,6 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
       capsuleProposalPrisma.findMany({
         take: 5,
         skip: isNew ? undefined : 1,
-        include: {
-          bridge_users: {
-            include: {
-              user: true
-            }
-          }
-        },
         cursor: isNew ? undefined : {
           id: capsuleProposalSubmissions[capsuleProposalSubmissions.length - 1].id
         },
@@ -137,11 +135,7 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
         take: 5,
         skip: isNew ? undefined : 1,
         include: {
-          bridge_users: {
-            include: {
-              user: true
-            }
-          }
+          file_upload: true
         },
         cursor: isNew ? undefined : {
           id: fullBlownProposalSubmissions[fullBlownProposalSubmissions.length - 1].id
@@ -163,17 +157,83 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
     ])
   }
 
-  const onLoadNewSubmissions = async () => {
-    const [[newBudget], [newCapsule], [newFullBlown]] = await Promise.all([
-      getBudgetSubmissions(false),
-      getCapsuleSubmissions(false),
-      getFullBlownSubmissions(false)
-    ])
+  React.useEffect(() => {
+    setLoading(true)
 
-    setBudgetProposalSubmissions((curr) => [...curr, ...newBudget])
-    setCapsuleProposalSubmissions((curr) => [...curr, ...newCapsule])
-    setFullBlownProposalSubmissions((curr) => [...curr, ...newFullBlown])
+    if (typeFilter === 'budget') {
+      getBudgetSubmissions(true).then(([newSubmissions]) => {
+        setBudgetProposalSubmissions(newSubmissions)
+
+        setLoading(false)
+      })
+    } else if (typeFilter === 'capsule') {
+      getCapsuleSubmissions(true).then(([newSubmissions]) => {
+        setCapsuleProposalSubmissions(newSubmissions)
+
+        setLoading(false)
+      })
+    } else if (typeFilter === 'full') {
+      getFullBlownSubmissions(true).then(([newSubmissions]) => {
+        setFullBlownProposalSubmissions(newSubmissions)
+
+        setLoading(false)
+      })
+    } else {
+      Promise.all([
+        getBudgetSubmissions(true),
+        getCapsuleSubmissions(true),
+        getFullBlownSubmissions(true)
+      ]).then(([[newBudget], [newCapsule], [newFullBlown]]) => {
+        setBudgetProposalSubmissions(newBudget)
+        setCapsuleProposalSubmissions(newCapsule)
+        setFullBlownProposalSubmissions(newFullBlown)
+
+        setLoading(false)
+      })
+    }
+  }, [typeFilter])
+
+  const onLoadNewSubmissions = async () => {
+    if (typeFilter === 'budget') {
+      const [newBudget] = await getBudgetSubmissions(false)
+  
+      setBudgetProposalSubmissions((curr) => [...curr, ...newBudget])
+    } else if (typeFilter === 'capsule') {
+      const [newCapsule] = await getCapsuleSubmissions(false)
+  
+      setCapsuleProposalSubmissions((curr) => [...curr, ...newCapsule])
+    } else if (typeFilter === 'full') {
+      const [newFullBlown] = await getFullBlownSubmissions(false)
+  
+      setFullBlownProposalSubmissions((curr) => [...curr, ...newFullBlown])
+    } else {
+      const [[newBudget], [newCapsule], [newFullBlown]] = await Promise.all([
+        getBudgetSubmissions(false),
+        getCapsuleSubmissions(false),
+        getFullBlownSubmissions(false)
+      ])
+  
+      setBudgetProposalSubmissions((curr) => [...curr, ...newBudget])
+      setCapsuleProposalSubmissions((curr) => [...curr, ...newCapsule])
+      setFullBlownProposalSubmissions((curr) => [...curr, ...newFullBlown])
+    }
   }
+
+  const paginationCondition = React.useMemo(() => {
+    if (typeFilter === 'budget') {
+      return budgetProposalSubmissions.length < props.budgetProposalCount
+    } else if (typeFilter === 'capsule') {
+      return capsuleProposalSubmissions.length < props.capsuleProposalCount
+    } else if (typeFilter === 'full') {
+      return fullBlownProposalSubmissions.length < props.fullBlownProposalCount
+    }
+
+    return (
+      budgetProposalSubmissions.length < props.budgetProposalCount ||
+      capsuleProposalSubmissions.length < props.capsuleProposalCount ||
+      fullBlownProposalSubmissions.length < props.fullBlownProposalCount
+    )
+  }, [typeFilter])
 
   return (
     <VStack spacing={5}>
@@ -203,8 +263,14 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
                       _focus={{
                         boxShadow: "none"
                       }}
+                      value={typeFilter}
+                      onChange={(e) => { setTypeFilter(e.target.value) }}
                       cursor="pointer"
-                    />
+                    >
+                      <option value="capsule">Capsule Proposal</option>
+                      <option value="full">Full-blown Proposal</option>
+                      <option value="budget">Budget Proposal</option>
+                    </Select>
                   </WrapItem>
                   <WrapItem>
                     <Select
@@ -242,45 +308,47 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
             </HStack>
           </WrapItem>
         </Wrap>
-        <InfiniteScroll
-          element={chakra.div}
-          w="full"
-          pageStart={0}
-          loadMore={onLoadNewSubmissions}
-          hasMore={
-            budgetProposalSubmissions.length < props.budgetProposalCount ||
-            capsuleProposalSubmissions.length < props.capsuleProposalCount ||
-            fullBlownProposalSubmissions.length < props.fullBlownProposalCount
-          }
-          loader={
-            <Center marginTop="2rem">
-              <Spinner color="brand.blue" />
-            </Center>
-          }
-        >
-          <VStack w="full">
-            { submissions.map((_submission) => {
-              const submission = Object.assign({}, _submission)
-              delete submission.type
+        { !loading ? (
+          <InfiniteScroll
+            element={chakra.div}
+            w="full"
+            pageStart={0}
+            loadMore={onLoadNewSubmissions}
+            hasMore={paginationCondition}
+            loader={
+              <Center marginTop="2rem">
+                <Spinner color="brand.blue" />
+              </Center>
+            }
+          >
+            <VStack w="full">
+              { submissions.map((_submission) => {
+                const submission = Object.assign({}, _submission)
+                delete submission.type
 
-              if (_submission.type === 'budget') {
-                return (
-                  <SubmissionCard budgetProposal={submission} />
-                )
-              } else if (_submission.type === 'capsule') {
-                return (
-                  <SubmissionCard capsuleProposal={submission} />
-                )
-              } else if (_submission.type === 'full') {
-                return (
-                  <SubmissionCard fullBlownProposal={submission} />
-                )
-              } else {
-                return <></>
-              }
-            }) }
-          </VStack>
-        </InfiniteScroll>
+                if (_submission.type === 'budget') {
+                  return (
+                    <SubmissionCard budgetProposal={submission} />
+                  )
+                } else if (_submission.type === 'capsule') {
+                  return (
+                    <SubmissionCard capsuleProposal={submission} />
+                  )
+                } else if (_submission.type === 'full') {
+                  return (
+                    <SubmissionCard fullBlownProposal={submission} />
+                  )
+                } else {
+                  return <></>
+                }
+              }) }
+            </VStack>
+          </InfiniteScroll>
+        ) : (
+          <Center marginTop="2rem">
+            <Spinner color="brand.blue" />
+          </Center>
+        ) }
       </VStack>
     </VStack>
   )
@@ -309,16 +377,31 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         take: 5,
         include: {
           file_upload: true
-        }
+        },
+        orderBy: [
+          {
+            updated_at: 'desc'
+          }
+        ]
       },
       capsule_proposal_submissions: {
-        take: 5
+        take: 5,
+        orderBy: [
+          {
+            updated_at: 'desc'
+          }
+        ]
       },
       full_blown_proposal_submissions: {
         take: 5,
         include: {
           file_upload: true
-        }
+        },
+        orderBy: [
+          {
+            updated_at: 'desc'
+          }
+        ]
       }
     }
   })

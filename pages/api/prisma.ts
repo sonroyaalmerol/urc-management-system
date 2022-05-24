@@ -15,6 +15,18 @@ const PERMISSIONS: { [K in PrismaModel]?: { [K in PrismaAction]?: boolean } } = 
   project: {
     findMany: true,
     count: true
+  },
+  budgetProposalSubmission: {
+    findMany: true,
+    count: true
+  },
+  capsuleProposalSubmission: {
+    findMany: true,
+    count: true
+  },
+  fullBlownProposalSubmission: {
+    findMany: true,
+    count: true
   }
 }
 
