@@ -3,15 +3,22 @@ import ContentHeader from '../components/ContentHeader'
 import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
 
+import { NextSeo } from 'next-seo'
+
 interface PublicationsProps {
 
 }
 
 const Publications: React.FC<PublicationsProps> = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return (
-    <ContentHeader>
-      Hello Publications!
-    </ContentHeader>
+    <>
+      <NextSeo
+        title="Publications | URC Management System"
+      />
+      <ContentHeader>
+        Hello Publications!
+      </ContentHeader>
+    </>
   )
 }
 

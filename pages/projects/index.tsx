@@ -14,6 +14,8 @@ import { useDebounce } from 'use-debounce'
 
 import InfiniteScroll from 'react-infinite-scroller'
 
+import { NextSeo } from 'next-seo'
+
 import ProjectCard from '../../components/projects/ProjectCard'
 import NewProjectButton from '../../components/projects/NewProjectButton'
 
@@ -40,7 +42,7 @@ const Projects: React.FC<ProjectsProps> = (props: InferGetServerSidePropsType<ty
   React.useEffect(() => {
     setLoading(true)
   }, [search])
-  
+
   React.useEffect(() => {
     getProjects(true).then(([newProjects, count]) => {
       setProjects(newProjects)
@@ -107,46 +109,51 @@ const Projects: React.FC<ProjectsProps> = (props: InferGetServerSidePropsType<ty
   }
 
   return (
-    <VStack spacing={5}>
-      <ContentHeader>
-        Projects
-      </ContentHeader>
-      <VStack spacing={5} w="full">
-        <HStack w="full" spacing={8}>
-          <SearchInput
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value)
-            }}
-          />
-          <NewProjectButton />
-        </HStack>
-        { !loading ? (
-          <InfiniteScroll
-            pageStart={0}
-            loadMore={onLoadNewProject}
-            hasMore={projects.length < count}
-            loader={
-              <Center marginTop="2rem">
-                <Spinner color="brand.blue" />
-              </Center>
-            }
-            element={chakra.div}
-            w="full"
-          >
-            <VStack w="full">
-              { projects.map((project) => (
-                <ProjectCard key={project.id} project={project} />
-              )) }
-            </VStack>
-          </InfiniteScroll>
-        ) : (
-          <Center marginTop="2rem">
-            <Spinner color="brand.blue" />
-          </Center>
-        ) }
+    <>
+      <NextSeo
+        title="Projects | URC Management System"
+      />
+      <VStack spacing={5}>
+        <ContentHeader>
+          Projects
+        </ContentHeader>
+        <VStack spacing={5} w="full">
+          <HStack w="full" spacing={8}>
+            <SearchInput
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value)
+              }}
+            />
+            <NewProjectButton />
+          </HStack>
+          { !loading ? (
+            <InfiniteScroll
+              pageStart={0}
+              loadMore={onLoadNewProject}
+              hasMore={projects.length < count}
+              loader={
+                <Center marginTop="2rem">
+                  <Spinner color="brand.blue" />
+                </Center>
+              }
+              element={chakra.div}
+              w="full"
+            >
+              <VStack w="full">
+                { projects.map((project) => (
+                  <ProjectCard key={project.id} project={project} />
+                )) }
+              </VStack>
+            </InfiniteScroll>
+          ) : (
+            <Center marginTop="2rem">
+              <Spinner color="brand.blue" />
+            </Center>
+          ) }
+        </VStack>
       </VStack>
-    </VStack>
+    </>
   )
 }
 

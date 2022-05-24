@@ -12,6 +12,8 @@ import Deadlines from '../components/Deadlines'
 
 import InfiniteScroll from 'react-infinite-scroller'
 
+import { NextSeo } from 'next-seo'
+
 interface MemosProps {
   memos: (InstituteNews & {
     user: User;
@@ -25,6 +27,9 @@ interface MemosProps {
 const Memos: React.FC<MemosProps> = (props) => {
   return (
     <>
+      <NextSeo
+        title="Dashboard | URC Management System"
+      />
       <InfiniteScroll
         pageStart={0}
         loadMore={props.loadMore}

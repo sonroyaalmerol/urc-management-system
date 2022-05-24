@@ -9,6 +9,7 @@ const Document: React.FC<DocumentProps> = (props) => {
       <Head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
+        <link rel="icon" href="/addu-logo-blue.png" type="image/x-icon" />
       </Head>
       <body>
         <ColorModeScript initialColorMode={theme.config.initialColorMode} />

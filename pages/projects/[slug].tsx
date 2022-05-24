@@ -4,14 +4,12 @@ import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
 import { VStack, HStack, Heading, Text, Tag, Button, Wrap, WrapItem, chakra, Center, Spinner, Avatar, Spacer, Select } from '@chakra-ui/react'
 
-import Card from '../../components/Card'
-import SearchInput from '../../components/SearchInput'
-import SmallAvatar from '../../components/SmallAvatar'
-
 import { AddIcon } from '@chakra-ui/icons'
 import { format } from 'date-fns'
 
 import parse from '../../lib/client/parseHTML'
+
+import { NextSeo } from 'next-seo'
 
 import { prisma } from '../../lib/server/prisma'
 
@@ -236,121 +234,126 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
   }, [typeFilter])
 
   return (
-    <VStack spacing={5}>
-      <ContentHeader>
-        {project.title}
-      </ContentHeader>
-      <VStack spacing={5} w="full">
-        <Wrap align="center" w="full">
-          <WrapItem>
-            <Wrap spacing={4} align="center">
-              <WrapItem>
-                <Heading
-                  fontFamily="body"
-                  fontSize="xl"
+    <>
+      <NextSeo
+        title={`${project.title} | URC Management System`}
+      />
+      <VStack spacing={5}>
+        <ContentHeader>
+          {project.title}
+        </ContentHeader>
+        <VStack spacing={5} w="full">
+          <Wrap align="center" w="full">
+            <WrapItem>
+              <Wrap spacing={4} align="center">
+                <WrapItem>
+                  <Heading
+                    fontFamily="body"
+                    fontSize="xl"
+                  >
+                    Submissions
+                  </Heading>
+                </WrapItem>
+                <WrapItem>
+                  <Wrap align="center">
+                    <WrapItem>
+                      <Select
+                        borderColor="brand.blue"
+                        color="brand.blue"
+                        placeholder="Submission Types"
+                        borderRadius={10}
+                        _focus={{
+                          boxShadow: "none"
+                        }}
+                        value={typeFilter}
+                        onChange={(e) => { setTypeFilter(e.target.value) }}
+                        cursor="pointer"
+                      >
+                        <option value="capsule">Capsule Proposal</option>
+                        <option value="full">Full-blown Proposal</option>
+                        <option value="budget">Budget Proposal</option>
+                      </Select>
+                    </WrapItem>
+                    <WrapItem>
+                      <Select
+                        borderColor="brand.blue"
+                        color="brand.blue"
+                        placeholder="Status"
+                        borderRadius={10}
+                        _focus={{
+                          boxShadow: "none"
+                        }}
+                        cursor="pointer"
+                      />
+                    </WrapItem>
+                  </Wrap>
+                </WrapItem>
+              </Wrap>
+            </WrapItem>
+            <Spacer />
+            <WrapItem>
+              <HStack>
+                <Button
+                  backgroundColor="brand.blue"
+                  borderRadius={10}
+                  color="white"
+                  fontWeight="bold"
+                  padding="1.5rem"
+                  _hover={{
+                    color: "brand.blue",
+                    backgroundColor: "brand.cardBackground"
+                  }}
+                  leftIcon={<AddIcon />}
                 >
-                  Submissions
-                </Heading>
-              </WrapItem>
-              <WrapItem>
-                <Wrap align="center">
-                  <WrapItem>
-                    <Select
-                      borderColor="brand.blue"
-                      color="brand.blue"
-                      placeholder="Submission Types"
-                      borderRadius={10}
-                      _focus={{
-                        boxShadow: "none"
-                      }}
-                      value={typeFilter}
-                      onChange={(e) => { setTypeFilter(e.target.value) }}
-                      cursor="pointer"
-                    >
-                      <option value="capsule">Capsule Proposal</option>
-                      <option value="full">Full-blown Proposal</option>
-                      <option value="budget">Budget Proposal</option>
-                    </Select>
-                  </WrapItem>
-                  <WrapItem>
-                    <Select
-                      borderColor="brand.blue"
-                      color="brand.blue"
-                      placeholder="Status"
-                      borderRadius={10}
-                      _focus={{
-                        boxShadow: "none"
-                      }}
-                      cursor="pointer"
-                    />
-                  </WrapItem>
-                </Wrap>
-              </WrapItem>
-            </Wrap>
-          </WrapItem>
-          <Spacer />
-          <WrapItem>
-            <HStack>
-              <Button
-                backgroundColor="brand.blue"
-                borderRadius={10}
-                color="white"
-                fontWeight="bold"
-                padding="1.5rem"
-                _hover={{
-                  color: "brand.blue",
-                  backgroundColor: "brand.cardBackground"
-                }}
-                leftIcon={<AddIcon />}
-              >
-                New Submission
-              </Button>
-            </HStack>
-          </WrapItem>
-        </Wrap>
-        { !loading ? (
-          <InfiniteScroll
-            element={chakra.div}
-            w="full"
-            pageStart={0}
-            loadMore={onLoadNewSubmissions}
-            hasMore={paginationCondition}
-            loader={
-              <Center marginTop="2rem">
-                <Spinner color="brand.blue" />
-              </Center>
-            }
-          >
-            <VStack w="full">
-              { submissions.map((_submission) => {
-                const submission = Object.assign({}, _submission)
-                delete submission.type
+                  New Submission
+                </Button>
+              </HStack>
+            </WrapItem>
+          </Wrap>
+          { !loading ? (
+            <InfiniteScroll
+              element={chakra.div}
+              w="full"
+              pageStart={0}
+              loadMore={onLoadNewSubmissions}
+              hasMore={paginationCondition}
+              loader={
+                <Center marginTop="2rem">
+                  <Spinner color="brand.blue" />
+                </Center>
+              }
+            >
+              <VStack w="full">
+                { submissions.map((_submission) => {
+                  const submission = Object.assign({}, _submission)
+                  delete submission.type
 
-                if (_submission.type === 'budget') {
-                  return (
-                    <SubmissionCard budgetProposal={submission} />
-                  )
-                } else if (_submission.type === 'capsule') {
-                  return (
-                    <SubmissionCard capsuleProposal={submission} />
-                  )
-                } else if (_submission.type === 'full') {
-                  return (
-                    <SubmissionCard fullBlownProposal={submission} />
-                  )
-                } else {
-                  return <></>
-                }
-              }) }
-            </VStack>
-          </InfiniteScroll>
-        ) : (
-          <Center marginTop="2rem">
-            <Spinner color="brand.blue" />
-          </Center>
-        ) }
+                  if (_submission.type === 'budget') {
+                    return (
+                      <SubmissionCard budgetProposal={submission} />
+                    )
+                  } else if (_submission.type === 'capsule') {
+                    return (
+                      <SubmissionCard capsuleProposal={submission} />
+                    )
+                  } else if (_submission.type === 'full') {
+                    return (
+                      <SubmissionCard fullBlownProposal={submission} />
+                    )
+                  } else {
+                    return <></>
+                  }
+                }) }
+              </VStack>
+            </InfiniteScroll>
+          ) : (
+            <Center marginTop="2rem">
+              <Spinner color="brand.blue" />
+            </Center>
+          ) }
+        </VStack>
       </VStack>
-    </VStack>
+    </>
   )
 }
 

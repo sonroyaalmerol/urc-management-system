@@ -2,6 +2,8 @@ import { getProviders, signIn, getSession, getCsrfToken } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
 import { Button, Center, VStack, Text, chakra, Container } from '@chakra-ui/react'
 
+import { NextSeo } from 'next-seo'
+
 interface LoginProps {
 
 }
@@ -9,6 +11,9 @@ interface LoginProps {
 const Login: React.FC<LoginProps> = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return (
     <>
+      <NextSeo
+        title="Login | URC Management System"
+      />
       <Center h="100vh">
         <VStack spacing={12}>
           <VStack spacing={0}>
