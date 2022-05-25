@@ -64,6 +64,7 @@ const RichTextarea: React.ForwardRefRenderFunction<HTMLTextAreaElement, Textarea
       key={props.key}
       w="100%"
       padding={4}
+      paddingTop={1}
       border="1px"
       borderRadius="10px"
       borderColor="gray.200"
@@ -79,13 +80,15 @@ const RichTextarea: React.ForwardRefRenderFunction<HTMLTextAreaElement, Textarea
         }}
         placeholder={props.placeholder}
         readOnly={props.isReadOnly}
-        toolbar={{
+        toolbar={!props.isReadOnly ? {
           options: [
             'inline',
             'list',
             'textAlign',
             'history'
           ]
+        } : {
+          options: []
         }}
       />
       <Textarea

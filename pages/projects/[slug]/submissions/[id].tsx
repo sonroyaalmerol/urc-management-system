@@ -41,7 +41,7 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
               name="research_thrust"
               control={control}
               defaultValue={props.submission.research_thrust}
-              render={({ field }) => <RichTextarea {...field} />}
+              render={({ field }) => <RichTextarea isReadOnly {...field} />}
             />
           </VStack>
           <VStack w="100%" align="baseline" spacing={1}>
@@ -50,7 +50,7 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
               name="brief_background"
               control={control}
               defaultValue={props.submission.brief_background}
-              render={({ field }) => <RichTextarea {...field} />}
+              render={({ field }) => <RichTextarea isReadOnly {...field} />}
             />
           </VStack>
           <VStack w="100%" align="baseline" spacing={1}>
@@ -59,7 +59,7 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
               name="objectives_of_the_study"
               control={control}
               defaultValue={props.submission.objectives_of_the_study}
-              render={({ field }) => <RichTextarea {...field} />}
+              render={({ field }) => <RichTextarea isReadOnly {...field} />}
             />
           </VStack>
           <VStack w="100%" align="baseline" spacing={1}>
@@ -68,7 +68,7 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
               name="significance_of_the_study"
               control={control}
               defaultValue={props.submission.significance_of_the_study}
-              render={({ field }) => <RichTextarea {...field} />}
+              render={({ field }) => <RichTextarea isReadOnly {...field} />}
             />
           </VStack>
           <VStack w="100%" align="baseline" spacing={1}>
@@ -77,12 +77,12 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
               name="methodology"
               control={control}
               defaultValue={props.submission.methodology}
-              render={({ field }) => <RichTextarea {...field} />}
+              render={({ field }) => <RichTextarea isReadOnly {...field} />}
             />
           </VStack>
         </VStack>
       </Card>
-      <Button type="submit">Submit</Button>
+      <Button type="submit" disabled>Update</Button>
     </VStack>
   )
 }
