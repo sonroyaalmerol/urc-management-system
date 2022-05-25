@@ -40,11 +40,11 @@ model Action {
   url                    String?
   action_tags            ActionTag[]
 
-  user_id                String
+  profile_id                String
   timestamp              DateTime      @default(now())
 
-  acted_users            User[]        @relation("acted_users")
-  affected_user          User          @relation(fields: [user_id], references: [id], onDelete: NoAction)
+  acted_profiles            Profile[]        @relation("acted_users")
+  affected_profile          Profile          @relation(fields: [profile_id], references: [id], onDelete: NoAction)
 }
 
 model ActionTag {
@@ -65,20 +65,54 @@ model Audit {
   timestamp     DateTime      @default(now())
 }
 
-model CapsuleProposalSubmission {
-  id                            String                        @id @default(cuid())
+model Submission {
+  id                            String                        @id @default(cuid()) 
   project_id                    String                        
   created_at                    DateTime?                     @default(now())
   updated_at                    DateTime?                     @updatedAt
   title                         String
+  description                   String?
+
+  type                          SubmissionTypes
+  status                        SubmissionStatus              @default(NOT_PROCESSED)
+
+  capsule_proposal_submission       CapsuleProposalSubmission?
+  full_blown_proposal_submission    FullBlownProposalSubmission?
+  deliverable_submission            DeliverableSubmission? 
+  budget_proposal_submission        BudgetProposalSubmission?
+
+  profile_id                       String
+  profile                          Profile                          @relation(fields: [profile_id], references: [id], onDelete: Cascade)
+  files                             FileUpload[]
+  comments                          Comment[]
+}
+
+enum SubmissionStatus {
+  APPROVED
+  NOT_APPROVED
+  NOT_PROCESSED
+}
+
+enum SubmissionTypes {
+  CAPSULE
+  FULL
+  BUDGET
+  DELIVERABLE
+}
+
+model CapsuleProposalSubmission {
+  id                            String                        @id @default(cuid())
+  created_at                    DateTime?                     @default(now())
+  updated_at                    DateTime?                     @updatedAt
+  
   research_thrust               String
   brief_background              String
   objectives_of_the_study       String
   significance_of_the_study     String
   methodology                   String
-  project                       Project @relation(fields: [project_id], references: [id], onDelete: Cascade)
-
-  comments                      Comment[]
+  
+  submission_id                 String
+  submission                    Submission                        @relation(fields: [submission_id], references: [id], onDelete: Cascade)
 }
 
 model Comment {
@@ -86,24 +120,15 @@ model Comment {
   parent_comment_id         String?                 
                     
   content                   String
-  user_id                   String
+  profile_id                   String
   created_at                DateTime                @default(now())
   updated_at                DateTime                @updatedAt
 
-  capsule_proposal_submission_id String?
-  capsule_proposal    CapsuleProposalSubmission?  @relation(fields: [capsule_proposal_submission_id], references: [id], onDelete: Cascade)
-
-  full_blown_proposal_id String?
-  full_blown_proposal_submission    FullBlownProposalSubmission?  @relation(fields: [full_blown_proposal_id], references: [id], onDelete: Cascade)
-
-  deliverable_submission_id String?
-  deliverable_submission    DeliverableSubmission?  @relation(fields: [deliverable_submission_id], references: [id], onDelete: Cascade)
-
-  budget_proposal_submission_id String?
-  budget_proposal_submission    BudgetProposalSubmission?  @relation(fields: [budget_proposal_submission_id], references: [id], onDelete: Cascade)
+  submission_id                    String
+  submission                       Submission                        @relation(fields: [submission_id], references: [id], onDelete: Cascade)
 
   parent_comment            Comment?               @relation("commentsTocomments_parent_comment_id", fields: [parent_comment_id], references: [id], onDelete: Cascade)
-  user                      User                   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  profile                   Profile                   @relation(fields: [profile_id], references: [id], onDelete: Cascade)
   other_comments            Comment[]              @relation("commentsTocomments_parent_comment_id")
 }
 
@@ -112,25 +137,20 @@ model DeliverableSubmission {
   deliverable_id String       
   created_at     DateTime     @default(now())
   updated_at     DateTime     @updatedAt
-  title          String
-  description    String?
+  
   deliverable    Deliverable @relation(fields: [deliverable_id], references: [id], onDelete: Cascade)
-  comments       Comment[]
+
+  submission_id                    String
+  submission                       Submission                        @relation(fields: [submission_id], references: [id], onDelete: Cascade)
 }
 
 model BudgetProposalSubmission {
   id             String       @id @default(cuid())
-  deliverable_id String       
   created_at     DateTime     @default(now())
   updated_at     DateTime     @updatedAt
-  title          String
-  description    String?
-  project_id     String
-  upload_id                        String                         
-  project                          Project                           @relation(fields: [project_id], references: [id], onDelete: Cascade)
-  file_upload                      FileUpload?                       @relation(fields: [upload_id], references: [id], onDelete: SetNull)
-
-  comments       Comment[]
+                  
+  submission_id                    String
+  submission                       Submission                        @relation(fields: [submission_id], references: [id], onDelete: Cascade)
 }
 
 model Deliverable {
@@ -149,12 +169,12 @@ model Download {
   id           String       @id @default(cuid())
   title        String
   description  String?
-  user_id      String
+  profile_id      String
   upload_id    String       
   created_at   DateTime     @default(now())
   updated_at   DateTime     @updatedAt
   file_upload  FileUpload? @relation(fields: [upload_id], references: [id], onDelete: SetNull)
-  users        User?        @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  profile      Profile?        @relation(fields: [profile_id], references: [id], onDelete: SetNull)
 }
 
 model ExternalResearch {
@@ -176,7 +196,7 @@ model ExternalResearch {
   file_upload                    FileUpload?                    @relation(fields: [upload_id], references: [id], onDelete: SetNull)
   research_presentations         ResearchPresentation[]
   journal_publications           JournalPublication[]
-  bridge_users   UserToExternalResearchBridge[]
+  bridge_profiles   ProfileToExternalResearchBridge[]
   disseminations ResearchDissemination[]
 }
 
@@ -188,31 +208,28 @@ model FileUpload {
   size                            Int                               @default(0)
   created_at                      DateTime                          @default(now())
   updated_at                      DateTime                          @updatedAt
-  user_id                         String?
+  profile_id                         String?
   public_access                   Boolean                           @default(false)
-  user                            User?                             @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  profile                         Profile?                             @relation("upload_to_owner", fields: [profile_id], references: [id], onDelete: SetNull)
   downloads                       Download[]
   external_researches             ExternalResearch[]
-  full_blown_proposal_submissions FullBlownProposalSubmission[]
   institute_news                  InstituteNews[]
   research_event_attendances      ResearchEventAttendance[]
   journal_publications            JournalPublication[]
   book_publications               BookPublication[]
-  budget_proposal_submissions     BudgetProposalSubmission[]
+  submissions                     Submission[]
+  profile_photos                  Profile[]
 }
 
 model FullBlownProposalSubmission {
   id                               String                           @id @default(cuid())
-  project_id                       String                            
   title                            String
   description                      String?
   created_at                       DateTime?                        @default(now())
   updated_at                       DateTime?                        @updatedAt
   upload_id                        String                           
-  project                          Project                           @relation(fields: [project_id], references: [id], onDelete: Cascade)
-  file_upload                      FileUpload?                       @relation(fields: [upload_id], references: [id], onDelete: SetNull)
-
-  comments                         Comment[]
+  submission_id                    String
+  submission                       Submission                        @relation(fields: [submission_id], references: [id], onDelete: Cascade)
 }
 
 model InstituteNews {
@@ -223,11 +240,11 @@ model InstituteNews {
   created_at   DateTime      @default(now())
   updated_at   DateTime      @updatedAt
   institute_id String?        
-  user_id      String?
+  profile_id      String?
   upload_id    String?       
   institute    Institute?   @relation(fields: [institute_id], references: [id], onDelete: SetNull)
   uploads      FileUpload[]
-  user         User?       @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  profile      Profile?       @relation(fields: [profile_id], references: [id], onDelete: SetNull)
 }
 
 model Institute {
@@ -243,11 +260,11 @@ model Institute {
   created_at          DateTime?             @default(now())
   updated_at          DateTime?             @updatedAt
   institute_news      InstituteNews[]
-  bridge_users UserToInstituteBridge[]
+  bridge_profiles ProfileToInstituteBridge[]
 }
 
-model UserToInstituteBridge {
-  user_id      String
+model ProfileToInstituteBridge {
+  profile_id      String
   institute_id String     
   role_title   String
   duration     String?
@@ -258,15 +275,15 @@ model UserToInstituteBridge {
   created_at   DateTime?  @default(now())
   updated_at   DateTime?  @updatedAt
   institute    Institute @relation(fields: [institute_id], references: [id], onDelete: Cascade)
-  user         User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  profile      Profile      @relation(fields: [profile_id], references: [id], onDelete: Cascade)
 
-  @@id([user_id, institute_id])
+  @@id([profile_id, institute_id])
 }
 
 model ResearchEventAttendance {
   id              String       @id @default(cuid())
   verified        Boolean      @default(false)
-  user_id         String
+  profile_id         String
   created_at      DateTime     @default(now())
   updated_at      DateTime     @updatedAt
   event_name      String
@@ -275,7 +292,7 @@ model ResearchEventAttendance {
   description     String
   proof_upload_id String       
   proof_upload    FileUpload? @relation(fields: [proof_upload_id], references: [id], onDelete: SetNull)
-  user            User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  profile         Profile        @relation(fields: [profile_id], references: [id], onDelete: Cascade)
 }
 
 model ResearchPresentation {
@@ -296,22 +313,22 @@ model ResearchPresentation {
   slug                   String?                @unique
   external_research      ExternalResearch?   @relation(fields: [external_research_id], references: [id], onDelete: SetNull)
   project    Project? @relation(fields: [project_id], references: [id], onDelete: SetNull)
-  bridge_users   UserToResearchPresentationBridge[]
+  bridge_profiles   ProfileToResearchPresentationBridge[]
   units Unit[]
 }
 
-model UserToResearchPresentationBridge {
-  user_id String
+model ProfileToResearchPresentationBridge {
+  profile_id String
   research_presentation_id String
   role_title String
 
   created_at           DateTime?           @default(now())
   updated_at           DateTime?           @updatedAt
 
-  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  profile Profile @relation(fields: [profile_id], references: [id], onDelete: Cascade)
   research_presentation ResearchPresentation @relation(fields: [research_presentation_id], references: [id], onDelete: Cascade)
 
-  @@id([user_id, research_presentation_id])
+  @@id([profile_id, research_presentation_id])
 }
 
 model ResearchDissemination {
@@ -328,24 +345,24 @@ model ResearchDissemination {
   updated_at             DateTime               @updatedAt
   verified               Boolean                @default(false)
   url                    String?
-  bridge_users   UserToResearchDisseminationBridge[]
+  bridge_profiles   ProfileToResearchDisseminationBridge[]
   external_researches  ExternalResearch[]
   projects  Project[]
   units Unit[]
 }
 
-model UserToResearchDisseminationBridge {
-  user_id String
+model ProfileToResearchDisseminationBridge {
+  profile_id String
   research_dissemination_id String
   role_title String?
 
   created_at           DateTime?           @default(now())
   updated_at           DateTime?           @updatedAt
 
-  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  profile Profile @relation(fields: [profile_id], references: [id], onDelete: Cascade)
   research_dissemination ResearchDissemination @relation(fields: [research_dissemination_id], references: [id], onDelete: Cascade)
 
-  @@id([user_id, research_dissemination_id])
+  @@id([profile_id, research_dissemination_id])
 }
 
 model JournalPublication {
@@ -368,22 +385,22 @@ model JournalPublication {
   external_researches    ExternalResearch?   @relation(fields: [external_research_id], references: [id], onDelete: SetNull)
   proof_upload           FileUpload?           @relation(fields: [proof_upload_id], references: [id], onDelete: SetNull)
   projects  Project? @relation(fields: [project_id], references: [id], onDelete: SetNull)
-  bridge_users   UserToJournalPublicationBridge[]
+  bridge_profiles   ProfileToJournalPublicationBridge[]
   units Unit[]
 }
 
-model UserToJournalPublicationBridge {
-  user_id String
+model ProfileToJournalPublicationBridge {
+  profile_id String
   role_title String?
   created_at           DateTime?           @default(now())
   updated_at           DateTime?           @updatedAt
 
   journal_publication_id String
 
-  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  profile Profile @relation(fields: [profile_id], references: [id], onDelete: Cascade)
   journal_publication JournalPublication @relation(fields: [journal_publication_id], references: [id], onDelete: Cascade)
 
-  @@id([user_id, journal_publication_id])
+  @@id([profile_id, journal_publication_id])
 }
 
 model BookPublication {
@@ -399,22 +416,22 @@ model BookPublication {
   slug                   String?                @unique
   date_published         String?             
   proof_upload           FileUpload?           @relation(fields: [proof_upload_id], references: [id], onDelete: SetNull)
-  bridge_users   UserToBookPublicationBridge[]
+  bridge_profiles   ProfileToBookPublicationBridge[]
   units Unit[]
 }
 
-model UserToBookPublicationBridge {
-  user_id String
+model ProfileToBookPublicationBridge {
+  profile_id String
   role_title String?
   created_at           DateTime?           @default(now())
   updated_at           DateTime?           @updatedAt
 
   book_publication_id String
 
-  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  profile Profile @relation(fields: [profile_id], references: [id], onDelete: Cascade)
   book_publication BookPublication @relation(fields: [book_publication_id], references: [id], onDelete: Cascade)
 
-  @@id([user_id, book_publication_id])
+  @@id([profile_id, book_publication_id])
 }
 
 model ProjectStatus {
@@ -467,7 +484,7 @@ model Unit {
   updated_at     DateTime? @updatedAt
   parent_unit    Unit?    @relation("unitsTounits_parent_unit_id", fields: [parent_unit_id], references: [id], onDelete: Cascade)
   sub_units      Unit[]   @relation("unitsTounits_parent_unit_id")
-  users          User[]
+  profiles       Profile[]
   projects Project[]
   journal_publications JournalPublication[]
   book_publications BookPublication[]
@@ -497,21 +514,18 @@ model Project {
   academic_term_id                 String?
   academic_term                    AcademicTerm?     @relation(fields: [academic_term_id], references: [id], onDelete: SetNull)
 
-  capsule_proposal_submissions     CapsuleProposalSubmission[]
   deliverables                     Deliverable[]
-  full_blown_proposal_submissions  FullBlownProposalSubmission[]
-  budget_proposal_submissions      BudgetProposalSubmission[]
   research_presentations           ResearchPresentation[]
   disseminations                   ResearchDissemination[]
   journal_publications             JournalPublication[]
-  bridge_users                     UserToProjectBridge[]
+  bridge_profiles                     ProfileToProjectBridge[]
   units                            Unit[]
 }
 
 model UserRole {
   id             String           @id @default("default")
   comment        String?
-  users          User[]
+  profiles       Profile[]
 }
 
 model User {
@@ -528,52 +542,69 @@ model User {
   titles        String?
 
   created_at                     DateTime                         @default(now())
+  updated_at                     DateTime                         @updatedAt      
+  
+  accounts                       Account[]
+  sessions                       Session[]
+
+  profile_id                     String?
+  profile                        Profile?     @relation(fields: [profile_id], references: [id], onDelete: SetNull)
+}
+
+model Profile {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  photo_id      String?
+  photo         FileUpload?  @relation(fields: [photo_id], references: [id], onDelete: SetNull)
+
+  user                           User?
+  created_at                     DateTime                         @default(now())
   updated_at                     DateTime                         @updatedAt                     
   units                          Unit[]
   roles                          UserRole[]
 
-  accounts                       Account[]
-  comments                       Comment[]
-  downloads                      Download[]
-  file_uploads                   FileUpload[]
-  institute_news                 InstituteNews[]
-  research_event_attendances     ResearchEventAttendance[]
-  sessions                       Session[]
   actions_made                   Action[]     @relation("acted_users")
   actions_involved               Action[]
 
-  bridge_institutes            UserToInstituteBridge[]
-  bridge_book_publications              UserToBookPublicationBridge[]
-  bridge_research_presentations         UserToResearchPresentationBridge[]
-  bridge_research_disseminations        UserToResearchDisseminationBridge[]
-  bridge_journal_publications           UserToJournalPublicationBridge[]
-  bridge_external_researches   UserToExternalResearchBridge[]
-  bridge_projects UserToProjectBridge[]
+  comments                       Comment[]
+  downloads                      Download[]
+  submissions                    Submission[]
+  file_uploads                   FileUpload[]  @relation("upload_to_owner")
+  institute_news                 InstituteNews[]
+  research_event_attendances     ResearchEventAttendance[]
+
+  bridge_institutes            ProfileToInstituteBridge[]
+  bridge_book_publications              ProfileToBookPublicationBridge[]
+  bridge_research_presentations         ProfileToResearchPresentationBridge[]
+  bridge_research_disseminations        ProfileToResearchDisseminationBridge[]
+  bridge_journal_publications           ProfileToJournalPublicationBridge[]
+  bridge_external_researches   ProfileToExternalResearchBridge[]
+  bridge_projects ProfileToProjectBridge[]
 }
 
-model UserToExternalResearchBridge {
+model ProfileToExternalResearchBridge {
   external_research_id String              
   role_title           String
   created_at           DateTime?           @default(now())
   updated_at           DateTime?           @updatedAt
-  user_id              String
+  profile_id           String
   external_research    ExternalResearch   @relation(fields: [external_research_id], references: [id], onDelete: Cascade)
-  user                 User               @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  profile              Profile               @relation(fields: [profile_id], references: [id], onDelete: Cascade)
 
-  @@id([external_research_id, user_id])
+  @@id([external_research_id, profile_id])
 }
 
-model UserToProjectBridge {
+model ProfileToProjectBridge {
   project_id String                
   role_title             String
   created_at             DateTime?             @default(now())
   updated_at             DateTime?             @updatedAt
   admin_positions        String?
-  user_id                String
+  profile_id             String
   project    Project    @relation(fields: [project_id], references: [id], map: "user_to_research_research_id_fkey", onDelete: Cascade)
-  user                   User                 @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  profile                Profile                 @relation(fields: [profile_id], references: [id], onDelete: Cascade)
 
-  @@id([project_id, user_id])
+  @@id([project_id, profile_id])
 }
 
 model VerificationToken {

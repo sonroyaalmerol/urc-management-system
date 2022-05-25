@@ -6,7 +6,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   await injector(req, res, async ({ skip, take, where }) => {
     return await prisma.$transaction([
-      prisma.user.count({
+      prisma.profile.count({
         where: {
           ...where,
           roles: {
@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           }
         }
       }),
-      prisma.user.findMany({
+      prisma.profile.findMany({
         skip,
         take,
         where: {
@@ -26,6 +26,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               id: 'researcher'
             }
           }
+        },
+        include: {
+          user: true
         }
       })
     ])

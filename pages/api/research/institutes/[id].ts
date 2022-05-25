@@ -10,11 +10,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         short_name: where.OR[0].id
       },
       include: {
-        bridge_users: {
+        bridge_profiles: {
           include: {
-            user: true
+            profile: {
+              include: {
+                user: true
+              }
+            }
           }
-        }
+        },
       }
     })
   })

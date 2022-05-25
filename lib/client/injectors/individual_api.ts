@@ -31,12 +31,12 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: (any) => 
     data = { ...rawData }
 
     Object.keys(data).forEach((key) => {
-      if (key === 'bridge_users') {
-        data.users = data[key].map((user) => {
-          let processedUser = { ...user }
-          delete processedUser.user
+      if (key === 'bridge_profiles') {
+        data.users = data[key].map((profileBridge) => {
+          let processedUser = { ...profileBridge }
+          delete processedUser.profile
 
-          let userObject = user.user
+          let userObject = profileBridge.profile.user
           delete userObject.id
           delete userObject.created_at
           delete userObject.updated_at

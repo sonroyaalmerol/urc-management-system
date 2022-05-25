@@ -1,16 +1,18 @@
-import type { User } from '@prisma/client'
+import type { User, Profile } from '@prisma/client'
 import { 
   Text,
   Avatar,
   HStack,
 } from '@chakra-ui/react'
 
-const SmallAvatar: React.FC<Partial<User>> = (props) => {
+const SmallAvatar: React.FC<Partial<Profile & {
+  user?: Partial<User>;
+}>> = (props) => {
   return (
     <HStack>
-      <Avatar size="xs" src={props.image} />
+      <Avatar size="xs" src={props.photo_id ? `/api/files/get/${props.photo_id}` : undefined} />
       <Text fontSize="xs" fontWeight="bold">
-        {props.name ?? "University Research Council"}
+        {props.user?.name ?? "University Research Council"}
       </Text>
     </HStack>
   )

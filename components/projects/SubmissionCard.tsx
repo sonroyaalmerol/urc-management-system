@@ -3,27 +3,89 @@ import { VStack, HStack, Avatar, Text, Tag, Button, Wrap, WrapItem, Box, Center,
 
 import Card from '../Card'
 
-import type { BudgetProposalSubmission, CapsuleProposalSubmission, FullBlownProposalSubmission, FileUpload } from '@prisma/client'
+import type { Profile, Submission, BudgetProposalSubmission, CapsuleProposalSubmission, FullBlownProposalSubmission, DeliverableSubmission, FileUpload, User, SubmissionTypes, SubmissionStatus } from '@prisma/client'
+
+import { format } from 'date-fns'
 
 import { useRouter } from 'next/router'
 
 interface SubmissionCardProps extends BoxProps {
-  budgetProposal?: Partial<(BudgetProposalSubmission & {
-    file_upload: FileUpload;
-  })>,
-  capsuleProposal?: Partial<CapsuleProposalSubmission>,
-  fullBlownProposal?: Partial<(FullBlownProposalSubmission & {
-    file_upload: FileUpload;
+  submission: Partial<(Submission & {
+    profile: Profile & {
+        user: User;
+    };
+    capsule_proposal_submission: CapsuleProposalSubmission;
+    full_blown_proposal_submission: FullBlownProposalSubmission;
+    deliverable_submission: DeliverableSubmission;
+    budget_proposal_submission: BudgetProposalSubmission;
+    files: FileUpload[];
   })>
 }
 
 const SubmissionCard: React.FC<SubmissionCardProps> = (props) => {
-  const { budgetProposal, capsuleProposal, fullBlownProposal } = props
+  const { submission } = props
 
   const divProps = Object.assign({}, props)
-  delete divProps.budgetProposal
-  delete divProps.capsuleProposal
-  delete divProps.fullBlownProposal
+  delete divProps.submission
+
+  const humanizeType = (type: SubmissionTypes) => {
+    switch(type) {
+      case 'BUDGET':
+        return 'Budget Proposal'
+      case 'CAPSULE':
+        return 'Capsule Proposal'
+      case 'DELIVERABLE':
+        return 'Deliverable'
+      case 'FULL':
+        return 'Full-blown Proposal'
+    }
+  }
+
+  const humanizeStatus = (status: SubmissionStatus) => {
+    switch(status) {
+      case 'APPROVED':
+        return {
+          color: 'brand.blue',
+          text: 'Approved'
+        }
+      case 'NOT_APPROVED':
+        return {
+          color: 'brand.red',
+          text: 'Not Approved'
+        }
+      case 'NOT_PROCESSED':
+        return {
+          color: 'brand.lightBlue',
+          text: 'Not yet processed'
+        }
+    }
+  }
+
+  const humanizeDescription = (submission: Partial<(Submission & {
+    profile: Profile & {
+        user: User;
+    };
+    capsule_proposal_submission: CapsuleProposalSubmission;
+    full_blown_proposal_submission: FullBlownProposalSubmission;
+    deliverable_submission: DeliverableSubmission;
+    budget_proposal_submission: BudgetProposalSubmission;
+    files: FileUpload[];
+  })>) => {
+    switch(submission.type) {
+      case 'BUDGET':
+      case 'DELIVERABLE':
+      case 'FULL':
+        return {
+          title: 'Description:',
+          content: submission.description
+        }
+      case 'CAPSULE':
+        return {
+          title: 'Brief Background:',
+          content: submission.capsule_proposal_submission.brief_background
+        }
+    }
+  }
 
   const router = useRouter()
 
@@ -42,6 +104,7 @@ const SubmissionCard: React.FC<SubmissionCardProps> = (props) => {
       onClick={(e) => {
         e.preventDefault()
       }}
+      {...divProps}
     >
       <VStack w="full" alignItems="flex-start" spacing={4}>
         <HStack spacing={4} align="flex-start">
@@ -53,20 +116,41 @@ const SubmissionCard: React.FC<SubmissionCardProps> = (props) => {
                   fontWeight="bold"
                   color="brand.blue"
                 >
-                  Jazzie
+                  { submission.profile.user.first_name }
                 </Text>
               </WrapItem>
               <WrapItem>
                 <Text fontStyle="italic">
-                  submitted a Budget Proposal
+                  submitted a {humanizeType(submission.type)}
                 </Text>
               </WrapItem>
               <WrapItem>
-                <Tag>for approval</Tag>
+                <Tag
+                  bgColor={humanizeStatus(submission.status).color}
+                  textColor="white"
+                  borderRadius="20px"
+                  fontSize="xs"
+                  fontWeight="bold"
+                  paddingX="0.8rem"
+                >
+                  {humanizeStatus(submission.status).text}
+                </Tag>
+              </WrapItem>
+            </Wrap>
+            <Wrap>
+              <WrapItem>
+                <Text color="brand.blue" fontWeight="bold" fontStyle="italic" fontSize="sm">
+                  { humanizeDescription(submission).title }
+                </Text>
+              </WrapItem>
+              <WrapItem>
+                <Text fontSize="sm">
+                  { humanizeDescription(submission).content }
+                </Text>
               </WrapItem>
             </Wrap>
             <Text fontStyle="italic" color="brand.blue">
-              May 17, 2022 at 4:42 pm
+              { format(new Date(submission.updated_at), 'MMM dd, yyyy h:mm a') }
             </Text>
           </VStack>
         </HStack>

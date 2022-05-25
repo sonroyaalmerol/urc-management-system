@@ -109,16 +109,16 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function)
     data = rawData.map((entry) => {
       let processedEntry = { ...entry }
       Object.keys(processedEntry).forEach((key) => {
-        if (key === 'bridge_users') {
-          processedEntry.users = processedEntry[key].map((user) => {
-            let processedUser = { ...user }
-            delete processedUser.user
-
-            let userObject = user.user
+        if (key === 'bridge_profiles') {
+          processedEntry.users = processedEntry[key].map((profileBridge) => {
+            let processedUser = { ...profileBridge }
+            delete processedUser.profile
+  
+            let userObject = profileBridge.profile.user
             delete userObject.id
             delete userObject.created_at
             delete userObject.updated_at
-
+  
             return { ...processedUser, ...userObject }
           })
 

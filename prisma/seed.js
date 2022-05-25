@@ -305,9 +305,19 @@ const uploadFile = async (fileUrl) => {
 }
 
 async function main() {
+  let profile
   try {
 
-    await prisma.$transaction([
+    [ profile ] = await prisma.$transaction([
+      prisma.profile.upsert({
+        where: {
+          email: 'sonraalmerol@addu.edu.ph'
+        },
+        update: {},
+        create: {
+          email: 'sonraalmerol@addu.edu.ph'
+        }
+      }),
       prisma.projectStatus.upsert({
         where: { id: 'not_implemented' },
         update: {},
@@ -473,7 +483,7 @@ async function main() {
   for (const research of researches) {
     if (research.fundSource === 'AdDU-URC') {
       try {
-        await prisma.project.upsert({
+        const project = await prisma.project.upsert({
           where: { title: research.name },
           update: {},
           create: {
@@ -492,6 +502,27 @@ async function main() {
             },
             project_status_id: 'finished'
           },
+        })
+        await prisma.submission.create({
+          data: {
+            title: research.name,
+            project_id: project.id,
+            type: 'CAPSULE',
+            profile: {
+              connect: {
+                id: profile.id
+              }
+            },
+            capsule_proposal_submission: {
+              create: {
+                research_thrust: `${research.name} test thrust`,
+                brief_background: `${research.name} test background`,
+                objectives_of_the_study:`${research.name} test objectives`,
+                significance_of_the_study:`${research.name} test significance`,
+                methodology:`${research.name} test methodology`
+              }
+            }
+          }
         })
       } catch (err) {
         console.log(research.name)
@@ -629,20 +660,12 @@ async function main() {
   for (const member of council) {
     try {
       const res = await uploadFile(member.image)
-      const imageUrl = `${process.env.BASE_URL}/api/files/get/${res?.id}`
 
-      await prisma.user.upsert({
+      await prisma.profile.upsert({
         where: { email: member.email },
         update: {},
         create: {
           email: member.email,
-          first_name: member.first_name,
-          middle_initial: member.middle_initial,
-          last_name: member.last_name,
-          honorific: member.honorific,
-          titles: member.titles,
-          image: imageUrl,
-          name: `${member.honorific ? `${member.honorific} ` : ''}${member.first_name} ${member.middle_initial} ${member.last_name}${member.titles ? `, ${member.titles}` : ''}`,
           bridge_institutes: {
             create: {
               institute: {
@@ -658,6 +681,11 @@ async function main() {
               },
               role_title: member.position,
               duration: member.duration
+            }
+          },
+          photo: {
+            connect: {
+              id: res?.id
             }
           },
           roles: {
@@ -682,22 +710,19 @@ async function main() {
 
       const usersConstructor = await Promise.all(center.users.map(async (member) => {
         const res = await uploadFile(member.image)
-        const imageUrl = `${process.env.BASE_URL}/api/files/get/${res?.id}`
         return ({
-          user: {
+          profile: {
             connectOrCreate: {
               where: {
-                email: member.email,
+                email: member.email
               },
               create: {
                 email: member.email,
-                first_name: member.first_name,
-                middle_initial: member.middle_initial,
-                last_name: member.last_name,
-                honorific: member.honorific,
-                titles: member.titles,
-                image: imageUrl,
-                name: `${member.honorific ? `${member.honorific} ` : ''}${member.first_name} ${member.middle_initial} ${member.last_name}${member.titles ? `, ${member.titles}` : ''}`,
+                photo: {
+                  connect: {
+                    id: res?.id
+                  }
+                },
               }
             }
           },
@@ -717,7 +742,7 @@ async function main() {
           address: center.address,
           description: center.description,
           research_areas: center.research_areas,
-          bridge_users: {
+          bridge_profiles: {
             create: usersConstructor
           }
         },

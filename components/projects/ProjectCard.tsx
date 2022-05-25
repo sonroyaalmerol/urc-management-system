@@ -8,14 +8,16 @@ import { format } from 'date-fns'
 
 import parse from '../../lib/client/parseHTML'
 
-import type { Project, UserToProjectBridge, User } from '@prisma/client'
+import type { Project, ProfileToProjectBridge, Profile, User } from '@prisma/client'
 
 import { useRouter } from 'next/router'
 
 interface ProjectCardProps extends BoxProps {
   project: (Project & {
-    bridge_users: (UserToProjectBridge & {
-        user: User;
+    bridge_profiles: (ProfileToProjectBridge & {
+        profile: Profile & {
+            user: User;
+        };
     })[];
   })
 }
@@ -55,10 +57,10 @@ const ProjectCard: React.FC<ProjectCardProps> = (props) => {
           {project.title}
         </Heading>
         <Wrap align="center" spacing="2">
-          { project.bridge_users.length > 0 ? project.bridge_users.map((bridge) => (
-            <WrapItem key={bridge.user_id}>
+          { project.bridge_profiles.length > 0 ? project.bridge_profiles.map((bridge) => (
+            <WrapItem key={bridge.profile.user.id}>
               <SmallAvatar
-                {...bridge.user}
+                {...bridge.profile}
               />
             </WrapItem>
           )) : (
@@ -66,7 +68,7 @@ const ProjectCard: React.FC<ProjectCardProps> = (props) => {
               { [...project.main_proponents, ...project.co_proponents].map((proponent, i) => (
                 <WrapItem key={`${proponent}-avatar-${i}`}>
                   <SmallAvatar
-                    name={proponent}
+                    user={{ name: proponent }}
                   />
                 </WrapItem>
               )) }

@@ -21,11 +21,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               parent_unit: true
             }
           },
-          bridge_users: {
+          bridge_profiles: {
             include: {
-              user: true
+              profile: {
+                include: {
+                  user: true
+                }
+              }
             }
-          }
+          },
         },
         where: {
           ...where,

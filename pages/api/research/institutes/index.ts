@@ -13,11 +13,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         skip,
         take,
         include: {
-          bridge_users: {
+          bridge_profiles: {
             include: {
-              user: true
+              profile: {
+                include: {
+                  user: true
+                }
+              }
             }
-          }
+          },
         },
         where
       })

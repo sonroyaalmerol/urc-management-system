@@ -36,7 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const response = await fs.readFile(path.join(
       process.cwd(),
-      `/storage/${file.user_id ?? 'root'}/${file.file_type.replace('.', '')}/${file.id}${file.file_type}`
+      `/storage/${file.profile_id ?? 'root'}/${file.file_type.replace('.', '')}/${file.id}${file.file_type}`
     ))
 
     const pass = new PassThrough()

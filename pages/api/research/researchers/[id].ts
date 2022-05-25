@@ -8,9 +8,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return await prisma.user.findFirst({
       where: {
         ...where.OR[0],
-        roles: {
-          some: {
-            id: 'researcher'
+        profile: {
+          roles: {
+            some: {
+              id: 'researcher'
+            }
           }
         }
       }
