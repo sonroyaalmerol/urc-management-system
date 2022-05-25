@@ -32,13 +32,13 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
   };
 
   return (
-    <VStack as="form" onSubmit={handleSubmit(onSubmit)} w="100%" align="baseline" spacing={8}>
+    <VStack as="form" onSubmit={handleSubmit(onSubmit)} w="full" align="baseline" spacing={8}>
       <Card>
         <VStack align="baseline" spacing={6}>
           <Heading fontFamily="body" fontSize="lg">
             {props.projectTitle}
           </Heading>
-          <VStack w="100%" align="baseline" spacing={1}>
+          <VStack w="full" align="baseline" spacing={1}>
             <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Research Thrust</Text>
             <Controller
               name="research_thrust"
@@ -47,7 +47,7 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
               render={({ field }) => <RichTextarea {...field} />}
             />
           </VStack>
-          <VStack w="100%" align="baseline" spacing={1}>
+          <VStack w="full" align="baseline" spacing={1}>
             <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Brief Background</Text>
             <Controller
               name="brief_background"
@@ -56,7 +56,7 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
               render={({ field }) => <RichTextarea {...field} />}
             />
           </VStack>
-          <VStack w="100%" align="baseline" spacing={1}>
+          <VStack w="full" align="baseline" spacing={1}>
             <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Objectives of the Study / Statement of the Problem</Text>
             <Controller
               name="objectives_of_the_study"
@@ -65,7 +65,7 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
               render={({ field }) => <RichTextarea {...field} />}
             />
           </VStack>
-          <VStack w="100%" align="baseline" spacing={1}>
+          <VStack w="full" align="baseline" spacing={1}>
             <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Significance of the Study</Text>
             <Controller
               name="significance_of_the_study"
@@ -74,7 +74,7 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
               render={({ field }) => <RichTextarea {...field} />}
             />
           </VStack>
-          <VStack w="100%" align="baseline" spacing={1}>
+          <VStack w="full" align="baseline" spacing={1}>
             <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Methodology</Text>
             <Controller
               name="methodology"
@@ -108,14 +108,14 @@ const FullBlownProposalForm: React.FC<FullBlownProposalFormProps> = (props) => {
   }, [file])
 
   return (
-    <VStack as="form" onSubmit={handleSubmit(onSubmit)} w="100%" align="baseline" spacing={8}>
+    <VStack as="form" onSubmit={handleSubmit(onSubmit)} w="full" align="baseline" spacing={8}>
       <Card>
         <VStack align="baseline" spacing={6}>
           <Heading fontFamily="body" fontSize="lg">
             {props.projectTitle}
           </Heading>
           <FileUploadButton file={file} {...register('file')} />
-          <VStack w="100%" align="baseline" spacing={1}>
+          <VStack w="full" align="baseline" spacing={1}>
             <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Description</Text>
             <Controller
               name="description"
@@ -149,7 +149,7 @@ const BudgetProposalForm: React.FC<BudgetProposalFormProps> = (props) => {
   }, [file])
 
   return (
-    <VStack as="form" onSubmit={handleSubmit(onSubmit)} w="100%" align="baseline" spacing={8}>
+    <VStack as="form" onSubmit={handleSubmit(onSubmit)} w="full" align="baseline" spacing={8}>
       <Card>
         <VStack align="baseline" spacing={6}>
           <Heading fontFamily="body" fontSize="lg">

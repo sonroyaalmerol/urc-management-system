@@ -62,7 +62,7 @@ const RichTextarea: React.ForwardRefRenderFunction<HTMLTextAreaElement, Textarea
   return (
     <Box
       key={props.key}
-      w="100%"
+      w="full"
       padding={4}
       paddingTop={1}
       border="1px"

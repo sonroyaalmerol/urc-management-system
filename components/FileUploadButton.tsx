@@ -19,13 +19,13 @@ const FileUploadButton: React.ForwardRefRenderFunction<HTMLInputElement, FileUpl
   delete divProps.file
 
   return (
-    <VStack w="100%" align="baseline" spacing={2}>
+    <VStack w="full" align="baseline" spacing={2}>
       { file?.length > 0 && (
         <Box
           backgroundColor="brand.cardBackground"
           borderRadius={10}
           padding="1rem"
-          w="100%"
+          w="full"
         >
           <Wrap align="center" spacing={4}>
             <WrapItem>

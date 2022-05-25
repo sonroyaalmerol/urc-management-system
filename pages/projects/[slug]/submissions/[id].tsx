@@ -2,7 +2,7 @@ import React from 'react'
 import ContentHeader from '../../../../components/ContentHeader'
 import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
-import { VStack, Heading, Text } from '@chakra-ui/react'
+import { VStack, Heading, Text, HStack, Avatar, Wrap, WrapItem, Tag } from '@chakra-ui/react'
 
 import Button from '../../../../components/Button'
 
@@ -10,15 +10,35 @@ import { NextSeo } from 'next-seo'
 
 import { prisma } from '../../../../lib/server/prisma'
 
-import type { Submission, DeliverableSubmission, BudgetProposalSubmission, CapsuleProposalSubmission, FullBlownProposalSubmission, Profile, Project, SubmissionTypes } from '@prisma/client'
+import type { Submission, SubmissionStatus, DeliverableSubmission, BudgetProposalSubmission, CapsuleProposalSubmission, FullBlownProposalSubmission, Profile, Project, SubmissionTypes } from '@prisma/client'
 import Card from '../../../../components/Card'
 import RichTextarea from '../../../../components/RichTextarea'
 
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 
+const humanizeStatus = (status: SubmissionStatus) => {
+  switch(status) {
+    case 'APPROVED':
+      return {
+        color: 'brand.blue',
+        text: 'Approved'
+      }
+    case 'NOT_APPROVED':
+      return {
+        color: 'brand.red',
+        text: 'Not Approved'
+      }
+    case 'NOT_PROCESSED':
+      return {
+        color: 'brand.lightBlue',
+        text: 'Not yet processed'
+      }
+  }
+}
 interface CapsuleProposalFormProps {
   projectTitle: string,
-  submission: CapsuleProposalSubmission
+  submission: CapsuleProposalSubmission,
+  status: SubmissionStatus
 }
 
 const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
@@ -29,13 +49,29 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
   };
 
   return (
-    <VStack as="form" onSubmit={handleSubmit(onSubmit)} w="100%" align="baseline" spacing={8}>
+    <VStack as="form" onSubmit={handleSubmit(onSubmit)} w="full" align="baseline" spacing={8}>
       <Card>
         <VStack align="baseline" spacing={6}>
-          <Heading fontFamily="body" fontSize="lg">
-            {props.projectTitle}
-          </Heading>
-          <VStack w="100%" align="baseline" spacing={1}>
+          <Wrap align="center" spacing={4}>
+            <WrapItem>
+              <Heading fontFamily="body" fontSize="lg">
+                {props.projectTitle}
+              </Heading>
+            </WrapItem>
+            <WrapItem>
+              <Tag
+                bgColor={humanizeStatus(props.status).color}
+                textColor="white"
+                borderRadius="20px"
+                fontSize="xs"
+                fontWeight="bold"
+                paddingX="0.8rem"
+              >
+                {humanizeStatus(props.status).text}
+              </Tag>
+            </WrapItem>
+          </Wrap>
+          <VStack w="full" align="baseline" spacing={1}>
             <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Research Thrust</Text>
             <Controller
               name="research_thrust"
@@ -44,7 +80,7 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
               render={({ field }) => <RichTextarea isReadOnly {...field} />}
             />
           </VStack>
-          <VStack w="100%" align="baseline" spacing={1}>
+          <VStack w="full" align="baseline" spacing={1}>
             <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Brief Background</Text>
             <Controller
               name="brief_background"
@@ -53,7 +89,7 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
               render={({ field }) => <RichTextarea isReadOnly {...field} />}
             />
           </VStack>
-          <VStack w="100%" align="baseline" spacing={1}>
+          <VStack w="full" align="baseline" spacing={1}>
             <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Objectives of the Study / Statement of the Problem</Text>
             <Controller
               name="objectives_of_the_study"
@@ -62,7 +98,7 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
               render={({ field }) => <RichTextarea isReadOnly {...field} />}
             />
           </VStack>
-          <VStack w="100%" align="baseline" spacing={1}>
+          <VStack w="full" align="baseline" spacing={1}>
             <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Significance of the Study</Text>
             <Controller
               name="significance_of_the_study"
@@ -71,7 +107,7 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
               render={({ field }) => <RichTextarea isReadOnly {...field} />}
             />
           </VStack>
-          <VStack w="100%" align="baseline" spacing={1}>
+          <VStack w="full" align="baseline" spacing={1}>
             <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Methodology</Text>
             <Controller
               name="methodology"
@@ -80,7 +116,6 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
               render={({ field }) => <RichTextarea isReadOnly {...field} />}
             />
           </VStack>
-          <Button type="submit" disabled>Update</Button>
         </VStack>
       </Card>
     </VStack>
@@ -89,7 +124,8 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
 
 interface FullBlownProposalFormProps {
   projectTitle: string,
-  submission: FullBlownProposalSubmission
+  submission: FullBlownProposalSubmission,
+  status: SubmissionStatus
 }
 
 const FullBlownProposalForm: React.FC<FullBlownProposalFormProps> = () => {
@@ -101,7 +137,8 @@ const FullBlownProposalForm: React.FC<FullBlownProposalFormProps> = () => {
 
 interface BudgetProposalFormProps {
   projectTitle: string,
-  submission: BudgetProposalSubmission
+  submission: BudgetProposalSubmission,
+  status: SubmissionStatus
 }
 
 const BudgetProposalForm: React.FC<BudgetProposalFormProps> = () => {
@@ -141,11 +178,23 @@ const Submission: React.FC<SubmissionProps> = (props: InferGetServerSidePropsTyp
   const formConstructor = (type: SubmissionTypes) => {
     switch(type) {
       case 'BUDGET':
-        return <BudgetProposalForm projectTitle={submission.project.title} submission={submission.budget_proposal_submission} />
+        return <BudgetProposalForm
+          projectTitle={submission.project.title}
+          submission={submission.budget_proposal_submission}
+          status={submission.status}
+        />
       case 'CAPSULE':
-        return <CapsuleProposalForm projectTitle={submission.project.title} submission={submission.capsule_proposal_submission} />
+        return <CapsuleProposalForm
+          projectTitle={submission.project.title}
+          submission={submission.capsule_proposal_submission}
+          status={submission.status}
+        />
       case 'FULL':
-        return <FullBlownProposalForm projectTitle={submission.project.title} submission={submission.full_blown_proposal_submission} />
+        return <FullBlownProposalForm
+          projectTitle={submission.project.title}
+          submission={submission.full_blown_proposal_submission}
+          status={submission.status}
+        />
     }
   }
 
@@ -160,6 +209,33 @@ const Submission: React.FC<SubmissionProps> = (props: InferGetServerSidePropsTyp
         </ContentHeader>
         <VStack spacing={5} w="full">
           {formConstructor(submission.type)}
+          
+          <Card>
+            <VStack align="baseline" spacing={6}>
+              <Heading fontFamily="body" fontSize="lg">
+                Comments
+              </Heading>
+              <HStack spacing={4} w="full" align="flex-start">
+                <Avatar />
+                <VStack align="baseline" spacing={1} w="full">
+                  <Heading fontFamily="body" fontSize="md" color="brand.blue">Son Roy Almerol</Heading>
+                  <Text>This is the comment.</Text>
+                </VStack>
+              </HStack>
+
+              <HStack spacing={4} w="full" align="flex-start">
+                <Avatar />
+                <VStack align="baseline" spacing={1} w="full">
+                  <Heading fontFamily="body" fontSize="md" color="brand.blue">Son Roy Almerol</Heading>
+                  <Text>This</Text>
+                  <Text>is</Text>
+                  <Text>a</Text>
+                  <Text>multiline</Text>
+                  <Text>comment</Text>
+                </VStack>
+              </HStack>
+            </VStack>
+          </Card>
         </VStack>
       </VStack>
     </>
@@ -182,7 +258,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   const submission = await prisma.submission.findUnique({
     where: {
-      id: id as string
+      id: id as string,
     },
     include: {
       deliverable_submission: true,
