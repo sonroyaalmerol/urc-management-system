@@ -116,7 +116,7 @@ const SubmissionCard: React.FC<SubmissionCardProps> = (props) => {
                   fontWeight="bold"
                   color="brand.blue"
                 >
-                  { submission.profile.user.first_name }
+                  { submission.profile.first_name }
                 </Text>
               </WrapItem>
               <WrapItem>

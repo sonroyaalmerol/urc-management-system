@@ -134,7 +134,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                   minW={0}>
                   <Avatar
                     size={'sm'}
-                    src={session.user.image}
+                    src={`/api/files/get/${session.profile.photo_id}`}
                   />
                 </MenuButton>
                 <MenuList alignItems={'center'}>
