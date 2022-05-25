@@ -2,11 +2,11 @@ import React from 'react'
 import ContentHeader from '../../../../../components/ContentHeader'
 import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
-import { VStack, HStack, Heading, Wrap, WrapItem, Spacer, Select, Input, Text } from '@chakra-ui/react'
+import { VStack, HStack, Heading, Wrap, WrapItem, Spacer, Select, Input, Text, Box } from '@chakra-ui/react'
 
 import Button from '../../../../../components/Button'
 
-import { AddIcon } from '@chakra-ui/icons'
+import { AddIcon, AttachmentIcon } from '@chakra-ui/icons'
 
 import { NextSeo } from 'next-seo'
 
@@ -17,6 +17,8 @@ import Card from '../../../../../components/Card'
 import RichTextarea from '../../../../../components/RichTextarea'
 
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
+import formatBytes from '../../../../../lib/formatBytes'
+import FileUploadButton from '../../../../../components/FileUploadButton'
 
 interface CapsuleProposalFormProps {
   projectTitle: string,
@@ -92,10 +94,40 @@ interface FullBlownProposalFormProps {
   projectTitle: string,
 }
 
-const FullBlownProposalForm: React.FC<FullBlownProposalFormProps> = () => {
+const FullBlownProposalForm: React.FC<FullBlownProposalFormProps> = (props) => {
+  const { control, handleSubmit, register, watch } = useForm<Partial<FullBlownProposalSubmission & { file: FileList }>>();
+
+  const onSubmit: SubmitHandler<Partial<FullBlownProposalSubmission>> = data => {
+    console.log(data)
+  };
+
+  const { file } = watch()
+
+  React.useEffect(() => {
+    console.log(file)
+  }, [file])
+
   return (
-    <>
-    </>
+    <VStack as="form" onSubmit={handleSubmit(onSubmit)} w="100%" align="baseline" spacing={8}>
+      <Card>
+        <VStack align="baseline" spacing={6}>
+          <Heading fontFamily="body" fontSize="lg">
+            {props.projectTitle}
+          </Heading>
+          <FileUploadButton file={file} {...register('file')} />
+          <VStack w="100%" align="baseline" spacing={1}>
+            <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Description</Text>
+            <Controller
+              name="description"
+              control={control}
+              defaultValue={""}
+              render={({ field }) => <RichTextarea {...field} />}
+            />
+          </VStack>
+          <Button type="submit">Submit</Button>
+        </VStack>
+      </Card>
+    </VStack>
   )
 }
 
@@ -103,10 +135,40 @@ interface BudgetProposalFormProps {
   projectTitle: string,
 }
 
-const BudgetProposalForm: React.FC<BudgetProposalFormProps> = () => {
+const BudgetProposalForm: React.FC<BudgetProposalFormProps> = (props) => {
+  const { control, handleSubmit, register, watch } = useForm<Partial<FullBlownProposalSubmission & { file: FileList }>>();
+
+  const onSubmit: SubmitHandler<Partial<FullBlownProposalSubmission>> = data => {
+    console.log(data)
+  };
+
+  const { file } = watch()
+
+  React.useEffect(() => {
+    console.log(file)
+  }, [file])
+
   return (
-    <>
-    </>
+    <VStack as="form" onSubmit={handleSubmit(onSubmit)} w="100%" align="baseline" spacing={8}>
+      <Card>
+        <VStack align="baseline" spacing={6}>
+          <Heading fontFamily="body" fontSize="lg">
+            {props.projectTitle}
+          </Heading>
+          <FileUploadButton file={file} {...register('file')} />
+          <VStack w="100%" align="baseline" spacing={1}>
+            <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Description</Text>
+            <Controller
+              name="description"
+              control={control}
+              defaultValue={""}
+              render={({ field }) => <RichTextarea {...field} />}
+            />
+          </VStack>
+          <Button type="submit">Submit</Button>
+        </VStack>
+      </Card>
+    </VStack>
   )
 }
 

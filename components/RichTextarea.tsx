@@ -92,7 +92,7 @@ const RichTextarea: React.ForwardRefRenderFunction<HTMLTextAreaElement, Textarea
         }}
       />
       <Textarea
-        hidden
+        display="none"
         onChange={() => { }}
         value={textAreaValue}
         ref={ref}
