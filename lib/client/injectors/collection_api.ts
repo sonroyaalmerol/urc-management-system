@@ -112,17 +112,21 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function)
         if (key === 'bridge_profiles') {
           processedEntry.users = processedEntry[key].map((profileBridge) => {
             let processedUser = { ...profileBridge }
-            delete processedUser.profile
+            delete processedUser?.profile
+            delete processedUser?.profile_id
+
+            let processedProfile = { ...profileBridge.profile }
+            delete processedProfile?.user
+            delete processedProfile?.id
   
             let userObject = profileBridge.profile.user
-            delete userObject.id
-            delete userObject.created_at
-            delete userObject.updated_at
-            delete userObject.first_name
-            delete userObject.last_name
-            delete userObject.image
+            delete userObject?.created_at
+            delete userObject?.updated_at
+            delete userObject?.first_name
+            delete userObject?.last_name
+            delete userObject?.image
   
-            return { ...processedUser, ...userObject }
+            return { ...processedUser, ...processedProfile, ...userObject }
           })
 
           delete processedEntry[key]
