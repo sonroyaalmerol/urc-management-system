@@ -70,7 +70,7 @@ const uploadFile = async (fileProps: FileProps, ownerId: string) : Promise<FileU
           file_type: extension,
           mime_type: fileProps.mimeType,
           public_access: fileProps.publicAccess,
-          user: ownerId ? {
+          profile: ownerId ? {
             connect: {
               id: ownerId
             }
@@ -95,7 +95,7 @@ const deleteFile = async (fileId: string) : Promise<FileUpload | null> => {
   })
 
   if (file) {
-    await fs.rm(path.join(process.cwd(), `/storage/${file.user_id ?? 'root'}/${file.file_type.replace('.', '')}/${file.id}${file.file_type}`))
+    await fs.rm(path.join(process.cwd(), `/storage/${file.profile_id ?? 'root'}/${file.file_type.replace('.', '')}/${file.id}${file.file_type}`))
   
     return await prisma.fileUpload.delete({
       where: {
