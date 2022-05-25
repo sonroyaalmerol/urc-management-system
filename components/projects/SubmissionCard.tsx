@@ -3,7 +3,7 @@ import { VStack, HStack, Avatar, Text, Tag, Button, Wrap, WrapItem, Box, Center,
 
 import Card from '../Card'
 
-import type { Profile, Submission, BudgetProposalSubmission, CapsuleProposalSubmission, FullBlownProposalSubmission, DeliverableSubmission, FileUpload, User, SubmissionTypes, SubmissionStatus } from '@prisma/client'
+import type { Profile, Submission, BudgetProposalSubmission, CapsuleProposalSubmission, FullBlownProposalSubmission, DeliverableSubmission, FileUpload, User, SubmissionTypes, SubmissionStatus, Project } from '@prisma/client'
 
 import { format } from 'date-fns'
 
@@ -19,6 +19,7 @@ interface SubmissionCardProps extends BoxProps {
     deliverable_submission: DeliverableSubmission;
     budget_proposal_submission: BudgetProposalSubmission;
     files: FileUpload[];
+    project: Project;
   })>
 }
 
@@ -92,7 +93,7 @@ const SubmissionCard: React.FC<SubmissionCardProps> = (props) => {
   return (
     <Card
       as="a"
-      href={`/projects/testsubmissionid`}
+      href={`/projects/${submission.project.slug}/submissions/${submission.id}`}
       transition="box-shadow 0.05s, background-color 0.1s"
       _hover={{
         backgroundColor: "brand.cardBackground",
@@ -103,6 +104,7 @@ const SubmissionCard: React.FC<SubmissionCardProps> = (props) => {
       }}
       onClick={(e) => {
         e.preventDefault()
+        router.push(`/projects/${submission.project.slug}/submissions/${submission.id}`)
       }}
       {...divProps}
     >

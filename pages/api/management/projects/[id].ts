@@ -42,7 +42,8 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
           include: {
             user: true
           }
-        }
+        },
+        project: true
       },
       orderBy: {
         updated_at: 'desc'

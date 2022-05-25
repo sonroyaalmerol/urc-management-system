@@ -33,6 +33,15 @@ const theme = extendTheme({
           boxShadow: 'none' 
         }
       }
+    },
+    Input: { 
+      baseStyle: {
+        field: {
+          _focus: {
+            boxShadow: 'none'
+          }
+        }
+      }
     }
   }
 })

@@ -1,0 +1,21 @@
+.rdw-editor-toolbar {
+  background-color: transparent !important;
+  border: none !important;
+}
+
+.rdw-option-wrapper {
+  border-radius: 10px !important;
+  padding: 15px !important;
+  background-color: transparent !important;
+  border-width: 1.5px !important;
+}
+
+.rdw-option-wrapper:hover {
+  box-shadow: none !important;
+}
+
+.rdw-option-active, .rdw-option-wrapper:active {
+  padding: 15px !important;
+  box-shadow: none !important;
+  border-color: #1A2B75 !important;
+}

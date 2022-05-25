@@ -33,7 +33,7 @@ const DashboardContentHeader: React.FC<DashboardContentHeaderProps> = (props) =>
 
     // Iterate over the list of nested route parts and build
     // a "crumb" object for each one.
-    const crumblist = asPathNestedRoutes.map((subpath, idx) => {
+    let crumblist = asPathNestedRoutes.map((subpath, idx) => {
       // We can get the partial nested route for the crumb
       // by joining together the path parts up to this point.
       const href = "/" + asPathNestedRoutes.slice(0, idx + 1).join("/")
@@ -48,12 +48,13 @@ const DashboardContentHeader: React.FC<DashboardContentHeaderProps> = (props) =>
     })
 
     crumblist.pop()
+    crumblist = crumblist.filter((crumb => crumb.text !== 'New'))
     // Add in a default "Home" crumb for the top-level
     if (crumblist.length < 2) {
       return [{ href: '/', text: 'AdDU URC' }, ...crumblist]
     }
 
-    return [...crumblist];
+    return [...crumblist].filter((crumb => crumb.text !== 'New'));
   }, [router.pathname])
 
   return (

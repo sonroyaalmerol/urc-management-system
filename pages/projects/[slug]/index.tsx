@@ -1,5 +1,5 @@
 import React from 'react'
-import ContentHeader from '../../components/ContentHeader'
+import ContentHeader from '../../../components/ContentHeader'
 import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
 import { VStack, HStack, Heading, Button, Wrap, WrapItem, Spacer, Select } from '@chakra-ui/react'
@@ -8,10 +8,10 @@ import { AddIcon } from '@chakra-ui/icons'
 
 import { NextSeo } from 'next-seo'
 
-import { prisma } from '../../lib/server/prisma'
+import { prisma } from '../../../lib/server/prisma'
 
 import type { Project } from '@prisma/client'
-import SubmissionList from '../../components/projects/SubmissionList'
+import SubmissionList from '../../../components/projects/SubmissionList'
 import { type } from 'os'
 
 interface ProjectProps {

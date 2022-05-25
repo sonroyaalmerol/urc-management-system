@@ -13,8 +13,9 @@ interface ParseOptions {
 
 const parseOptions: (options?: ParseOptions) => HTMLReactParserOptions = (options) => {
   return ({
-    replace: domNode => {
-      if (domNode instanceof Element) {
+    replace: _domNode => {
+      if ((_domNode as Element).type === 'tag') {
+        const domNode = _domNode as Element
         const props = attributesToProps(domNode.attribs)
 
         if (options?.textOnly) {
@@ -59,7 +60,7 @@ const parseOptions: (options?: ParseOptions) => HTMLReactParserOptions = (option
           return <></>
         }
       } else {
-        return <>{(domNode as Text).nodeValue.replace(/\s+/g, ' ')}</>
+        return <>{(_domNode as Text).nodeValue.replace(/\s+/g, ' ')}</>
       }
     }
   })
