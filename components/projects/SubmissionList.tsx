@@ -49,6 +49,7 @@ const SubmissionList: React.FC<ProjectListProps> = (props) => {
   }
 
   React.useEffect(() => {
+    setLoading(true)
     onLoadNewMemo({ reset: true })
   }, [props.types, props.status])
   return (
