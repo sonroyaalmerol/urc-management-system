@@ -32,7 +32,7 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
   return (
     <VStack as="form" onSubmit={handleSubmit(onSubmit)} w="100%" align="baseline" spacing={8}>
       <Card>
-        <VStack align="baseline" spacing={4}>
+        <VStack align="baseline" spacing={6}>
           <Heading fontFamily="body" fontSize="lg">
             {props.projectTitle}
           </Heading>
@@ -81,9 +81,9 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
               render={({ field }) => <RichTextarea {...field} />}
             />
           </VStack>
+          <Button type="submit">Submit</Button>
         </VStack>
       </Card>
-      <Button type="submit">Submit</Button>
     </VStack>
   )
 }
