@@ -2,9 +2,9 @@ import React from 'react'
 import ContentHeader from '../../../../components/ContentHeader'
 import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
-import { VStack, HStack, Heading, Button, Wrap, WrapItem, Spacer, Select, Input } from '@chakra-ui/react'
+import { VStack, Heading, Text } from '@chakra-ui/react'
 
-import { AddIcon } from '@chakra-ui/icons'
+import Button from '../../../../components/Button'
 
 import { NextSeo } from 'next-seo'
 
@@ -14,30 +14,76 @@ import type { Submission, DeliverableSubmission, BudgetProposalSubmission, Capsu
 import Card from '../../../../components/Card'
 import RichTextarea from '../../../../components/RichTextarea'
 
+import { useForm, Controller, SubmitHandler } from "react-hook-form"
+
 interface CapsuleProposalFormProps {
   projectTitle: string,
   submission: CapsuleProposalSubmission
 }
 
 const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
-  const [test, setTest] = React.useState('')
+  const { control, handleSubmit } = useForm<Partial<CapsuleProposalSubmission>>();
 
-  React.useEffect(() => {
-    console.log(test)
-  })
+  const onSubmit: SubmitHandler<Partial<CapsuleProposalSubmission>> = data => {
+    console.log(data)
+  };
 
   return (
-    <>
+    <VStack as="form" onSubmit={handleSubmit(onSubmit)} w="100%" align="baseline" spacing={8}>
       <Card>
-        <VStack align="baseline">
+        <VStack align="baseline" spacing={4}>
           <Heading fontFamily="body" fontSize="lg">
             {props.projectTitle}
           </Heading>
-          <RichTextarea placeholder='test' onChange={(e) => { setTest(e.target.value) }} value={test} />
-          <Input />
+          <VStack w="100%" align="baseline" spacing={1}>
+            <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Research Thrust</Text>
+            <Controller
+              name="research_thrust"
+              control={control}
+              defaultValue={props.submission.research_thrust}
+              render={({ field }) => <RichTextarea {...field} />}
+            />
+          </VStack>
+          <VStack w="100%" align="baseline" spacing={1}>
+            <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Brief Background</Text>
+            <Controller
+              name="brief_background"
+              control={control}
+              defaultValue={props.submission.brief_background}
+              render={({ field }) => <RichTextarea {...field} />}
+            />
+          </VStack>
+          <VStack w="100%" align="baseline" spacing={1}>
+            <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Objectives of the Study / Statement of the Problem</Text>
+            <Controller
+              name="objectives_of_the_study"
+              control={control}
+              defaultValue={props.submission.objectives_of_the_study}
+              render={({ field }) => <RichTextarea {...field} />}
+            />
+          </VStack>
+          <VStack w="100%" align="baseline" spacing={1}>
+            <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Significance of the Study</Text>
+            <Controller
+              name="significance_of_the_study"
+              control={control}
+              defaultValue={props.submission.significance_of_the_study}
+              render={({ field }) => <RichTextarea {...field} />}
+            />
+          </VStack>
+          <VStack w="100%" align="baseline" spacing={1}>
+            <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Methodology</Text>
+            <Controller
+              name="methodology"
+              control={control}
+              defaultValue={props.submission.methodology}
+              render={({ field }) => <RichTextarea {...field} />}
+            />
+          </VStack>
         </VStack>
       </Card>
-    </>
+      <Button type="submit">Submit</Button>
+    </VStack>
   )
 }
 

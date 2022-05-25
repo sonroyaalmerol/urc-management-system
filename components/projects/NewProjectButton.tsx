@@ -1,6 +1,8 @@
 import React from 'react'
 
-import { Button, useDisclosure, Text } from '@chakra-ui/react'
+import { useDisclosure, Text } from '@chakra-ui/react'
+
+import Button from '../Button'
 
 import {
   Modal,
@@ -23,15 +25,6 @@ const NewProjectButton: React.FC<NewProjectButtonProps> = (props) => {
   return (
     <>
       <Button
-        backgroundColor="brand.blue"
-        borderRadius={10}
-        color="white"
-        fontWeight="bold"
-        padding="1.5rem"
-        _hover={{
-          color: "brand.blue",
-          backgroundColor: "brand.cardBackground"
-        }}
         onClick={onOpen}
         leftIcon={<AddIcon />}
       >

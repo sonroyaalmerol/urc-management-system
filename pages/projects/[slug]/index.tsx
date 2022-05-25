@@ -13,6 +13,7 @@ import { prisma } from '../../../lib/server/prisma'
 import type { Project } from '@prisma/client'
 import SubmissionList from '../../../components/projects/SubmissionList'
 import { type } from 'os'
+import NewSubmissionButton from '../../../components/projects/NewSubmissionButton'
 
 interface ProjectProps {
 
@@ -90,20 +91,11 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
             <Spacer />
             <WrapItem>
               <HStack>
-                <Button
-                  backgroundColor="brand.blue"
-                  borderRadius={10}
-                  color="white"
-                  fontWeight="bold"
-                  padding="1.5rem"
-                  _hover={{
-                    color: "brand.blue",
-                    backgroundColor: "brand.cardBackground"
-                  }}
-                  leftIcon={<AddIcon />}
-                >
-                  New Submission
-                </Button>
+                <NewSubmissionButton
+                  capsuleUrl={`/projects/${project.slug}/submissions/new/capsule`}
+                  fullBlownUrl={`/projects/${project.slug}/submissions/new/full`}
+                  budgetUrl={`/projects/${project.slug}/submissions/new/budget`}
+                />
               </HStack>
             </WrapItem>
           </Wrap>

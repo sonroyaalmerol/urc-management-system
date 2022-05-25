@@ -16,11 +16,11 @@ const Editor = dynamic(
 
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css"
 
-const RichTextarea: React.FC<TextareaProps> = (props) => {
+const RichTextarea: React.ForwardRefRenderFunction<HTMLTextAreaElement, TextareaProps> = (props, ref) => {
   const contentState = React.useMemo(() => {
     if (props.value && typeof window === 'object') {
       const htmlToDraft = require('html-to-draftjs').default
-      return ContentState.createFromBlockArray(
+      const currentState = ContentState.createFromBlockArray(
         htmlToDraft(
           (props.value as string)
             .replace('<b>', '<strong>')
@@ -31,6 +31,7 @@ const RichTextarea: React.FC<TextareaProps> = (props) => {
             .replace('</u>', '</ins>')
         )
       )
+      return currentState
     }
 
     return ContentState.createFromText('')
@@ -44,12 +45,18 @@ const RichTextarea: React.FC<TextareaProps> = (props) => {
 
   const [editorState, setEditorState] = useState(EditorState.createWithContent(contentState))
 
+  /* React.useEffect(() => {
+    setEditorState(EditorState.createWithContent(contentState))
+  }, [contentState]) */
+
   const textAreaValue = React.useMemo(() => {
     return draftToHtml(convertToRaw(editorState.getCurrentContent()))
   }, [editorState])
 
   React.useEffect(() => {
-    props.onChange({ target: { value: textAreaValue } } as any)
+    if (props.onChange) {
+      props.onChange({ target: { value: textAreaValue } } as any)
+    }
   }, [textAreaValue])
 
   return (
@@ -83,12 +90,13 @@ const RichTextarea: React.FC<TextareaProps> = (props) => {
       />
       <Textarea
         hidden
-        onChange={() => {}}
+        onChange={() => { }}
         value={textAreaValue}
+        ref={ref}
         {...divProps}
       />
     </Box>
   )
 }
 
-export default RichTextarea
+export default React.forwardRef(RichTextarea)
