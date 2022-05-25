@@ -315,7 +315,11 @@ async function main() {
         },
         update: {},
         create: {
-          email: 'sonraalmerol@addu.edu.ph'
+          email: 'sonraalmerol@addu.edu.ph',
+          first_name: 'Son Roy',
+          middle_initial: 'A.',
+          last_name: 'Almerol',
+          honorific: 'Mr.',
         }
       }),
       prisma.projectStatus.upsert({
@@ -665,6 +669,11 @@ async function main() {
         where: { email: member.email },
         update: {},
         create: {
+          first_name: member.first_name,
+          middle_initial: member.middle_initial,
+          last_name: member.last_name,
+          honorific: member.honorific,
+          titles: member.titles,
           email: member.email,
           bridge_institutes: {
             create: {
@@ -717,6 +726,11 @@ async function main() {
                 email: member.email
               },
               create: {
+                first_name: member.first_name,
+                middle_initial: member.middle_initial,
+                last_name: member.last_name,
+                honorific: member.honorific,
+                titles: member.titles,
                 email: member.email,
                 photo: {
                   connect: {

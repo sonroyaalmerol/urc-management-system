@@ -54,10 +54,6 @@ export default NextAuth({
           },
           select: {
             id: true,
-            name: true,
-            first_name: true,
-            last_name: true,
-            middle_initial: true,
             image: true,
             email: true,
             profile: {
@@ -67,6 +63,9 @@ export default NextAuth({
                     institute: true
                   }
                 },
+                first_name: true,
+                last_name: true,
+                middle_initial: true,
                 roles: true
               }
             }
