@@ -118,6 +118,9 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function)
             delete userObject.id
             delete userObject.created_at
             delete userObject.updated_at
+            delete userObject.first_name
+            delete userObject.last_name
+            delete userObject.image
   
             return { ...processedUser, ...userObject }
           })
