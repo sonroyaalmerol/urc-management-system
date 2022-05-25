@@ -136,9 +136,9 @@ interface BudgetProposalFormProps {
 }
 
 const BudgetProposalForm: React.FC<BudgetProposalFormProps> = (props) => {
-  const { control, handleSubmit, register, watch } = useForm<Partial<FullBlownProposalSubmission & { file: FileList }>>();
+  const { control, handleSubmit, register, watch } = useForm<Partial<BudgetProposalSubmission & { file: FileList }>>();
 
-  const onSubmit: SubmitHandler<Partial<FullBlownProposalSubmission>> = data => {
+  const onSubmit: SubmitHandler<Partial<BudgetProposalSubmission>> = data => {
     console.log(data)
   };
 
@@ -156,15 +156,6 @@ const BudgetProposalForm: React.FC<BudgetProposalFormProps> = (props) => {
             {props.projectTitle}
           </Heading>
           <FileUploadButton file={file} {...register('file')} />
-          <VStack w="100%" align="baseline" spacing={1}>
-            <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Description</Text>
-            <Controller
-              name="description"
-              control={control}
-              defaultValue={""}
-              render={({ field }) => <RichTextarea {...field} />}
-            />
-          </VStack>
           <Button type="submit">Submit</Button>
         </VStack>
       </Card>
