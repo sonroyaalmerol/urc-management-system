@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import type { Function } from '../../../types/api';
 
 const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function) => {
-  let { page: raw_page, per_page: raw_per_page, search, fields } = req.query
+  let { page: raw_page, per_page: raw_per_page, search, fields, sort_field, sort } = req.query
   const page: number = raw_page ? parseInt(raw_page as string) : 1
   const per_page: number = raw_per_page ? parseInt(raw_per_page as string) : 10
 
@@ -100,6 +100,9 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function)
     take: (per_page ?? 10),
     where: search ? {
       OR: ORarray
+    } : undefined,
+    orderBy: sort_field && sort ? {
+      [sort_field as string]: sort
     } : undefined
   }
 
@@ -117,7 +120,6 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function)
 
             let processedProfile = { ...profileBridge.profile }
             delete processedProfile?.user
-            delete processedProfile?.id
   
             let userObject = profileBridge.profile.user
             delete userObject?.created_at
@@ -126,7 +128,7 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function)
             delete userObject?.last_name
             delete userObject?.image
   
-            return { ...processedUser, ...processedProfile, ...userObject }
+            return { ...userObject, ...processedProfile, ...processedUser }
           })
 
           delete processedEntry[key]

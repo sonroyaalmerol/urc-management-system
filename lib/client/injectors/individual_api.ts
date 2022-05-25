@@ -39,7 +39,6 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: (any) => 
 
           let processedProfile = { ...profileBridge.profile }
           delete processedProfile?.user
-          delete processedProfile?.id
 
           let userObject = profileBridge.profile.user
           delete userObject?.created_at
@@ -48,7 +47,7 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: (any) => 
           delete userObject?.last_name
           delete userObject?.image
 
-          return { ...processedUser, ...processedProfile, ...userObject }
+          return { ...userObject, ...processedProfile, ...processedUser }
         })
 
         delete data[key]

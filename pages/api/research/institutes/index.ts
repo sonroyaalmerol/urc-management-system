@@ -4,7 +4,7 @@ import injector from "../../../../lib/client/injectors/collection_api"
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  await injector(req, res, async ({ skip, take, where }) => {
+  await injector(req, res, async ({ skip, take, where, orderBy }) => {
     return await prisma.$transaction([
       prisma.institute.count({
         where
@@ -23,7 +23,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
           },
         },
-        where
+        where,
+        orderBy
       })
     ])
   })
