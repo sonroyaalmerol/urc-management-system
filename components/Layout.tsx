@@ -19,8 +19,12 @@ const menus = [
     url: '/projects',
   },
   {
-    name: 'Publications',
-    url: '/publications',
+    name: 'Activities',
+    url: '/activities'
+  },
+  {
+    name: 'Profiles',
+    url: '/profiles',
   }
 ]
 
