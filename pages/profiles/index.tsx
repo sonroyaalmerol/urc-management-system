@@ -6,7 +6,7 @@ import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "nex
 import { NextSeo } from 'next-seo'
 import { HStack, VStack } from '@chakra-ui/react'
 import SearchInput from '../../components/SearchInput'
-import NewProjectButton from '../../components/projects/NewProjectButton'
+import NewProfileButton from '../../components/profiles/NewProfileButton'
 
 interface ProfilesProps {
 
@@ -32,7 +32,7 @@ const Profiles: React.FC<ProfilesProps> = (props: InferGetServerSidePropsType<ty
                 setSearch(e.target.value)
               }}
             />
-            <NewProjectButton />
+            <NewProfileButton />
           </HStack>
         </VStack>
       </VStack>

@@ -6,7 +6,7 @@ import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "nex
 import { NextSeo } from 'next-seo'
 import { HStack, VStack } from '@chakra-ui/react'
 import SearchInput from '../../components/SearchInput'
-import NewProjectButton from '../../components/projects/NewProjectButton'
+import NewActivityButton from '../../components/activities/NewActivityButton'
 
 interface ActivitiesProps {
 
@@ -32,7 +32,7 @@ const Activities: React.FC<ActivitiesProps> = (props: InferGetServerSidePropsTyp
                 setSearch(e.target.value)
               }}
             />
-            <NewProjectButton />
+            <NewActivityButton />
           </HStack>
         </VStack>
       </VStack>
