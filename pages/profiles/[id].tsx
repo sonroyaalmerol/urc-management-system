@@ -4,9 +4,7 @@ import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
 
 import { NextSeo } from 'next-seo'
-import { Avatar, Divider, Heading, HStack, Tag, Text, VStack, Wrap, WrapItem } from '@chakra-ui/react'
-import { BookPublication, ExternalResearch, Institute, JournalPublication, Profile, ProfileToBookPublicationBridge, ProfileToExternalResearchBridge, ProfileToInstituteBridge, ProfileToJournalPublicationBridge, ProfileToProjectBridge, ProfileToResearchDisseminationBridge, ProfileToResearchPresentationBridge, Project, ResearchDissemination, ResearchPresentation, Unit, User } from '@prisma/client'
-import Card from '../../components/Card'
+import { VStack } from '@chakra-ui/react'
 import ProfileDetails from '../../components/profiles/profile/ProfileDetails'
 import InternalProjects from '../../components/profiles/profile/InternalProjects'
 import ExternalResearches from '../../components/profiles/profile/ExternalResearches'
@@ -14,37 +12,14 @@ import JournalPublications from '../../components/profiles/profile/JournalPublic
 import BookPublications from '../../components/profiles/profile/BookPublications'
 import ResearchDisseminations from '../../components/profiles/profile/ResearchDisseminations'
 import ResearchPresentations from '../../components/profiles/profile/ResearchPresentations'
+import { ExtendedProfile } from '../../types/profile-card'
 
 interface ProfileProps {
 
 }
 
 const Profile: React.FC<ProfileProps> = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const profile: Profile & {
-    user: User;
-    units: Unit[];
-    bridge_institutes: (ProfileToInstituteBridge & {
-      institute: Institute;
-    })[];
-    bridge_projects: (ProfileToProjectBridge & {
-      project: Project;
-    })[];
-    bridge_external_researches: (ProfileToExternalResearchBridge & {
-      external_research: ExternalResearch;
-    })[];
-    bridge_journal_publications: (ProfileToJournalPublicationBridge & {
-      journal_publication: JournalPublication;
-    })[];
-    bridge_book_publications: (ProfileToBookPublicationBridge & {
-      book_publication: BookPublication;
-    })[];
-    bridge_research_disseminations: (ProfileToResearchDisseminationBridge & {
-      research_dissemination: ResearchDissemination;
-    })[];
-    bridge_research_presentations: (ProfileToResearchPresentationBridge & {
-      presentation: ResearchPresentation;
-    })[];
-  } = JSON.parse(props.profile)
+  const profile: ExtendedProfile = JSON.parse(props.profile)
 
   return (
     <>
@@ -89,7 +64,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     },
     include: {
       user: true,
-      units: true
+      units: true,
+      roles: true
     }
   })
 

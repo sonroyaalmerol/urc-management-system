@@ -58,6 +58,7 @@ export default NextAuth({
             email: true,
             profile: {
               select: {
+                id: true,
                 bridge_institutes: {
                   include: {
                     institute: true

@@ -1,9 +1,10 @@
 import React from 'react'
 
-import { Avatar, Divider, Heading, HStack, Tag, Text, VStack, Wrap, WrapItem } from '@chakra-ui/react'
+import { Avatar, Divider, Heading, Tag, Text, VStack, Wrap, WrapItem } from '@chakra-ui/react'
 import Card from '../../../components/Card'
 
 import type { ComponentProps } from '../../../types/profile-card'
+import RolesSection from './RolesSection'
 
 const ProfileDetails: React.FC<ComponentProps> = (props) => {
   const profile = props.profile
@@ -133,6 +134,9 @@ const ProfileDetails: React.FC<ComponentProps> = (props) => {
                 </WrapItem>
               </Wrap>
             </VStack>
+          </WrapItem>
+          <WrapItem>
+            <RolesSection profile={profile} />
           </WrapItem>
         </Wrap>
       </VStack>

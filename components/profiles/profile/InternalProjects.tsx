@@ -43,6 +43,7 @@ const InternalProjects: React.FC<ComponentProps> = (props) => {
       onNew={() => {
         console.log('test')
       }}
+      profileId={profile.id}
     >
       { entries.map((entry) => (
         <CardTemplate

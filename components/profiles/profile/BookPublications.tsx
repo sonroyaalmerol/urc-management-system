@@ -42,6 +42,7 @@ const BookPublications: React.FC<ComponentProps> = (props) => {
       loading={loading}
       hasMore={entries.length < count}
       loadMore={loadNewEntries}
+      profileId={profile.id}
     >
       { entries.map((entry) => (
         <CardTemplate

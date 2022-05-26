@@ -6,15 +6,20 @@ import Card from '../../../components/Card'
 import { AddIcon } from '@chakra-ui/icons'
 import Button from '../../Button'
 
+import { useSession } from 'next-auth/react'
+
 interface ListTemplateProps extends BoxProps {
   title: string
   loading: boolean
   hasMore: boolean
   loadMore: () => any
   onNew?: () => any
+  profileId: string
 }
 
 const ListTemplate: React.FC<ListTemplateProps> = (props) => {
+  const { data: { profile: currentProfile } } = useSession()
+
   const divProps = Object.assign({}, props)
   delete divProps.loading
   delete divProps.hasMore
@@ -33,7 +38,7 @@ const ListTemplate: React.FC<ListTemplateProps> = (props) => {
             </Heading>
           </WrapItem>
           <Spacer />
-          { props.onNew && (
+          { (currentProfile.id === props.profileId) && (
             <WrapItem>
               <Button 
                 aria-label="Add Entry"

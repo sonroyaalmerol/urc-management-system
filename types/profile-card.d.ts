@@ -15,7 +15,8 @@ import type {
   ResearchDissemination,
   ResearchPresentation,
   Unit,
-  User
+  User,
+  UserRole
 } from '@prisma/client'
 
 export interface ExtendedBookPublication extends BookPublication {
@@ -77,30 +78,33 @@ export interface ExtendedResearchPresentation extends ResearchPresentation {
   })[];
 }
 
+export interface ExtendedProfile extends Profile {
+  user: User;
+  units: Unit[];
+  bridge_institutes: (ProfileToInstituteBridge & {
+    institute: Institute;
+  })[];
+  bridge_projects: (ProfileToProjectBridge & {
+    project: Project;
+  })[];
+  bridge_external_researches: (ProfileToExternalResearchBridge & {
+    external_research: ExternalResearch;
+  })[];
+  bridge_journal_publications: (ProfileToJournalPublicationBridge & {
+    journal_publication: JournalPublication;
+  })[];
+  bridge_book_publications: (ProfileToBookPublicationBridge & {
+    book_publication: BookPublication;
+  })[];
+  bridge_research_disseminations: (ProfileToResearchDisseminationBridge & {
+    research_dissemination: ResearchDissemination;
+  })[];
+  bridge_research_presentations: (ProfileToResearchPresentationBridge & {
+    presentation: ResearchPresentation;
+  })[];
+  roles: UserRole[];
+}
+
 export interface ComponentProps {
-  profile: Partial<Profile> & {
-    user?: User;
-    units?: Unit[];
-    bridge_institutes?: (ProfileToInstituteBridge & {
-      institute: Institute;
-    })[];
-    bridge_projects?: (ProfileToProjectBridge & {
-      project: Project;
-    })[];
-    bridge_external_researches?: (ProfileToExternalResearchBridge & {
-      external_research: ExternalResearch;
-    })[];
-    bridge_journal_publications?: (ProfileToJournalPublicationBridge & {
-      journal_publication: JournalPublication;
-    })[];
-    bridge_book_publications?: (ProfileToBookPublicationBridge & {
-      book_publication: BookPublication;
-    })[];
-    bridge_research_disseminations?: (ProfileToResearchDisseminationBridge & {
-      research_dissemination: ResearchDissemination;
-    })[];
-    bridge_research_presentations?: (ProfileToResearchPresentationBridge & {
-      presentation: ResearchPresentation;
-    })[];
-  }
+  profile: Partial<ExtendedProfile>;
 }
