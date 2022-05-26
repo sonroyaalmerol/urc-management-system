@@ -36,101 +36,105 @@ const ProfileDetails: React.FC<ComponentProps> = (props) => {
           ) }
         </Wrap>
         <Divider />
-        <HStack w="full" spacing={10} align="flex-start">
-          <Avatar src={`/api/files/get/${profile.photo_id}`} size="2xl" />
-          <VStack align="baseline">
-            <Wrap align="baseline">
-              <WrapItem>
-                <Heading
-                  fontFamily="body"
-                  fontSize="md"
-                >
-                  Email:
-                </Heading>
-              </WrapItem>
-              <WrapItem>
-                <Text>
-                  {profile.email}
-                </Text>
-              </WrapItem>
-            </Wrap>
-            <Wrap align="baseline">
-              <WrapItem>
-                <Heading
-                  fontFamily="body"
-                  fontSize="md"
-                >
-                  First Name:
-                </Heading>
-              </WrapItem>
-              <WrapItem>
-                <Text>
-                  {profile.first_name}
-                </Text>
-              </WrapItem>
-            </Wrap>
-            <Wrap align="baseline">
-              <WrapItem>
-                <Heading
-                  fontFamily="body"
-                  fontSize="md"
-                >
-                  Middle Initial:
-                </Heading>
-              </WrapItem>
-              <WrapItem>
-                <Text>
-                  {profile.middle_initial}
-                </Text>
-              </WrapItem>
-            </Wrap>
-            <Wrap align="baseline">
-              <WrapItem>
-                <Heading
-                  fontFamily="body"
-                  fontSize="md"
-                >
-                  Last Name:
-                </Heading>
-              </WrapItem>
-              <WrapItem>
-                <Text>
-                  {profile.last_name}
-                </Text>
-              </WrapItem>
-            </Wrap>
-            <Wrap align="baseline">
-              <WrapItem>
-                <Heading
-                  fontFamily="body"
-                  fontSize="md"
-                >
-                  Titles:
-                </Heading>
-              </WrapItem>
-              <WrapItem>
-                <Text>
-                  {profile.titles}
-                </Text>
-              </WrapItem>
-            </Wrap>
-            <Wrap align="baseline">
-              <WrapItem>
-                <Heading
-                  fontFamily="body"
-                  fontSize="md"
-                >
-                  Honorific:
-                </Heading>
-              </WrapItem>
-              <WrapItem>
-                <Text>
-                  {profile.honorific}
-                </Text>
-              </WrapItem>
-            </Wrap>
-          </VStack>
-        </HStack>
+        <Wrap w="full" spacing={10} align="center" justify={{ base: 'center', lg: 'initial' }}>
+          <WrapItem>
+            <Avatar src={`/api/files/get/${profile.photo_id}`} size="2xl" />
+          </WrapItem>
+          <WrapItem>
+            <VStack align="baseline">
+              <Wrap align="baseline">
+                <WrapItem>
+                  <Heading
+                    fontFamily="body"
+                    fontSize="md"
+                  >
+                    Email:
+                  </Heading>
+                </WrapItem>
+                <WrapItem>
+                  <Text>
+                    {profile.email}
+                  </Text>
+                </WrapItem>
+              </Wrap>
+              <Wrap align="baseline">
+                <WrapItem>
+                  <Heading
+                    fontFamily="body"
+                    fontSize="md"
+                  >
+                    First Name:
+                  </Heading>
+                </WrapItem>
+                <WrapItem>
+                  <Text>
+                    {profile.first_name}
+                  </Text>
+                </WrapItem>
+              </Wrap>
+              <Wrap align="baseline">
+                <WrapItem>
+                  <Heading
+                    fontFamily="body"
+                    fontSize="md"
+                  >
+                    Middle Initial:
+                  </Heading>
+                </WrapItem>
+                <WrapItem>
+                  <Text>
+                    {profile.middle_initial}
+                  </Text>
+                </WrapItem>
+              </Wrap>
+              <Wrap align="baseline">
+                <WrapItem>
+                  <Heading
+                    fontFamily="body"
+                    fontSize="md"
+                  >
+                    Last Name:
+                  </Heading>
+                </WrapItem>
+                <WrapItem>
+                  <Text>
+                    {profile.last_name}
+                  </Text>
+                </WrapItem>
+              </Wrap>
+              <Wrap align="baseline">
+                <WrapItem>
+                  <Heading
+                    fontFamily="body"
+                    fontSize="md"
+                  >
+                    Titles:
+                  </Heading>
+                </WrapItem>
+                <WrapItem>
+                  <Text>
+                    {profile.titles}
+                  </Text>
+                </WrapItem>
+              </Wrap>
+              <Wrap align="baseline">
+                <WrapItem>
+                  <Heading
+                    fontFamily="body"
+                    fontSize="md"
+                  >
+                    Honorific:
+                  </Heading>
+                </WrapItem>
+                <WrapItem>
+                  <Text>
+                    {profile.honorific}
+                  </Text>
+                </WrapItem>
+              </Wrap>
+            </VStack>
+          </WrapItem>
+        </Wrap>
       </VStack>
     </Card>
   )

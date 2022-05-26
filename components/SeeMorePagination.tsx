@@ -25,6 +25,7 @@ const SeeMorePagination: React.FC<SeeMorePaginationProps> = (props) => {
   if (props.hasMore) {
     return (
       <Box
+        w="full"
         {...divProps}
       >
         { props.children }

@@ -1,11 +1,9 @@
 import React from 'react'
 
-import { Divider, Heading, VStack, SimpleGrid, Center, Spinner } from '@chakra-ui/react'
-import SeeMorePagination from '../../SeeMorePagination'
-import Card from '../../../components/Card'
+import ListTemplate from './ListTemplate'
 
 import type { ComponentProps, ExtendedJournalPublication } from '../../../types/profile-card'
-import JournalPublicationCard from './JournalPublicationCard'
+import CardTemplate from './CardTemplate'
 
 const JournalPublications: React.FC<ComponentProps> = (props) => {
   const profile = props.profile
@@ -36,33 +34,16 @@ const JournalPublications: React.FC<ComponentProps> = (props) => {
   }, [])
 
   return (
-    <Card>
-      <VStack spacing={6} align="baseline">
-        <Heading
-          fontFamily="body"
-          fontSize="xl"
-        >
-          Journal Publications
-        </Heading>
-        <Divider />
-        { !loading ? (
-          <SeeMorePagination
-            hasMore={entries.length < count}
-            loadMore={onLoadNewMemo}
-          >
-            <SimpleGrid columns={{ base: 1, lg: 2 }}>
-              { entries.map((entry) => (
-                <JournalPublicationCard key={entry.id} entry={entry} />
-              )) }
-            </SimpleGrid>
-          </SeeMorePagination>
-        ) : (
-          <Center marginTop="2rem" w="full">
-            <Spinner color="brand.blue" />
-          </Center>
-        ) }
-      </VStack>
-    </Card>
+    <ListTemplate
+      title="Journal Publications"
+      loading={loading}
+      hasMore={entries.length < count}
+      loadMore={onLoadNewMemo}
+    >
+      { entries.map((entry) => (
+        <CardTemplate key={entry.id} entry={entry} />
+      )) }
+    </ListTemplate>
   )
 }
 

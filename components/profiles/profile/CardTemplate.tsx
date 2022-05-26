@@ -6,14 +6,30 @@ import SmallAvatar from '../../SmallAvatar'
 
 import { format } from 'date-fns'
 
-import { ExtendedJournalPublication } from '../../../types/profile-card'
-import VerifiedTag from '../../VerifiedTag'
+import type { 
+  ExtendedBookPublication,
+  ExtendedExternalResearch,
+  ExtendedJournalPublication,
+  ExtendedProject,
+  ExtendedResearchDissemination,
+  ExtendedResearchPresentation
+} from '../../../types/profile-card'
 
-const JournalPublicationCard: React.FC<{entry: ExtendedJournalPublication}> = (props) => {
+import VerifiedTag from '../../VerifiedTag'
+import ApprovalTag from '../../ApprovalTag'
+
+const CardTemplate: React.FC<{
+  entry: ExtendedBookPublication |
+    ExtendedExternalResearch |
+    ExtendedJournalPublication |
+    ExtendedResearchDissemination |
+    ExtendedResearchPresentation |
+    ExtendedProject
+}> = (props) => {
   const entry = props.entry
 
   return (
-    <InnerCard href={`/entrys/${entry?.slug}`} w="full">
+    <InnerCard w="full">
       <VStack alignItems="flex-start" spacing={4}>
         <Heading
           size="md"
@@ -35,11 +51,15 @@ const JournalPublicationCard: React.FC<{entry: ExtendedJournalPublication}> = (p
           Last updated: { format(new Date(entry?.updated_at), 'MMM dd, yyyy h:mm a') }
         </Text>
         <HStack>
-          <VerifiedTag status={entry?.verified} />
+          { "verified" in entry ? (
+            <VerifiedTag status={entry?.verified} />
+          ) : (
+            <ApprovalTag status={entry?.approved} />
+          ) }
         </HStack>
       </VStack>
     </InnerCard>
   )
 }
 
-export default JournalPublicationCard
+export default CardTemplate

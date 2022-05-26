@@ -1,11 +1,8 @@
 import React from 'react'
-
-import { Divider, Heading, VStack, SimpleGrid, Center, Spinner } from '@chakra-ui/react'
-import SeeMorePagination from '../../SeeMorePagination'
-import Card from '../../../components/Card'
+import ListTemplate from './ListTemplate'
 
 import type { ComponentProps, ExtendedResearchDissemination } from '../../../types/profile-card'
-import ResearchDisseminationCard from './ResearchDisseminationCard'
+import CardTemplate from './CardTemplate'
 
 const ResearchDisseminations: React.FC<ComponentProps> = (props) => {
   const profile = props.profile
@@ -37,33 +34,16 @@ const ResearchDisseminations: React.FC<ComponentProps> = (props) => {
   }, [])
 
   return (
-    <Card>
-      <VStack spacing={6} align="baseline">
-        <Heading
-          fontFamily="body"
-          fontSize="xl"
-        >
-          Research Disseminations
-        </Heading>
-        <Divider />
-        { !loading ? (
-          <SeeMorePagination
-            hasMore={entries.length < count}
-            loadMore={onLoadNewMemo}
-          >
-            <SimpleGrid columns={{ base: 1, lg: 2 }}>
-              { entries.map((entry) => (
-                <ResearchDisseminationCard key={entry.id} entry={entry} />
-              )) }
-            </SimpleGrid>
-          </SeeMorePagination>
-        ) : (
-          <Center marginTop="2rem" w="full">
-            <Spinner color="brand.blue" />
-          </Center>
-        ) }
-      </VStack>
-    </Card>
+    <ListTemplate
+      title="Research Disseminations"
+      loading={loading}
+      hasMore={entries.length < count}
+      loadMore={onLoadNewMemo}
+    >
+      { entries.map((entry) => (
+        <CardTemplate key={entry.id} entry={entry} />
+      )) }
+    </ListTemplate>
   )
 }
 

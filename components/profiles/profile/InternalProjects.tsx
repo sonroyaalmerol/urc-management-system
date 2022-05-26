@@ -1,11 +1,9 @@
 import React from 'react'
 
-import { Center, Divider, Heading, Spinner, SimpleGrid, VStack, Button } from '@chakra-ui/react'
-import Card from '../../../components/Card'
+import ListTemplate from './ListTemplate'
 
 import type { ComponentProps, ExtendedProject } from '../../../types/profile-card'
-import InternalProjectCard from './InternalProjectCard'
-import SeeMorePagination from '../../SeeMorePagination'
+import CardTemplate from './CardTemplate'
 
 const InternalProjects: React.FC<ComponentProps> = (props) => {
   const profile = props.profile
@@ -37,33 +35,16 @@ const InternalProjects: React.FC<ComponentProps> = (props) => {
   }, [])
 
   return (
-    <Card>
-      <VStack spacing={6} align="baseline">
-        <Heading
-          fontFamily="body"
-          fontSize="xl"
-        >
-          Internal Projects
-        </Heading>
-        <Divider />
-        { !loading ? (
-          <SeeMorePagination
-            hasMore={entries.length < count}
-            loadMore={onLoadNewMemo}
-          >
-            <SimpleGrid columns={{ base: 1, lg: 2 }}>
-              { entries.map((entry) => (
-                <InternalProjectCard key={entry.id} entry={entry} />
-              )) }
-            </SimpleGrid>
-          </SeeMorePagination>
-        ) : (
-          <Center marginTop="2rem" w="full">
-            <Spinner color="brand.blue" />
-          </Center>
-        ) }
-      </VStack>
-    </Card>
+    <ListTemplate
+      title="Internal Projects"
+      loading={loading}
+      hasMore={entries.length < count}
+      loadMore={onLoadNewMemo}
+    >
+      { entries.map((entry) => (
+        <CardTemplate key={entry.id} entry={entry} />
+      )) }
+    </ListTemplate>
   )
 }
 
