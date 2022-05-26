@@ -1,6 +1,7 @@
+import React from 'react'
 import { getProviders, signIn, getSession, getCsrfToken } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
-import { Button, Center, VStack, Text, chakra, Container } from '@chakra-ui/react'
+import { Button, Center, VStack, Text, chakra, Container, useToast } from '@chakra-ui/react'
 
 import { NextSeo } from 'next-seo'
 
@@ -9,6 +10,23 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const toast = useToast()
+  const error = (props as any)?.error ?? null
+
+  React.useEffect(() => {
+    if (error) {
+      if (error === 'invalid_email') {
+        toast({
+          position: 'bottom',
+          title: 'Email not whitelisted!',
+          description: 'Despite having an official AdDU email, you must request for your email to be whitelisted for now.',
+          status: 'error',
+          isClosable: true
+        })
+      }
+    }
+  }, [error])
+
   return (
     <>
       <NextSeo
@@ -63,6 +81,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   return {
     props: {
+      error: query?.error ?? null,
       providers: await getProviders(),
       csrfToken: await getCsrfToken({ req })
     }

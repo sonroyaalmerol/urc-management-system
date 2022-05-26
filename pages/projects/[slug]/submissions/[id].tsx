@@ -10,7 +10,7 @@ import { NextSeo } from 'next-seo'
 
 import { prisma } from '../../../../lib/server/prisma'
 
-import type { Submission, SubmissionStatus, DeliverableSubmission, BudgetProposalSubmission, CapsuleProposalSubmission, FullBlownProposalSubmission, Profile, Project, SubmissionTypes } from '@prisma/client'
+import type { Comment, Submission, SubmissionStatus, DeliverableSubmission, BudgetProposalSubmission, CapsuleProposalSubmission, FullBlownProposalSubmission, Profile, Project, SubmissionTypes } from '@prisma/client'
 import Card from '../../../../components/Card'
 import RichTextarea from '../../../../components/RichTextarea'
 
@@ -162,6 +162,12 @@ const Submission: React.FC<SubmissionProps> = (props: InferGetServerSidePropsTyp
     project: Project;
   } = JSON.parse(props.submission)
 
+  const { control, handleSubmit } = useForm<Partial<Comment>>();
+
+  const onSubmit: SubmitHandler<Partial<Comment>> = data => {
+    console.log(data)
+  };
+
   const humanizeType = (type: SubmissionTypes) => {
     switch(type) {
       case 'BUDGET':
@@ -215,6 +221,19 @@ const Submission: React.FC<SubmissionProps> = (props: InferGetServerSidePropsTyp
               <Heading fontFamily="body" fontSize="lg">
                 Comments
               </Heading>
+              <HStack as="form" onSubmit={handleSubmit(onSubmit)} spacing={4} w="full" align="flex-start">
+                <Avatar />
+                <VStack align="end" spacing={1} w="full">
+                  <Controller
+                    name="content"
+                    control={control}
+                    defaultValue={""}
+                    render={({ field }) => <RichTextarea {...field} />}
+                  />
+                  <Button type="submit">Comment</Button>
+                </VStack>
+              </HStack>
+
               <HStack spacing={4} w="full" align="flex-start">
                 <Avatar />
                 <VStack align="baseline" spacing={1} w="full">

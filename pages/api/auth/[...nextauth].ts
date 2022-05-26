@@ -38,12 +38,12 @@ export default NextAuth({
         })
         
         if (dbProfile) {
-          
           return profile.email.endsWith("@addu.edu.ph")
         }
 
-        return false
+        return '/login?error=invalid_email'
       }
+      
       return true // Do different verification for other providers that don't have `email_verified`
     },
     async session({ session, user }) {
