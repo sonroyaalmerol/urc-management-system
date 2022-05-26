@@ -31,6 +31,15 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
     }
   }, [typeFilter])
 
+  const [statusFilter, setStatusFilter] = React.useState('')
+  const status = React.useMemo(() => {
+    if (statusFilter === '') {
+      return ['approved', 'not_approved', 'not_processed']
+    } else {
+      return [statusFilter]
+    }
+  }, [statusFilter])
+
   return (
     <>
       <NextSeo
@@ -78,11 +87,17 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
                         color="brand.blue"
                         placeholder="Status"
                         borderRadius={10}
+                        value={status}
+                        onChange={(e) => { setStatusFilter(e.target.value) }}
                         _focus={{
                           boxShadow: "none"
                         }}
                         cursor="pointer"
-                      />
+                      >
+                        <option value="approved">Approved</option>
+                        <option value="not_approved">Not Approved</option>
+                        <option value="not_processed">Not yet processed</option>
+                      </Select>
                     </WrapItem>
                   </Wrap>
                 </WrapItem>
@@ -99,7 +114,7 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
               </HStack>
             </WrapItem>
           </Wrap>
-          <SubmissionList projectId={project.id} types={types} />
+          <SubmissionList projectId={project.id} types={types} status={status} />
         </VStack>
       </VStack>
     </>

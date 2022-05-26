@@ -4,12 +4,13 @@ import { getSession } from 'next-auth/react'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
 
-import type { SubmissionTypes } from '@prisma/client'
+import type { SubmissionStatus, SubmissionTypes } from '@prisma/client'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  const { id, types: types_raw, status } = req.query
+  const { id, types: types_raw, status: status_raw } = req.query
 
   const types = (types_raw as string)?.split(',').map((i) => i.trim().toUpperCase()) as SubmissionTypes[] ?? []
+  const status = (status_raw as string)?.split(',').map((i) => i.trim().toUpperCase()) as SubmissionStatus[] ?? []
 
   const [totalCount, data] = await prisma.$transaction([
     prisma.submission.count({
@@ -17,6 +18,9 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
         project_id: id as string,
         type: {
           in: types
+        },
+        status: {
+          in: status
         }
       }
     }),
@@ -30,6 +34,9 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
         project_id: id as string,
         type: {
           in: types
+        },
+        status: {
+          in: status
         }
       },
       include: {

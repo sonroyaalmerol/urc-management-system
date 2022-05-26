@@ -11,7 +11,7 @@ import SubmissionCard from './SubmissionCard'
 interface ProjectListProps {
   types?: string[],
   projectId: string,
-  status?: string
+  status?: string[]
 }
 
 const SubmissionList: React.FC<ProjectListProps> = (props) => {

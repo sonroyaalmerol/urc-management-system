@@ -75,6 +75,7 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
       h='100vh'
       spacing={0}
       position="fixed"
+      overflow="hidden"
       {...divProps}
     >
       <Box

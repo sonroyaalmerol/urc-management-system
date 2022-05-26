@@ -1,6 +1,7 @@
 import React from 'react'
 
-import { useDisclosure, Text } from '@chakra-ui/react'
+import { useDisclosure, Text, Input, VStack } from '@chakra-ui/react'
+import { useForm, Controller, SubmitHandler } from "react-hook-form"
 
 import Button from '../Button'
 
@@ -15,6 +16,7 @@ import {
 } from '@chakra-ui/react'
 
 import { AddIcon } from '@chakra-ui/icons'
+import type { Project } from '@prisma/client'
 
 interface NewProjectButtonProps {
 
@@ -22,6 +24,14 @@ interface NewProjectButtonProps {
 
 const NewProjectButton: React.FC<NewProjectButtonProps> = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
+
+  const { control, handleSubmit } = useForm<Partial<Project>>();
+
+  const onSubmit: SubmitHandler<Partial<Project>> = data => {
+    console.log(data)
+    onClose()
+  };
+
   return (
     <>
       <Button
@@ -32,23 +42,25 @@ const NewProjectButton: React.FC<NewProjectButtonProps> = (props) => {
       </Button>
       <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
+        <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
+          <ModalHeader>New Project</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Text fontWeight='bold' mb='1rem'>
-              You can scroll the content behind the modal
-            </Text>
-            <Text>
-              Test
-            </Text>
+            <VStack w="full" align="baseline" spacing={1}>
+              <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Project Title</Text>
+              <Controller
+                name="title"
+                control={control}
+                defaultValue=""
+                render={({ field }) => <Input {...field} />}
+              />
+            </VStack>
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme='blue' mr={3} onClick={onClose}>
-              Close
+            <Button colorScheme='blue' mr={3} type="submit">
+              Submit
             </Button>
-            <Button variant='ghost'>Secondary Action</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

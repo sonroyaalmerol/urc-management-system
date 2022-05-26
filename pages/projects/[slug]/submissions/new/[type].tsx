@@ -2,22 +2,19 @@ import React from 'react'
 import ContentHeader from '../../../../../components/ContentHeader'
 import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
-import { VStack, HStack, Heading, Wrap, WrapItem, Spacer, Select, Input, Text, Box } from '@chakra-ui/react'
+import { VStack, Heading, Text } from '@chakra-ui/react'
 
 import Button from '../../../../../components/Button'
-
-import { AddIcon, AttachmentIcon } from '@chakra-ui/icons'
 
 import { NextSeo } from 'next-seo'
 
 import { prisma } from '../../../../../lib/server/prisma'
 
-import type { Submission, DeliverableSubmission, BudgetProposalSubmission, CapsuleProposalSubmission, FullBlownProposalSubmission, Profile, Project, SubmissionTypes } from '@prisma/client'
+import type { BudgetProposalSubmission, CapsuleProposalSubmission, FullBlownProposalSubmission, Profile, Project, SubmissionTypes } from '@prisma/client'
 import Card from '../../../../../components/Card'
 import RichTextarea from '../../../../../components/RichTextarea'
 
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
-import formatBytes from '../../../../../lib/formatBytes'
 import FileUploadButton from '../../../../../components/FileUploadButton'
 
 interface CapsuleProposalFormProps {
