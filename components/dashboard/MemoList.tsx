@@ -18,7 +18,7 @@ const MemoList: React.FC = () => {
   const [count, setCount] = React.useState(0)
   const [loading, setLoading] = React.useState(true)
 
-  const onLoadNewMemo = async () => {
+  const loadNewEntries = async () => {
     const newMemos = await fetch(`/api/management/news${memos.length > 0 ? `?cursor=${memos[memos.length - 1].id}` : ''}`).then(res => res.json())
     setCount(newMemos?.totalCount ?? 0)
 
@@ -29,14 +29,14 @@ const MemoList: React.FC = () => {
   }
 
   React.useEffect(() => {
-    onLoadNewMemo()
+    loadNewEntries()
   }, [])
   return (
     <>
       { !loading ? (
         <InfiniteScroll
           pageStart={0}
-          loadMore={onLoadNewMemo}
+          loadMore={loadNewEntries}
           hasMore={memos.length < count}
           loader={
             <Center marginTop="2rem" key="infinite-scroll-load">

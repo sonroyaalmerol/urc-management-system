@@ -89,7 +89,7 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
                         color="brand.blue"
                         placeholder="Status"
                         borderRadius={10}
-                        value={status}
+                        value={statusFilter}
                         onChange={(e) => { setStatusFilter(e.target.value) }}
                         _focus={{
                           boxShadow: "none"

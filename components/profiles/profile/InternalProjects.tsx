@@ -13,7 +13,7 @@ const InternalProjects: React.FC<ComponentProps> = (props) => {
   const [count, setCount] = React.useState(0)
   const [loading, setLoading] = React.useState(true)
 
-  const onLoadNewMemo = async (args?: { reset: Boolean }) => {
+  const loadNewEntries = async (args?: { reset: Boolean }) => {
     const newEntries = await fetch(
       `/api/management/profiles/${profile.id}/projects?${entries.length > 0 && !args?.reset ? `&cursor=${entries[entries.length - 1].id}` : ''}`
     ).then(res => res.json())
@@ -31,7 +31,7 @@ const InternalProjects: React.FC<ComponentProps> = (props) => {
 
   React.useEffect(() => {
     setLoading(true)
-    onLoadNewMemo()
+    loadNewEntries()
   }, [])
 
   return (
@@ -39,10 +39,17 @@ const InternalProjects: React.FC<ComponentProps> = (props) => {
       title="Internal Projects"
       loading={loading}
       hasMore={entries.length < count}
-      loadMore={onLoadNewMemo}
+      loadMore={loadNewEntries}
+      onNew={() => {
+        console.log('test')
+      }}
     >
       { entries.map((entry) => (
-        <CardTemplate key={entry.id} entry={entry} />
+        <CardTemplate
+          key={entry.id}
+          entry={entry}
+          href={`/projects/${entry.slug}`}
+        />
       )) }
     </ListTemplate>
   )

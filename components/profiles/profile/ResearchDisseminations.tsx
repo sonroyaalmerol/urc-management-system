@@ -12,7 +12,7 @@ const ResearchDisseminations: React.FC<ComponentProps> = (props) => {
   const [count, setCount] = React.useState(0)
   const [loading, setLoading] = React.useState(true)
 
-  const onLoadNewMemo = async (args?: { reset: Boolean }) => {
+  const loadNewEntries = async (args?: { reset: Boolean }) => {
     const newEntries = await fetch(
       `/api/management/profiles/${profile.id}/research_disseminations?${entries.length > 0 && !args?.reset ? `&cursor=${entries[entries.length - 1].id}` : ''}`
     ).then(res => res.json())
@@ -30,7 +30,7 @@ const ResearchDisseminations: React.FC<ComponentProps> = (props) => {
 
   React.useEffect(() => {
     setLoading(true)
-    onLoadNewMemo()
+    loadNewEntries()
   }, [])
 
   return (
@@ -38,7 +38,7 @@ const ResearchDisseminations: React.FC<ComponentProps> = (props) => {
       title="Research Disseminations"
       loading={loading}
       hasMore={entries.length < count}
-      loadMore={onLoadNewMemo}
+      loadMore={loadNewEntries}
     >
       { entries.map((entry) => (
         <CardTemplate key={entry.id} entry={entry} />

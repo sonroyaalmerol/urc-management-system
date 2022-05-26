@@ -32,7 +32,7 @@ const SubmissionList: React.FC<ProjectListProps> = (props) => {
   const [count, setCount] = React.useState(0)
   const [loading, setLoading] = React.useState(true)
 
-  const onLoadNewMemo = async (args?: { reset: Boolean }) => {
+  const loadNewEntries = async (args?: { reset: Boolean }) => {
     const newEntries = await fetch(
       `/api/management/projects/${props.projectId}?${props.types?.length > 0 ? `&types=${props.types.join(',')}` : ''}${props.status?.length > 0 ? `&status=${props.status}` : ''}`
     ).then(res => res.json())
@@ -50,14 +50,14 @@ const SubmissionList: React.FC<ProjectListProps> = (props) => {
 
   React.useEffect(() => {
     setLoading(true)
-    onLoadNewMemo({ reset: true })
+    loadNewEntries({ reset: true })
   }, [props.types, props.status])
   return (
     <>
       { !loading ? (
         <InfiniteScroll
           pageStart={0}
-          loadMore={onLoadNewMemo}
+          loadMore={loadNewEntries}
           hasMore={entries.length < count}
           loader={
             <Center marginTop="2rem" key="infinite-scroll-load">

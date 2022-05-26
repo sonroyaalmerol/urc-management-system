@@ -11,6 +11,7 @@ interface ListTemplateProps extends BoxProps {
   loading: boolean
   hasMore: boolean
   loadMore: () => any
+  onNew?: () => any
 }
 
 const ListTemplate: React.FC<ListTemplateProps> = (props) => {
@@ -32,16 +33,19 @@ const ListTemplate: React.FC<ListTemplateProps> = (props) => {
             </Heading>
           </WrapItem>
           <Spacer />
-          <WrapItem>
-            <Button 
-              aria-label="Add Entry"
-              leftIcon={<AddIcon />}
-              size="xs"
-              paddingY={0}
-            >
-              New
-            </Button>
-          </WrapItem>
+          { props.onNew && (
+            <WrapItem>
+              <Button 
+                aria-label="Add Entry"
+                leftIcon={<AddIcon />}
+                size="xs"
+                paddingY={0}
+                onClick={props.onNew}
+              >
+                New
+              </Button>
+            </WrapItem>
+          ) }
         </Wrap>
         <Divider />
         { !props.loading ? (

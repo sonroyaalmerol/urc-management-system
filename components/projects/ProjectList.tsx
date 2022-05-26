@@ -25,7 +25,7 @@ const ProjectList: React.FC<ProjectListProps> = (props) => {
   const [count, setCount] = React.useState(0)
   const [loading, setLoading] = React.useState(true)
 
-  const onLoadNewMemo = async (args?: { reset: Boolean }) => {
+  const loadNewEntries = async (args?: { reset: Boolean }) => {
     const newEntries = await fetch(
       `/api/management/projects?${props.search.length > 0 ? `&query=${props.search}` : ''}${entries.length > 0 && !args.reset ? `&cursor=${entries[entries.length - 1].id}` : ''}`
     ).then(res => res.json())
@@ -46,14 +46,14 @@ const ProjectList: React.FC<ProjectListProps> = (props) => {
   }, [props.search])
 
   React.useEffect(() => {
-    onLoadNewMemo({ reset: true })
+    loadNewEntries({ reset: true })
   }, [deferredSearch])
   return (
     <>
       { !loading ? (
         <InfiniteScroll
           pageStart={0}
-          loadMore={onLoadNewMemo}
+          loadMore={loadNewEntries}
           hasMore={entries.length < count}
           loader={
             <Center marginTop="2rem" key="infinite-scroll-load">

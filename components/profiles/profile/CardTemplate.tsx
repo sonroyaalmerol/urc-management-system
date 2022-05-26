@@ -18,18 +18,21 @@ import type {
 import VerifiedTag from '../../VerifiedTag'
 import ApprovalTag from '../../ApprovalTag'
 
-const CardTemplate: React.FC<{
+interface CardTemplateProps {
   entry: ExtendedBookPublication |
     ExtendedExternalResearch |
     ExtendedJournalPublication |
     ExtendedResearchDissemination |
     ExtendedResearchPresentation |
     ExtendedProject
-}> = (props) => {
+  href?: string
+}
+
+const CardTemplate: React.FC<CardTemplateProps> = (props) => {
   const entry = props.entry
 
   return (
-    <InnerCard w="full">
+    <InnerCard href={props.href} w="full">
       <VStack alignItems="flex-start" spacing={4}>
         <Heading
           size="md"
