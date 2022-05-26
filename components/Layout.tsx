@@ -19,10 +19,6 @@ const menus = [
     url: '/projects',
   },
   {
-    name: 'Activities',
-    url: '/activities'
-  },
-  {
     name: 'Profiles',
     url: '/profiles',
   },
