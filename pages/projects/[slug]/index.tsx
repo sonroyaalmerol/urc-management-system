@@ -14,6 +14,8 @@ import type { Project } from '@prisma/client'
 import SubmissionList from '../../../components/projects/SubmissionList'
 import { type } from 'os'
 import NewSubmissionButton from '../../../components/projects/NewSubmissionButton'
+import EditProjectTitleButton from '../../../components/projects/EditProjectTitleButton'
+import AddProponentButton from '../../../components/projects/AddProponentButton'
 
 interface ProjectProps {
 
@@ -106,6 +108,8 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
             <Spacer />
             <WrapItem>
               <HStack>
+                <EditProjectTitleButton />
+                <AddProponentButton />
                 <NewSubmissionButton
                   capsuleUrl={`/projects/${project.slug}/submissions/new/capsule`}
                   fullBlownUrl={`/projects/${project.slug}/submissions/new/full`}
