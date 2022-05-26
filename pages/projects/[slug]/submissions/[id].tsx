@@ -2,7 +2,7 @@ import React from 'react'
 import ContentHeader from '../../../../components/ContentHeader'
 import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
-import { VStack, Heading, Text, HStack, Avatar, Wrap, WrapItem, Tag } from '@chakra-ui/react'
+import { VStack, Heading, Text, HStack, Avatar, Wrap, WrapItem, Tag, Textarea } from '@chakra-ui/react'
 
 import Button from '../../../../components/Button'
 
@@ -228,7 +228,7 @@ const Submission: React.FC<SubmissionProps> = (props: InferGetServerSidePropsTyp
                     name="content"
                     control={control}
                     defaultValue={""}
-                    render={({ field }) => <RichTextarea {...field} />}
+                    render={({ field }) => <Textarea {...field} />}
                   />
                   <Button type="submit">Comment</Button>
                 </VStack>
