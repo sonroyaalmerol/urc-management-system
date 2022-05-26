@@ -25,6 +25,10 @@ const menus = [
   {
     name: 'Profiles',
     url: '/profiles',
+  },
+  {
+    name: 'Settings',
+    url: '/settings',
   }
 ]
 

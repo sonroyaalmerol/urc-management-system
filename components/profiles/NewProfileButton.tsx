@@ -16,7 +16,7 @@ import {
 } from '@chakra-ui/react'
 
 import { AddIcon } from '@chakra-ui/icons'
-import type { Project } from '@prisma/client'
+import type { Profile } from '@prisma/client'
 
 interface NewProfileButtonProps {
 
@@ -25,9 +25,9 @@ interface NewProfileButtonProps {
 const NewProfileButton: React.FC<NewProfileButtonProps> = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const { control, handleSubmit } = useForm<Partial<Project>>();
+  const { control, handleSubmit } = useForm<Partial<Profile>>();
 
-  const onSubmit: SubmitHandler<Partial<Project>> = data => {
+  const onSubmit: SubmitHandler<Partial<Profile>> = data => {
     console.log(data)
     onClose()
   };
@@ -46,14 +46,43 @@ const NewProfileButton: React.FC<NewProfileButtonProps> = (props) => {
           <ModalHeader>New Profile</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <VStack w="full" align="baseline" spacing={1}>
-              <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Project Title</Text>
-              <Controller
-                name="title"
-                control={control}
-                defaultValue=""
-                render={({ field }) => <Input {...field} />}
-              />
+            <VStack>
+              <VStack w="full" align="baseline" spacing={1}>
+                <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Email Address</Text>
+                <Controller
+                  name="email"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => <Input {...field} />}
+                />
+              </VStack>
+              <VStack w="full" align="baseline" spacing={1}>
+                <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">First Name</Text>
+                <Controller
+                  name="first_name"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => <Input {...field} />}
+                />
+              </VStack>
+              <VStack w="full" align="baseline" spacing={1}>
+                <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Middle Initial</Text>
+                <Controller
+                  name="middle_initial"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => <Input {...field} />}
+                />
+              </VStack>
+              <VStack w="full" align="baseline" spacing={1}>
+                <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Last Name</Text>
+                <Controller
+                  name="last_name"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => <Input {...field} />}
+                />
+              </VStack>
             </VStack>
           </ModalBody>
 
