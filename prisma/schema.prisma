@@ -506,7 +506,7 @@ model Project {
   cycle                            String?
   budget                           Float?
   source_of_fund                   String?
-  approved                         Boolean                            @default(false)
+  approved                         Boolean?                           
   created_at                       DateTime?                          @default(now())
   updated_at                       DateTime?                          @updatedAt
   completed_at                     String?

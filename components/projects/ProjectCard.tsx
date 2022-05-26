@@ -11,6 +11,7 @@ import parse from '../../lib/client/parseHTML'
 import type { Project, ProfileToProjectBridge, Profile, User } from '@prisma/client'
 
 import { useRouter } from 'next/router'
+import ApprovalTag from '../ApprovalTag'
 
 interface ProjectCardProps extends BoxProps {
   project: (Project & {
@@ -82,16 +83,7 @@ const ProjectCard: React.FC<ProjectCardProps> = (props) => {
           {parse(project.abstract, { textOnly: true })}
         </Box>
         <HStack>
-          <Tag
-            bgColor={project.approved ? "brand.blue" : "brand.red"}
-            textColor="white"
-            borderRadius="20px"
-            fontSize="xs"
-            fontWeight="bold"
-            paddingX="0.8rem"
-          >
-            {project.approved ? "Approved" : "For Approval"}
-          </Tag>
+          <ApprovalTag status={project.approved} />
         </HStack>
       </VStack>
     </Card>

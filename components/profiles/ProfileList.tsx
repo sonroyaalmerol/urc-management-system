@@ -59,7 +59,7 @@ const ProfileList: React.FC<ProfileListProps> = (props) => {
           element={chakra.div}
           w="full"
         >
-          <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={4}>
+          <SimpleGrid columns={{ base: 1, lg: 2, xl: 3 }} spacing={4}>
             { entries.map((profile) => (
               <ProfileCard key={profile.id} profile={profile} />
             )) }

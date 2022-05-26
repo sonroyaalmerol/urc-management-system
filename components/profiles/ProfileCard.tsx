@@ -46,7 +46,7 @@ const ProfileCard: React.FC<ProfileCardProps> = (props) => {
     >
       <HStack spacing={4} alignItems="flex-start">
         <Avatar src={`/api/files/get/${profile.photo_id}`} />
-        <VStack alignItems="flex-start" spacing={0}>
+        <VStack alignItems="flex-start" spacing={1}>
           <Heading
             size="sm"
             fontFamily="body"

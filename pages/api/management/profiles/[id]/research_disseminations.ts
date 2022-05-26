@@ -1,18 +1,16 @@
-import { prisma } from '../../../../lib/server/prisma'
+import { prisma } from '../../../../../lib/server/prisma'
 import { getSession } from 'next-auth/react'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
 import type { Profile } from '@prisma/client'
 
-import relevancy from 'relevancy'
-
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const searchQuery = (req.query?.query as string) ?? ''
 
   const queryFilter = searchQuery.split(' ').filter(s => s.trim().length > 0)
   const queryFields = [
-    'email', 'first_name', 'middle_initial', 'last_name', 'honorific', 'titles'
+    'title'
   ]
   let orQuery = []
   queryFields.forEach((field) => {
@@ -28,48 +26,52 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
   } : undefined
 
   let [totalCount, data] = await prisma.$transaction([
-    prisma.profile.count({
+    prisma.researchDissemination.count({
       where: {
-        ...whereQuery
+        ...whereQuery,
+        bridge_profiles: {
+          some: {
+            profile_id: req.query.id as string
+          }
+        }
       }
     }),
-    prisma.profile.findMany({
+    prisma.researchDissemination.findMany({
       skip: req.query.cursor ? 1 : undefined,
-      take: 10,
+      take: 4,
       cursor: req.query.cursor ? {
         id: req.query.cursor as string
       } : undefined,
       where: {
-        ...whereQuery
+        ...whereQuery,
+        bridge_profiles: {
+          some: {
+            profile_id: req.query.id as string
+          }
+        }
       },
       include: {
-        user: true
+        bridge_profiles: {
+          include: {
+            profile: {
+              include: {
+                user: true
+              }
+            }
+          }
+        },
+        units: true
       },
       orderBy: [
         {
-          last_name: 'asc'
+          title: 'asc'
         },
         {
-          email: 'asc'
+          updated_at: 'desc'
         }
       ]
     })
   ])
-
-  if (searchQuery.trim().length > 0) {
-    const fullSearchQuery = queryFilter.join(' ')
-    const entryWeights = data.map((entry) => {
-      return queryFields.reduce((sum, curr) => {
-        if (typeof entry[curr] === 'string' || entry[curr] instanceof String) {
-          return relevancy.weight(fullSearchQuery, entry[curr]) + sum
-        }
-        return sum
-      }, 0)
-    })
-    data = data.map((o, i) => ({ idx: i, obj: o }))
-      .sort((a, b) => entryWeights[b.idx] - entryWeights[a.idx])
-      .map((x) => x.obj)
-  }
 
   return res.status(200).json({
     totalCount,
