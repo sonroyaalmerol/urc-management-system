@@ -49,6 +49,7 @@
     "react-hook-form": "^7.31.2",
     "react-icons": "^4.3.1",
     "react-infinite-scroller": "^1.2.6",
+    "relevancy": "^0.2.0",
     "sharp": "^0.30.5",
     "slugify": "^1.6.5",
     "use-debounce": "^8.0.1"

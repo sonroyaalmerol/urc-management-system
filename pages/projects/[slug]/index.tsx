@@ -145,6 +145,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     }
   })
 
+  if (!project) {
+    return {
+      props: {
+        statusCode: 404
+      }
+    }
+  }
+
   return {
     props: { 
       session,

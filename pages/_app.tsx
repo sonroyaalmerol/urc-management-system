@@ -14,6 +14,7 @@ import '../styles/richTextArea.css'
 
 import type { AppProps } from 'next/app'
 import { NextSeo } from 'next-seo'
+import Error from '../components/Error'
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps: { session, ...pageProps } }) => {
   return (
@@ -25,7 +26,11 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps: { session, ...pagePro
       <SessionProvider session={session}>
         <ChakraProvider theme={theme}>
           <Layout>
-            <Component {...pageProps} />
+            { pageProps?.statusCode ? (
+              <Error statusCode={pageProps.statusCode} />
+            ) : (
+              <Component {...pageProps} />
+            ) }
           </Layout>
         </ChakraProvider>
       </SessionProvider>

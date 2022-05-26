@@ -289,6 +289,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     }
   })
 
+  if (!submission) {
+    return {
+      props: {
+        statusCode: 404
+      }
+    }
+  }
+
   return {
     props: { 
       session,

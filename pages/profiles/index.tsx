@@ -7,6 +7,7 @@ import { NextSeo } from 'next-seo'
 import { HStack, VStack } from '@chakra-ui/react'
 import SearchInput from '../../components/SearchInput'
 import NewProfileButton from '../../components/profiles/NewProfileButton'
+import ProfileList from '../../components/profiles/ProfileList'
 
 interface ProfilesProps {
 
@@ -34,6 +35,7 @@ const Profiles: React.FC<ProfilesProps> = (props: InferGetServerSidePropsType<ty
             />
             <NewProfileButton />
           </HStack>
+          <ProfileList search={search} />
         </VStack>
       </VStack>
     </>
