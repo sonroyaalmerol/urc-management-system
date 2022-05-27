@@ -7,7 +7,7 @@ import {
   MenuItem
 } from '@chakra-ui/react'
 
-import Button from '../Button'
+import Button from '../general/Button'
 import { AddIcon, ChevronDownIcon } from '@chakra-ui/icons'
 
 import { useRouter } from 'next/router'

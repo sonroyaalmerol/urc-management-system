@@ -23,6 +23,10 @@ const menus = [
     url: '/profiles',
   },
   {
+    name: 'Verifications',
+    url: '/verifications'
+  },
+  {
     name: 'Settings',
     url: '/settings',
   }

@@ -1,11 +1,11 @@
 import React from 'react'
-import ContentHeader from '../../components/ContentHeader'
+import ContentHeader from '../../components/general/ContentHeader'
 import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
 
 import { NextSeo } from 'next-seo'
 import { HStack, VStack } from '@chakra-ui/react'
-import SearchInput from '../../components/SearchInput'
+import SearchInput from '../../components/general/SearchInput'
 import NewProfileButton from '../../components/profiles/NewProfileButton'
 import ProfileList from '../../components/profiles/ProfileList'
 

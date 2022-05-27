@@ -3,7 +3,7 @@ import { VStack, chakra, Box, Center, Container, StackProps } from '@chakra-ui/r
 import SidebarMenu from './SidebarMenu'
 import { useRouter } from 'next/router'
 import { motion, useAnimation } from 'framer-motion'
-import type { Menu } from '../types/menu'
+import type { Menu } from '../../types/menu'
 import NavigationAvatar from './NavigationAvatar'
 
 interface SidebarProps extends StackProps {

@@ -1,8 +1,8 @@
 import React from 'react'
 
 import { Heading, HStack, Text, VStack, Wrap, WrapItem } from '@chakra-ui/react'
-import InnerCard from '../../InnerCard'
-import SmallAvatar from '../../SmallAvatar'
+import InnerCard from '../../general/InnerCard'
+import SmallAvatar from '../../general/SmallAvatar'
 
 import { format } from 'date-fns'
 
@@ -15,8 +15,8 @@ import type {
   ExtendedResearchPresentation
 } from '../../../types/profile-card'
 
-import VerifiedTag from '../../VerifiedTag'
-import ApprovalTag from '../../ApprovalTag'
+import VerifiedTag from '../../general/VerifiedTag'
+import ApprovalTag from '../../general/ApprovalTag'
 
 interface CardTemplateProps {
   entry: ExtendedBookPublication |

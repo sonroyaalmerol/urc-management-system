@@ -26,7 +26,7 @@ import { HamburgerIcon } from '@chakra-ui/icons'
 import { useRouter } from 'next/router'
 import NavigationAvatar from './NavigationAvatar'
 import { useSession, signOut } from 'next-auth/react'
-import type { Menu as MenuType } from '../types/menu'
+import type { Menu as MenuType } from '../../types/menu'
 
 interface NavbarProps extends BoxProps {
   menus: MenuType[]

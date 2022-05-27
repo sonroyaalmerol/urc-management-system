@@ -4,7 +4,7 @@ import type { ErrorProps } from 'next/error'
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { Center, Heading, VStack } from "@chakra-ui/react";
-import Button from '../components/Button';
+import Button from './Button';
 
 const Error: NextPage<ErrorProps> = ({ statusCode }) => {
   const router = useRouter()

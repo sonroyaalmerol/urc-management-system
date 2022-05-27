@@ -1,8 +1,8 @@
 import React from 'react'
 import { VStack, HStack, Heading, Text, Tag, Button, Wrap, WrapItem, Box, Center, Spinner, BoxProps, Avatar } from '@chakra-ui/react'
 
-import Card from '../../components/Card'
-import SmallAvatar from '../../components/SmallAvatar'
+import Card from '../../components/general/Card'
+import SmallAvatar from '../../components/general/SmallAvatar'
 
 import { format } from 'date-fns'
 

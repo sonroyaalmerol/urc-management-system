@@ -1,21 +1,21 @@
 import React from 'react'
-import ContentHeader from '../../../../../components/general/ContentHeader'
+import ContentHeader from '../../components/general/ContentHeader'
 import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
 import { VStack, Heading, Text } from '@chakra-ui/react'
 
-import Button from '../../../../../components/general/Button'
+import Button from '../../components/general/Button'
 
 import { NextSeo } from 'next-seo'
 
-import { prisma } from '../../../../../lib/server/prisma'
+import { prisma } from '../../lib/server/prisma'
 
 import type { BudgetProposalSubmission, CapsuleProposalSubmission, FullBlownProposalSubmission, Profile, Project, SubmissionTypes } from '@prisma/client'
-import Card from '../../../../../components/general/Card'
-import RichTextarea from '../../../../../components/general/RichTextarea'
+import Card from '../../components/general/Card'
+import RichTextarea from '../../components/general/RichTextarea'
 
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
-import FileUploadButton from '../../../../../components/general/FileUploadButton'
+import FileUploadButton from '../../components/general/FileUploadButton'
 
 interface CapsuleProposalFormProps {
   projectTitle: string,
@@ -164,7 +164,7 @@ interface NewSubmissionProps {
 
 }
 
-const NewSubmission: React.FC<NewSubmissionProps> = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const NewVerification: React.FC<NewSubmissionProps> = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const project: Project = JSON.parse(props.project)
 
   const { type } = props
@@ -241,4 +241,4 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 }
 
-export default NewSubmission
+export default NewVerification

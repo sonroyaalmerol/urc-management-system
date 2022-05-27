@@ -1,9 +1,9 @@
 import React from 'react'
-import ContentHeader from '../components/ContentHeader'
+import ContentHeader from '../components/general/ContentHeader'
 import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
 import { HStack, VStack  } from '@chakra-ui/react'
-import Deadlines from '../components/Deadlines'
+import Deadlines from '../components/general/Deadlines'
 
 import MemoList from '../components/dashboard/MemoList'
 

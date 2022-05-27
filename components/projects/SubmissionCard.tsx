@@ -1,7 +1,7 @@
 import React from 'react'
 import { VStack, HStack, Avatar, Text, Tag, Button, Wrap, WrapItem, Box, Center, Spinner, BoxProps } from '@chakra-ui/react'
 
-import Card from '../Card'
+import Card from '../general/Card'
 
 import type { Profile, Submission, BudgetProposalSubmission, CapsuleProposalSubmission, FullBlownProposalSubmission, DeliverableSubmission, FileUpload, User, SubmissionTypes, SubmissionStatus, Project } from '@prisma/client'
 

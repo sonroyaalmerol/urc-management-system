@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { Avatar, Divider, Heading, Tag, Text, VStack, Wrap, WrapItem } from '@chakra-ui/react'
-import Card from '../../../components/Card'
+import Card from '../../general/Card'
 
 import type { ComponentProps } from '../../../types/profile-card'
 import RolesSection from './RolesSection'

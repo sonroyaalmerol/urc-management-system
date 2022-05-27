@@ -1,18 +1,18 @@
 import React from 'react'
-import ContentHeader from '../../../../components/ContentHeader'
+import ContentHeader from '../../../../components/general/ContentHeader'
 import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
 import { VStack, Heading, Text, HStack, Avatar, Wrap, WrapItem, Tag, Textarea } from '@chakra-ui/react'
 
-import Button from '../../../../components/Button'
+import Button from '../../../../components/general/Button'
 
 import { NextSeo } from 'next-seo'
 
 import { prisma } from '../../../../lib/server/prisma'
 
 import type { Comment, Submission, SubmissionStatus, DeliverableSubmission, BudgetProposalSubmission, CapsuleProposalSubmission, FullBlownProposalSubmission, Profile, Project, SubmissionTypes } from '@prisma/client'
-import Card from '../../../../components/Card'
-import RichTextarea from '../../../../components/RichTextarea'
+import Card from '../../../../components/general/Card'
+import RichTextarea from '../../../../components/general/RichTextarea'
 
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 

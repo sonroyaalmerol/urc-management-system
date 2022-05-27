@@ -1,4 +1,4 @@
-import Card from '../Card'
+import Card from '../general/Card'
 import type { CardProps } from '../../types/cardprops'
 import { InstituteNews, User, FileUpload, Institute } from '@prisma/client'
 import { 
@@ -12,7 +12,7 @@ import {
   Heading
 } from '@chakra-ui/react'
 
-import SmallAvatar from '../SmallAvatar'
+import SmallAvatar from '../general/SmallAvatar'
 
 import parse from '../../lib/client/parseHTML'
 import { DownloadIcon } from '@chakra-ui/icons'

@@ -3,7 +3,7 @@ import React from 'react'
 import { useDisclosure, Text, Input, VStack, Icon } from '@chakra-ui/react'
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 
-import Button from '../Button'
+import Button from '../general/Button'
 
 import {
   Modal,
@@ -17,7 +17,7 @@ import {
 
 import { MdGroupAdd } from 'react-icons/md'
 import type { Project } from '@prisma/client'
-import IconButton from '../IconButton'
+import IconButton from '../general/IconButton'
 
 interface AddProponentButtonProps {
 

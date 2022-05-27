@@ -1,7 +1,7 @@
 import React from 'react'
 import { ChakraProvider } from '@chakra-ui/react'
 import theme from '../styles/theme'
-import Layout from '../components/Layout'
+import Layout from '../components/general/Layout'
 import { SessionProvider } from 'next-auth/react'
 import NextNProgress from 'nextjs-progressbar'
 
@@ -14,7 +14,7 @@ import '../styles/richTextArea.css'
 
 import type { AppProps } from 'next/app'
 import { NextSeo } from 'next-seo'
-import Error from '../components/Error'
+import Error from '../components/general/Error'
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps: { session, ...pageProps } }) => {
   return (

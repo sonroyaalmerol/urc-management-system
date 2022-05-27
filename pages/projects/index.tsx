@@ -1,10 +1,10 @@
 import React from 'react'
-import ContentHeader from '../../components/ContentHeader'
+import ContentHeader from '../../components/general/ContentHeader'
 import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
 import { VStack, HStack } from '@chakra-ui/react'
 
-import SearchInput from '../../components/SearchInput'
+import SearchInput from '../../components/general/SearchInput'
 
 import { NextSeo } from 'next-seo'
 

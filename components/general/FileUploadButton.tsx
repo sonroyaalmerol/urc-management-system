@@ -5,7 +5,7 @@ import Button from './Button'
 
 import { AttachmentIcon } from '@chakra-ui/icons'
 
-import formatBytes from '../lib/formatBytes'
+import formatBytes from '../../lib/formatBytes'
 
 interface FileUploadButtonProps extends React.InputHTMLAttributes<HTMLInputElement> {
   file: FileList,

@@ -1,5 +1,5 @@
 import { Box } from '@chakra-ui/react'
-import type { CardProps } from '../types/cardprops'
+import type { CardProps } from '../../types/cardprops'
 
 const Card: React.FC<CardProps> = (props) => {
   return (

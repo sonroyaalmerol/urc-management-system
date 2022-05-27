@@ -3,7 +3,7 @@ import React from 'react'
 import { Center, Heading, Menu, MenuButton, MenuItem, MenuList, Spinner, Tag, TagCloseButton, Text, VStack, Wrap, WrapItem } from '@chakra-ui/react'
 
 import type { ExtendedProfile } from '../../../types/profile-card'
-import Button from '../../Button'
+import Button from '../../general/Button'
 import { AddIcon } from '@chakra-ui/icons'
 import type { UserRole } from '@prisma/client'
 

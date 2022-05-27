@@ -1,5 +1,5 @@
 import React from 'react'
-import ContentHeader from '../../components/ContentHeader'
+import ContentHeader from '../../components/general/ContentHeader'
 import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
 
