@@ -28,11 +28,14 @@ interface EditProjectTitleButtonProps {
 const EditProjectTitleButton: React.FC<EditProjectTitleButtonProps> = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
+  const [submitting, setSubmitting] = React.useState(false)
+
   const { control, handleSubmit, reset } = useForm<Partial<Project>>();
   const router = useRouter()
   const toast = useToast()
 
   const onSubmit: SubmitHandler<Partial<Project>> = async data => {
+    setSubmitting(true)
     const res = await fetch(`/api/management/projects`, {
       method: 'POST',
       body: JSON.stringify({...data, mode: 'update', id: props.projectId})
@@ -52,7 +55,7 @@ const EditProjectTitleButton: React.FC<EditProjectTitleButtonProps> = (props) =>
         status: 'error'
       })
     }
-    
+    setSubmitting(false)
     onClose()
   };
 
@@ -81,7 +84,7 @@ const EditProjectTitleButton: React.FC<EditProjectTitleButtonProps> = (props) =>
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme='blue' mr={3} type="submit">
+            <Button isLoading={submitting} colorScheme='blue' mr={3} type="submit">
               Submit
             </Button>
           </ModalFooter>

@@ -25,10 +25,13 @@ interface NewProfileButtonProps {
 const NewProfileButton: React.FC<NewProfileButtonProps> = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
+  const [submitting, setSubmitting] = React.useState(false)
+
   const { control, handleSubmit, reset } = useForm<Partial<Profile>>();
   const toast = useToast()
 
   const onSubmit: SubmitHandler<Partial<Profile>> = async data => {
+    setSubmitting(true)
     const res = await fetch(`/api/management/profiles`, {
       method: 'POST',
       body: JSON.stringify(data)
@@ -48,7 +51,7 @@ const NewProfileButton: React.FC<NewProfileButtonProps> = (props) => {
         status: 'error'
       })
     }
-    
+    setSubmitting(false)
     reset()
     onClose()
   };
@@ -108,7 +111,7 @@ const NewProfileButton: React.FC<NewProfileButtonProps> = (props) => {
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme='blue' mr={3} type="submit">
+            <Button isLoading={submitting} colorScheme='blue' mr={3} type="submit">
               Submit
             </Button>
           </ModalFooter>
