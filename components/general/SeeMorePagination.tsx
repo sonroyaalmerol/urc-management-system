@@ -33,6 +33,7 @@ const SeeMorePagination: React.FC<SeeMorePaginationProps> = (props) => {
           <Button
             w="full"
             bgColor="transparent"
+            marginTop="1rem"
             borderRadius={0}
             color="brand.blue"
             onClick={() => seeMore()}

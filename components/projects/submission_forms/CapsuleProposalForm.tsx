@@ -9,15 +9,18 @@ import RichTextarea from '../../general/RichTextarea'
 
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 import fetchWithFile from '../../../lib/client/fetchWithFile'
+import { useRouter } from 'next/router'
 
 interface CapsuleProposalFormProps {
   projectTitle: string,
   projectId: string
+  projectSlug: string
 }
 
 const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
   const { control, handleSubmit, setValue, reset } = useForm<Partial<Submission & CapsuleProposalSubmission>>();
   const toast = useToast()
+  const router = useRouter()
   const [submitting, setSubmitting] = React.useState(false)
 
   const onSubmit: SubmitHandler<Partial<Submission & CapsuleProposalSubmission>> = async data => {
@@ -26,6 +29,7 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
     const res = await fetchWithFile(`/api/management/projects/${props.projectId}`, { ...data, type: 'CAPSULE' })
 
     if (res.success) {
+      router.push(`/projects/${props.projectSlug}`)
       toast({
         title: 'Success!',
         description: `Successfully created Capsule Proposal!`,

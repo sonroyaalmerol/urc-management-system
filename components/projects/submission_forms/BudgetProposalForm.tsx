@@ -9,16 +9,19 @@ import Card from '../../general/Card'
 import { useForm, SubmitHandler } from "react-hook-form"
 import FileUploadButton from '../../general/FileUploadButton'
 import fetchWithFile from '../../../lib/client/fetchWithFile'
+import { useRouter } from 'next/router'
 
 
 interface BudgetProposalFormProps {
   projectTitle: string,
-  projectId: string
+  projectId: string,
+  projectSlug: string
 }
 
 const BudgetProposalForm: React.FC<BudgetProposalFormProps> = (props) => {
   const { handleSubmit, register, watch, reset, setValue } = useForm<Partial<BudgetProposalSubmission & { file: FileList } & Submission>>();
   const toast = useToast()
+  const router = useRouter()
   const [submitting, setSubmitting] = React.useState(false)
 
   const onSubmit: SubmitHandler<Partial<BudgetProposalSubmission>> = async data => {
@@ -26,6 +29,7 @@ const BudgetProposalForm: React.FC<BudgetProposalFormProps> = (props) => {
     const res = await fetchWithFile(`/api/management/projects/${props.projectId}`, { ...data, type: 'BUDGET' })
 
     if (res.success) {
+      router.push(`/projects/${props.projectSlug}`)
       toast({
         title: 'Success!',
         description: `Successfully submitted Budget Proposal!`,
