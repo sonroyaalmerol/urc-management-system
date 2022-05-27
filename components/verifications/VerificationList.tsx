@@ -57,7 +57,7 @@ const VerificationList: React.FC<VerificationListProps> = (props) => {
           element={chakra.div}
           w="full"
         >
-          <SimpleGrid w="full" columns={{ base: 1, md: 2, lg: 3 }}>
+          <SimpleGrid w="full" columns={{ base: 1, lg: 2 }} spacing={4}>
             { entries.map((entry) => (
               <VerificationCard key={entry.id} request={entry} afterAction={afterAction} />
             )) }

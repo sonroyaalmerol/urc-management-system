@@ -1,5 +1,5 @@
 import React from 'react'
-import { VStack, HStack, Heading, Text, Tag, Button, Wrap, WrapItem, Box, Center, Spinner, BoxProps, Avatar, SimpleGrid, useToast } from '@chakra-ui/react'
+import { VStack, HStack, Heading, Text, Tag, Button, Wrap, WrapItem, Box, Center, Spinner, BoxProps, Avatar, SimpleGrid, useToast, Spacer } from '@chakra-ui/react'
 
 import Card from '../general/Card'
 
@@ -135,6 +135,8 @@ const VerificationCard: React.FC<VerificationCardProps> = (props) => {
   return (
     <Card
       transition="box-shadow 0.05s, background-color 0.1s"
+      display='flex'
+      flexDir="column"
       {...divProps}
     >
       <VStack alignItems="flex-start" spacing={2}>
@@ -183,6 +185,7 @@ const VerificationCard: React.FC<VerificationCardProps> = (props) => {
           )) }
         </Wrap>
       </VStack>
+      <Spacer />
       <SimpleGrid columns={2} mt="1rem" spacing={2}>
         <ButtonWithConfirmation
           color="white"
