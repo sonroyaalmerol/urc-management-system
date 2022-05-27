@@ -1,6 +1,7 @@
 import React from 'react'
 import { VStack, StackProps, Avatar, Text, HStack, Button } from '@chakra-ui/react'
 import { useSession, signOut } from 'next-auth/react'
+import { useRouter } from 'next/router'
 
 interface NavigationAvatarProps extends StackProps {
   avatarSize?: "small" | "large"
@@ -12,10 +13,18 @@ const NavigationAvatar: React.FC<NavigationAvatarProps> = (props) => {
   const divProps = Object.assign({}, props)
   delete divProps.avatarSize
 
+  const router = useRouter()
+
   if (props.avatarSize === 'small') {
     return (
       <HStack spacing={4} {...divProps}>
         <Avatar
+          as="a"
+          href={`/profiles/${session.profile.id}`}
+          onClick={(e) => {
+            e.preventDefault()
+            router.push(`/profiles/${session.profile.id}`)
+          }}
           zIndex={5}
           size={props.avatarSize === 'small' ? 'lg' : '2xl'}
           name={`${session.profile.first_name} ${session.profile.middle_initial} ${session.profile.last_name}`}
@@ -34,6 +43,12 @@ const NavigationAvatar: React.FC<NavigationAvatarProps> = (props) => {
   return (
     <VStack spacing={4} {...divProps}>
       <Avatar
+        as="a"
+        href={`/profiles/${session.profile.id}`}
+        onClick={(e) => {
+          e.preventDefault()
+          router.push(`/profiles/${session.profile.id}`)
+        }}
         zIndex={5}
         size={'2xl'}
         name={`${session.profile.first_name} ${session.profile.middle_initial} ${session.profile.last_name}`}
