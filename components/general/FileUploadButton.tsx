@@ -6,6 +6,7 @@ import Button from './Button'
 import { AttachmentIcon } from '@chakra-ui/icons'
 
 import formatBytes from '../../lib/formatBytes'
+import FileDetails from './FileDetails'
 
 interface FileUploadButtonProps extends React.InputHTMLAttributes<HTMLInputElement> {
   file: FileList,
@@ -21,34 +22,7 @@ const FileUploadButton: React.ForwardRefRenderFunction<HTMLInputElement, FileUpl
   return (
     <VStack w="full" align="baseline" spacing={2}>
       { file?.length > 0 && (
-        <Box
-          backgroundColor="brand.cardBackground"
-          borderRadius={10}
-          padding="1rem"
-          w="full"
-        >
-          <Wrap align="center" spacing={4}>
-            <WrapItem>
-              <AttachmentIcon fontSize="2xl" color="brand.blue" />
-            </WrapItem>
-            <WrapItem>
-              <VStack spacing={0} align="baseline">
-                <Heading
-                  fontFamily="body"
-                  fontSize="sm"
-                >
-                  {file[0].name}
-                </Heading>
-                <Text
-                  color="brand.blue"
-                  fontSize="sm"
-                >
-                  { formatBytes(file[0].size) }
-                </Text>
-              </VStack>
-            </WrapItem>
-          </Wrap>
-        </Box>
+        <FileDetails file={file[0]} />
       ) }
       <Box>
         <input

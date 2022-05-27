@@ -10,6 +10,7 @@ import ProjectCard from './ProjectCard'
 
 interface ProjectListProps {
   search?: string
+  refreshKey?: number
 }
 
 const ProjectList: React.FC<ProjectListProps> = (props) => {
@@ -43,11 +44,19 @@ const ProjectList: React.FC<ProjectListProps> = (props) => {
 
   React.useEffect(() => {
     setLoading(true)
+    if (deferredSearch === props.search) {
+      setLoading(false)
+    }
   }, [props.search])
 
   React.useEffect(() => {
     loadNewEntries({ reset: true })
-  }, [deferredSearch])
+  }, [deferredSearch, props.refreshKey])
+
+  React.useEffect(() => {
+    setLoading(true)
+  }, [props.refreshKey])
+
   return (
     <>
       { !loading ? (

@@ -38,11 +38,11 @@ const NewSubmission: React.FC<NewSubmissionProps> = (props: InferGetServerSidePr
   const formConstructor = (type: SubmissionTypes) => {
     switch(type.toUpperCase()) {
       case 'BUDGET':
-        return <BudgetProposalForm projectTitle={project.title} />
+        return <BudgetProposalForm projectTitle={project.title} projectId={project.id} />
       case 'CAPSULE':
-        return <CapsuleProposalForm projectTitle={project.title} />
+        return <CapsuleProposalForm projectTitle={project.title} projectId={project.id} />
       case 'FULL':
-        return <FullBlownProposalForm projectTitle={project.title} />
+        return <FullBlownProposalForm projectTitle={project.title} projectId={project.id} />
     }
   }
 

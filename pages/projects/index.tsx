@@ -17,6 +17,11 @@ interface ProjectsProps {
 
 const Projects: React.FC<ProjectsProps> = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [search, setSearch] = React.useState('')
+  const [refreshKey, setRefreshKey] = React.useState(0)
+
+  const refresh = () => {
+    setRefreshKey(prev => prev + 1)
+  }
 
   return (
     <>
@@ -35,9 +40,9 @@ const Projects: React.FC<ProjectsProps> = (props: InferGetServerSidePropsType<ty
                 setSearch(e.target.value)
               }}
             />
-            <NewProjectButton />
+            <NewProjectButton onSuccess={refresh} />
           </HStack>
-          <ProjectList search={search} />
+          <ProjectList search={search} refreshKey={refreshKey} />
         </VStack>
       </VStack>
     </>

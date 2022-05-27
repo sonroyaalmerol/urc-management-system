@@ -1,31 +1,48 @@
 import React from 'react'
-import { VStack, Heading } from '@chakra-ui/react'
+import { VStack, Heading, useToast } from '@chakra-ui/react'
 
 import Button from '../../general/Button'
 
-import type { BudgetProposalSubmission } from '@prisma/client'
+import type { BudgetProposalSubmission, Submission } from '@prisma/client'
 import Card from '../../general/Card'
 
 import { useForm, SubmitHandler } from "react-hook-form"
 import FileUploadButton from '../../general/FileUploadButton'
+import fetchWithFile from '../../../lib/client/fetchWithFile'
 
 
 interface BudgetProposalFormProps {
   projectTitle: string,
+  projectId: string
 }
 
 const BudgetProposalForm: React.FC<BudgetProposalFormProps> = (props) => {
-  const { control, handleSubmit, register, watch } = useForm<Partial<BudgetProposalSubmission & { file: FileList }>>();
+  const { handleSubmit, register, watch, reset, setValue } = useForm<Partial<BudgetProposalSubmission & { file: FileList } & Submission>>();
+  const toast = useToast()
+  const [submitting, setSubmitting] = React.useState(false)
 
-  const onSubmit: SubmitHandler<Partial<BudgetProposalSubmission>> = data => {
-    console.log(data)
+  const onSubmit: SubmitHandler<Partial<BudgetProposalSubmission>> = async data => {
+    setSubmitting(true)
+    const res = await fetchWithFile(`/api/management/projects/${props.projectId}`, { ...data, type: 'BUDGET' })
+
+    if (res.success) {
+      toast({
+        title: 'Success!',
+        description: `Successfully submitted Budget Proposal!`,
+        status: 'success'
+      })
+    } else {
+      toast({
+        title: 'Error!',
+        description: res.error,
+        status: 'error'
+      })
+    }
+    setSubmitting(false)
+    reset()
   };
 
   const { file } = watch()
-
-  React.useEffect(() => {
-    console.log(file)
-  }, [file])
 
   return (
     <VStack as="form" onSubmit={handleSubmit(onSubmit)} w="full" align="baseline" spacing={8}>
@@ -35,7 +52,7 @@ const BudgetProposalForm: React.FC<BudgetProposalFormProps> = (props) => {
             {props.projectTitle}
           </Heading>
           <FileUploadButton file={file} {...register('file')} />
-          <Button type="submit">Submit</Button>
+          <Button type="submit" isLoading={submitting}>Submit</Button>
         </VStack>
       </Card>
     </VStack>

@@ -15,6 +15,11 @@ interface ProfilesProps {
 
 const Profiles: React.FC<ProfilesProps> = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [search, setSearch] = React.useState('')
+  const [refreshKey, setRefreshKey] = React.useState(0)
+
+  const refresh = () => {
+    setRefreshKey(prev => prev + 1)
+  }
 
   return (
     <>
@@ -33,9 +38,9 @@ const Profiles: React.FC<ProfilesProps> = (props: InferGetServerSidePropsType<ty
                 setSearch(e.target.value)
               }}
             />
-            <NewProfileButton />
+            <NewProfileButton onSuccess={refresh} />
           </HStack>
-          <ProfileList search={search} />
+          <ProfileList search={search} refreshKey={refreshKey} />
         </VStack>
       </VStack>
     </>

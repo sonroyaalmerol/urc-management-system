@@ -66,6 +66,6 @@ const parseOptions: (options?: ParseOptions) => HTMLReactParserOptions = (option
   })
 }
 
-const parse = (html: string, options?: ParseOptions) => rawParse(html, parseOptions(options))
+const parseHTML = (html: string, options?: ParseOptions) => rawParse(html ?? '', parseOptions(options))
 
-export default parse
+export default parseHTML

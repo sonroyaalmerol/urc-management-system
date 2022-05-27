@@ -10,11 +10,12 @@ import { NextSeo } from 'next-seo'
 
 import { prisma } from '../../../../lib/server/prisma'
 
-import type { Comment, Submission, SubmissionStatus, DeliverableSubmission, BudgetProposalSubmission, CapsuleProposalSubmission, FullBlownProposalSubmission, Profile, Project, SubmissionTypes } from '@prisma/client'
+import type { Comment, Submission, SubmissionStatus, DeliverableSubmission, BudgetProposalSubmission, CapsuleProposalSubmission, FullBlownProposalSubmission, Profile, Project, SubmissionTypes, FileUpload } from '@prisma/client'
 import Card from '../../../../components/general/Card'
 import RichTextarea from '../../../../components/general/RichTextarea'
 
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
+import FileDetails from '../../../../components/general/FileDetails'
 
 const humanizeStatus = (status: SubmissionStatus) => {
   switch(status) {
@@ -35,10 +36,18 @@ const humanizeStatus = (status: SubmissionStatus) => {
       }
   }
 }
+
+interface ExtendedSubmission extends Submission {
+  deliverable_submission: DeliverableSubmission;
+  budget_proposal_submission: BudgetProposalSubmission;
+  capsule_proposal_submission: CapsuleProposalSubmission;
+  full_blown_proposal_submission: FullBlownProposalSubmission;
+  profile: Profile;
+  project: Project;
+  files: FileUpload[];
+}
 interface CapsuleProposalFormProps {
-  projectTitle: string,
-  submission: CapsuleProposalSubmission,
-  status: SubmissionStatus
+  submission: ExtendedSubmission
 }
 
 const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
@@ -55,19 +64,19 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
           <Wrap align="center" spacing={4}>
             <WrapItem>
               <Heading fontFamily="body" fontSize="lg">
-                {props.projectTitle}
+                {props.submission.project.title}
               </Heading>
             </WrapItem>
             <WrapItem>
               <Tag
-                bgColor={humanizeStatus(props.status).color}
+                bgColor={humanizeStatus(props.submission.status).color}
                 textColor="white"
                 borderRadius="20px"
                 fontSize="xs"
                 fontWeight="bold"
                 paddingX="0.8rem"
               >
-                {humanizeStatus(props.status).text}
+                {humanizeStatus(props.submission.status).text}
               </Tag>
             </WrapItem>
           </Wrap>
@@ -76,7 +85,7 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
             <Controller
               name="research_thrust"
               control={control}
-              defaultValue={props.submission.research_thrust}
+              defaultValue={props.submission.capsule_proposal_submission.research_thrust}
               render={({ field }) => <RichTextarea isReadOnly {...field} />}
             />
           </VStack>
@@ -85,7 +94,7 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
             <Controller
               name="brief_background"
               control={control}
-              defaultValue={props.submission.brief_background}
+              defaultValue={props.submission.capsule_proposal_submission.brief_background}
               render={({ field }) => <RichTextarea isReadOnly {...field} />}
             />
           </VStack>
@@ -94,7 +103,7 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
             <Controller
               name="objectives_of_the_study"
               control={control}
-              defaultValue={props.submission.objectives_of_the_study}
+              defaultValue={props.submission.capsule_proposal_submission.objectives_of_the_study}
               render={({ field }) => <RichTextarea isReadOnly {...field} />}
             />
           </VStack>
@@ -103,7 +112,7 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
             <Controller
               name="significance_of_the_study"
               control={control}
-              defaultValue={props.submission.significance_of_the_study}
+              defaultValue={props.submission.capsule_proposal_submission.significance_of_the_study}
               render={({ field }) => <RichTextarea isReadOnly {...field} />}
             />
           </VStack>
@@ -112,7 +121,7 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
             <Controller
               name="methodology"
               control={control}
-              defaultValue={props.submission.methodology}
+              defaultValue={props.submission.capsule_proposal_submission.methodology}
               render={({ field }) => <RichTextarea isReadOnly {...field} />}
             />
           </VStack>
@@ -123,44 +132,56 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
 }
 
 interface FullBlownProposalFormProps {
-  projectTitle: string,
-  submission: FullBlownProposalSubmission,
-  status: SubmissionStatus
+  submission: ExtendedSubmission
 }
 
-const FullBlownProposalForm: React.FC<FullBlownProposalFormProps> = () => {
+const FullBlownProposalForm: React.FC<FullBlownProposalFormProps> = (props) => {
+  const { control } = useForm<Partial<FullBlownProposalSubmission>>();
+
   return (
-    <>
-    </>
+    <Card>
+      <VStack align="baseline" spacing={6}>
+        <Heading fontFamily="body" fontSize="lg">
+          File Uploaded
+        </Heading>
+        <FileDetails isViewable file={props.submission.files[0]} />
+        <VStack w="full" align="baseline" spacing={1}>
+          <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Description</Text>
+          <Controller
+            name="description"
+            control={control}
+            defaultValue={props.submission.full_blown_proposal_submission.description}
+            render={({ field }) => <RichTextarea isReadOnly {...field} />}
+          />
+        </VStack>
+      </VStack>
+    </Card>
   )
 }
 
 interface BudgetProposalFormProps {
-  projectTitle: string,
-  submission: BudgetProposalSubmission,
-  status: SubmissionStatus
+  submission: ExtendedSubmission
 }
 
-const BudgetProposalForm: React.FC<BudgetProposalFormProps> = () => {
+const BudgetProposalForm: React.FC<BudgetProposalFormProps> = (props) => {
   return (
-    <>
-    </>
+    <Card>
+      <VStack align="baseline" spacing={6}>
+        <Heading fontFamily="body" fontSize="lg">
+          File Uploaded
+        </Heading>
+        <FileDetails isViewable file={props.submission.files[0]} />
+      </VStack>
+    </Card>
   )
 }
 
 interface SubmissionProps {
-
+  
 }
 
 const Submission: React.FC<SubmissionProps> = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const submission: Submission & {
-    deliverable_submission: DeliverableSubmission;
-    budget_proposal_submission: BudgetProposalSubmission;
-    capsule_proposal_submission: CapsuleProposalSubmission;
-    full_blown_proposal_submission: FullBlownProposalSubmission;
-    profile: Profile;
-    project: Project;
-  } = JSON.parse(props.submission)
+  const submission: ExtendedSubmission = JSON.parse(props.submission)
 
   const { control, handleSubmit } = useForm<Partial<Comment>>();
 
@@ -185,21 +206,15 @@ const Submission: React.FC<SubmissionProps> = (props: InferGetServerSidePropsTyp
     switch(type) {
       case 'BUDGET':
         return <BudgetProposalForm
-          projectTitle={submission.project.title}
-          submission={submission.budget_proposal_submission}
-          status={submission.status}
+          submission={submission}
         />
       case 'CAPSULE':
         return <CapsuleProposalForm
-          projectTitle={submission.project.title}
-          submission={submission.capsule_proposal_submission}
-          status={submission.status}
+          submission={submission}
         />
       case 'FULL':
         return <FullBlownProposalForm
-          projectTitle={submission.project.title}
-          submission={submission.full_blown_proposal_submission}
-          status={submission.status}
+          submission={submission}
         />
     }
   }
@@ -285,7 +300,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       capsule_proposal_submission: true,
       full_blown_proposal_submission: true,
       profile: true,
-      project: true
+      project: true,
+      files: true
     }
   })
 

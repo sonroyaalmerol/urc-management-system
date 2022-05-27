@@ -8,6 +8,8 @@ import type { Profile, Submission, BudgetProposalSubmission, CapsuleProposalSubm
 import { format } from 'date-fns'
 
 import { useRouter } from 'next/router'
+import parseHTML from '../../lib/client/parseHTML'
+import FileDetails from '../general/FileDetails'
 
 interface SubmissionCardProps extends BoxProps {
   submission: Partial<(Submission & {
@@ -139,18 +141,23 @@ const SubmissionCard: React.FC<SubmissionCardProps> = (props) => {
                 </Tag>
               </WrapItem>
             </Wrap>
-            <Wrap>
-              <WrapItem>
-                <Text color="brand.blue" fontWeight="bold" fontStyle="italic" fontSize="sm">
-                  { humanizeDescription(submission).title }
-                </Text>
-              </WrapItem>
-              <WrapItem>
-                <Text fontSize="sm">
-                  { humanizeDescription(submission).content }
-                </Text>
-              </WrapItem>
-            </Wrap>
+            { submission.type === 'CAPSULE' ? (
+              <Wrap>
+                <WrapItem>
+                  <Text color="brand.blue" fontWeight="bold" fontStyle="italic" fontSize="sm">
+                    { humanizeDescription(submission).title }
+                  </Text>
+                </WrapItem>
+                <WrapItem>
+                  <Text fontSize="sm">
+                    { parseHTML(humanizeDescription(submission).content, { textOnly: true }) }
+                  </Text>
+                </WrapItem>
+              </Wrap>
+            ) : (
+              <FileDetails file={submission.files[0]} />
+            ) }
+            
             <Text fontStyle="italic" color="brand.blue">
               { format(new Date(submission.updated_at), 'MMM dd, yyyy h:mm a') }
             </Text>

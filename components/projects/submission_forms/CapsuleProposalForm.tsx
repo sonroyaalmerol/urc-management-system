@@ -1,23 +1,45 @@
 import React from 'react'
-import { VStack, Heading, Text } from '@chakra-ui/react'
+import { VStack, Heading, Text, useToast } from '@chakra-ui/react'
 
 import Button from '../../general/Button'
 
-import type { CapsuleProposalSubmission } from '@prisma/client'
+import type { CapsuleProposalSubmission, Submission } from '@prisma/client'
 import Card from '../../general/Card'
 import RichTextarea from '../../general/RichTextarea'
 
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
+import fetchWithFile from '../../../lib/client/fetchWithFile'
 
 interface CapsuleProposalFormProps {
   projectTitle: string,
+  projectId: string
 }
 
 const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
-  const { control, handleSubmit } = useForm<Partial<CapsuleProposalSubmission>>();
+  const { control, handleSubmit, setValue, reset } = useForm<Partial<Submission & CapsuleProposalSubmission>>();
+  const toast = useToast()
+  const [submitting, setSubmitting] = React.useState(false)
 
-  const onSubmit: SubmitHandler<Partial<CapsuleProposalSubmission>> = data => {
-    console.log(data)
+  const onSubmit: SubmitHandler<Partial<Submission & CapsuleProposalSubmission>> = async data => {
+    setValue('type', 'CAPSULE')
+    setSubmitting(true)
+    const res = await fetchWithFile(`/api/management/projects/${props.projectId}`, { ...data, type: 'CAPSULE' })
+
+    if (res.success) {
+      toast({
+        title: 'Success!',
+        description: `Successfully created Capsule Proposal!`,
+        status: 'success'
+      })
+    } else {
+      toast({
+        title: 'Error!',
+        description: res.error,
+        status: 'error'
+      })
+    }
+    setSubmitting(false)
+    reset()
   };
 
   return (
@@ -72,7 +94,7 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
               render={({ field }) => <RichTextarea {...field} />}
             />
           </VStack>
-          <Button type="submit">Submit</Button>
+          <Button type="submit" isLoading={submitting}>Submit</Button>
         </VStack>
       </Card>
     </VStack>

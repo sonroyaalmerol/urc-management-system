@@ -4,7 +4,14 @@ import { getSession } from 'next-auth/react'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
 
-import type { SubmissionStatus, SubmissionTypes } from '@prisma/client'
+import type { BudgetProposalSubmission, CapsuleProposalSubmission, FileUpload, FullBlownProposalSubmission, Submission, SubmissionStatus, SubmissionTypes } from '@prisma/client'
+import parseBodyWithFile from '../../../../lib/server/parseBodyWithFile'
+
+export const config = {
+  api: {
+    bodyParser: false
+  }
+}
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const { id, types: types_raw, status: status_raw } = req.query
@@ -65,7 +72,89 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
+  const { id } = req.query
 
+  const body: { file: FileUpload, fields: (
+    Partial<Submission> &
+    Partial<BudgetProposalSubmission> &
+    Partial<FullBlownProposalSubmission> &
+    Partial<CapsuleProposalSubmission>
+  ) } = await parseBodyWithFile(req, false)
+
+  if (!body) {
+    return res.status(500).json({ error: 'Something went wrong! Please try again.' })
+  }
+
+  if (!body.file && (body.fields.type === 'BUDGET' || body.fields.type === 'FULL')) {
+    return res.status(400).json({ error: 'A file is required!' })
+  }
+  
+  const submission = await prisma.submission.create({
+    data: {
+      type: body.fields.type,
+      project: {
+        connect: {
+          id: id as string
+        }
+      },
+      profile: {
+        connect: {
+          id: session.profile.id
+        }
+      },
+      files: body.file ? {
+        connect: {
+          id: body.file.id
+        }
+      } : undefined
+    }
+  })
+
+  let specificSubmission: BudgetProposalSubmission | FullBlownProposalSubmission | CapsuleProposalSubmission
+
+  if (body.fields.type === 'BUDGET') {
+    specificSubmission = await prisma.budgetProposalSubmission.create({
+      data: {
+        submission: {
+          connect: {
+            id: submission.id
+          }
+        }
+      }
+    })
+  }
+
+  if (body.fields.type === 'FULL') {
+    specificSubmission = await prisma.fullBlownProposalSubmission.create({
+      data: {
+        submission: {
+          connect: {
+            id: submission.id
+          }
+        },
+        description: body.fields.description
+      }
+    })
+  }
+
+  if (body.fields.type === 'CAPSULE') {
+    specificSubmission = await prisma.capsuleProposalSubmission.create({
+      data: {
+        research_thrust: body.fields.research_thrust,
+        brief_background: body.fields.brief_background,
+        objectives_of_the_study: body.fields.objectives_of_the_study,
+        significance_of_the_study: body.fields.significance_of_the_study,
+        methodology: body.fields.methodology,
+        submission: {
+          connect: {
+            id: submission.id
+          }
+        }
+      }
+    })
+  }
+
+  return res.status(200).json({ success: true, data: submission, subdata: specificSubmission })
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

@@ -278,11 +278,9 @@ model FileUpload {
 
 model FullBlownProposalSubmission {
   id                               String                           @id @default(cuid())
-  title                            String
   description                      String?
   created_at                       DateTime?                        @default(now())
   updated_at                       DateTime?                        @updatedAt
-  upload_id                        String                           
   submission_id                    String
   submission                       Submission                        @relation(fields: [submission_id], references: [id], onDelete: Cascade)
 }

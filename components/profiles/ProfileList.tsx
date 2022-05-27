@@ -9,7 +9,8 @@ import InfiniteScroll from 'react-infinite-scroller'
 import ProfileCard from './ProfileCard'
 
 interface ProfileListProps {
-  search?: string
+  search?: string,
+  refreshKey?: number
 }
 
 const ProfileList: React.FC<ProfileListProps> = (props) => {
@@ -39,11 +40,18 @@ const ProfileList: React.FC<ProfileListProps> = (props) => {
 
   React.useEffect(() => {
     setLoading(true)
+    if (deferredSearch === props.search) {
+      setLoading(false)
+    }
   }, [props.search])
 
   React.useEffect(() => {
     loadNewEntries({ reset: true })
-  }, [deferredSearch])
+  }, [deferredSearch, props.refreshKey])
+
+  React.useEffect(() => {
+    setLoading(true)
+  }, [props.refreshKey])
   return (
     <>
       { !loading ? (

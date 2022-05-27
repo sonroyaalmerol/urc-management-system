@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useDisclosure, Text, Input, VStack } from '@chakra-ui/react'
+import { useDisclosure, Text, Input, VStack, useToast } from '@chakra-ui/react'
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 
 import Button from '../general/Button'
@@ -19,16 +19,37 @@ import { AddIcon } from '@chakra-ui/icons'
 import type { Profile } from '@prisma/client'
 
 interface NewProfileButtonProps {
-
+  onSuccess: () => any
 }
 
 const NewProfileButton: React.FC<NewProfileButtonProps> = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const { control, handleSubmit } = useForm<Partial<Profile>>();
+  const { control, handleSubmit, reset } = useForm<Partial<Profile>>();
+  const toast = useToast()
 
-  const onSubmit: SubmitHandler<Partial<Profile>> = data => {
-    console.log(data)
+  const onSubmit: SubmitHandler<Partial<Profile>> = async data => {
+    const res = await fetch(`/api/management/profiles`, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    }).then((i) => i.json())
+
+    if (res.success) {
+      toast({
+        title: 'Success!',
+        description: `Successfully created profile of "${res.data.email}"!`,
+        status: 'success'
+      })
+      props.onSuccess()
+    } else {
+      toast({
+        title: 'Error!',
+        description: res.error,
+        status: 'error'
+      })
+    }
+    
+    reset()
     onClose()
   };
 

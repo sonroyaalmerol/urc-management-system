@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import slugify from 'slugify'
+import slugGenerator from '../slugGenerator'
 
 declare global {
   // allow global `var` declarations
@@ -52,11 +52,11 @@ export const prisma =
       if (SLUGIFY_MODELS.includes(params.model)) {
         if (params.action === 'create') {
           if (!params.args.data.slug && params.args.data.title) {
-            manipulatedParams.args.data.slug = slugify(params.args.data.title, { lower: true, strict: true, remove: /[*+~.()'"!:@]/g })
+            manipulatedParams.args.data.slug = slugGenerator(params.args.data.title)
           }
         } else if (params.action === 'upsert') {
           if (!params.args.create.slug && params.args.create.title) {
-            manipulatedParams.args.create.slug = slugify(params.args.create.title, { lower: true, strict: true, remove: /[*+~.()'"!:@]/g })
+            manipulatedParams.args.create.slug = slugGenerator(params.args.create.title)
           }
         }
       }
