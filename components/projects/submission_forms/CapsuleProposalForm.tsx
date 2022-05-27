@@ -1,0 +1,82 @@
+import React from 'react'
+import { VStack, Heading, Text } from '@chakra-ui/react'
+
+import Button from '../../general/Button'
+
+import type { CapsuleProposalSubmission } from '@prisma/client'
+import Card from '../../general/Card'
+import RichTextarea from '../../general/RichTextarea'
+
+import { useForm, Controller, SubmitHandler } from "react-hook-form"
+
+interface CapsuleProposalFormProps {
+  projectTitle: string,
+}
+
+const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
+  const { control, handleSubmit } = useForm<Partial<CapsuleProposalSubmission>>();
+
+  const onSubmit: SubmitHandler<Partial<CapsuleProposalSubmission>> = data => {
+    console.log(data)
+  };
+
+  return (
+    <VStack as="form" onSubmit={handleSubmit(onSubmit)} w="full" align="baseline" spacing={8}>
+      <Card>
+        <VStack align="baseline" spacing={6}>
+          <Heading fontFamily="body" fontSize="lg">
+            {props.projectTitle}
+          </Heading>
+          <VStack w="full" align="baseline" spacing={1}>
+            <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Research Thrust</Text>
+            <Controller
+              name="research_thrust"
+              control={control}
+              defaultValue=""
+              render={({ field }) => <RichTextarea {...field} />}
+            />
+          </VStack>
+          <VStack w="full" align="baseline" spacing={1}>
+            <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Brief Background</Text>
+            <Controller
+              name="brief_background"
+              control={control}
+              defaultValue=""
+              render={({ field }) => <RichTextarea {...field} />}
+            />
+          </VStack>
+          <VStack w="full" align="baseline" spacing={1}>
+            <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Objectives of the Study / Statement of the Problem</Text>
+            <Controller
+              name="objectives_of_the_study"
+              control={control}
+              defaultValue=""
+              render={({ field }) => <RichTextarea {...field} />}
+            />
+          </VStack>
+          <VStack w="full" align="baseline" spacing={1}>
+            <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Significance of the Study</Text>
+            <Controller
+              name="significance_of_the_study"
+              control={control}
+              defaultValue=""
+              render={({ field }) => <RichTextarea {...field} />}
+            />
+          </VStack>
+          <VStack w="full" align="baseline" spacing={1}>
+            <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Methodology</Text>
+            <Controller
+              name="methodology"
+              control={control}
+              defaultValue=""
+              render={({ field }) => <RichTextarea {...field} />}
+            />
+          </VStack>
+          <Button type="submit">Submit</Button>
+        </VStack>
+      </Card>
+    </VStack>
+  )
+}
+
+export default CapsuleProposalForm
