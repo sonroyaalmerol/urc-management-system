@@ -142,9 +142,15 @@ const FullBlownProposalForm: React.FC<FullBlownProposalFormProps> = (props) => {
     <Card>
       <VStack align="baseline" spacing={6}>
         <Heading fontFamily="body" fontSize="lg">
-          File Uploaded
+          Files Uploaded
         </Heading>
-        <FileDetails isViewable file={props.submission.files[0]} />
+        <Wrap>
+          { props.submission.files.map((file) => (
+            <WrapItem key={file.id}>
+              <FileDetails isViewable file={file} />
+            </WrapItem>
+          )) }
+          </Wrap>
         <VStack w="full" align="baseline" spacing={1}>
           <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Description</Text>
           <Controller
@@ -166,11 +172,17 @@ interface BudgetProposalFormProps {
 const BudgetProposalForm: React.FC<BudgetProposalFormProps> = (props) => {
   return (
     <Card>
-      <VStack align="baseline" spacing={6}>
+      <VStack align="baseline" spacing={6} w="full">
         <Heading fontFamily="body" fontSize="lg">
-          File Uploaded
+          Files Uploaded
         </Heading>
-        <FileDetails isViewable file={props.submission.files[0]} />
+        <Wrap>
+          { props.submission.files.map((file) => (
+            <WrapItem key={file.id}>
+              <FileDetails isViewable file={file} />
+            </WrapItem>
+          )) }
+        </Wrap>
       </VStack>
     </Card>
   )

@@ -74,18 +74,21 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const { id } = req.query
 
-  const body: { file: FileUpload, fields: (
+  const body: { files: {
+    fieldName: string,
+    value: FileUpload
+  }[], fields: (
     Partial<Submission> &
     Partial<BudgetProposalSubmission> &
     Partial<FullBlownProposalSubmission> &
     Partial<CapsuleProposalSubmission>
-  ) } = await parseBodyWithFile(req, false)
+  ) } = await parseBodyWithFile(req, { publicAccess: false })
 
   if (!body) {
     return res.status(500).json({ error: 'Something went wrong! Please try again.' })
   }
 
-  if (!body.file && (body.fields.type === 'BUDGET' || body.fields.type === 'FULL')) {
+  if (body.files.length === 0 && (body.fields.type === 'BUDGET' || body.fields.type === 'FULL')) {
     return res.status(400).json({ error: 'A file is required!' })
   }
   
@@ -102,11 +105,9 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
           id: session.profile.id
         }
       },
-      files: body.file ? {
-        connect: {
-          id: body.file.id
-        }
-      } : undefined
+      files: {
+        connect: body.files?.map((file) => ({id: file.value.id})) ?? []
+      }
     }
   })
 

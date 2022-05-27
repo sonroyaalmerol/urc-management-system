@@ -3,7 +3,9 @@ const fetchWithFile = async (url, data) => {
 
   Object.keys(data).forEach((key) => {
     if (data[key] instanceof FileList) {
-      formData.append(key, data[key][0])
+      Array.from(data[key]).forEach((file) => {
+        formData.append(key, file as File)
+      })
     } else {
       formData.append(key, data[key])
     }

@@ -59,7 +59,7 @@ const FullBlownProposalForm: React.FC<FullBlownProposalFormProps> = (props) => {
           <Heading fontFamily="body" fontSize="lg">
             {props.projectTitle}
           </Heading>
-          <FileUploadButton file={file} {...register('file')} />
+          <FileUploadButton files={file} {...register('file')} />
           <VStack w="full" align="baseline" spacing={1}>
             <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Description</Text>
             <Controller

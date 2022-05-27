@@ -155,7 +155,13 @@ const SubmissionCard: React.FC<SubmissionCardProps> = (props) => {
                 </WrapItem>
               </Wrap>
             ) : (
-              <FileDetails file={submission.files[0]} />
+              <Wrap>
+                { submission.files.map((file) => (
+                  <WrapItem key={file.id}>
+                    <FileDetails file={file} />
+                  </WrapItem>
+                )) }
+              </Wrap>
             ) }
             
             <Text fontStyle="italic" color="brand.blue">

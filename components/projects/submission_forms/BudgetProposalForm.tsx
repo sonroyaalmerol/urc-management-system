@@ -55,7 +55,7 @@ const BudgetProposalForm: React.FC<BudgetProposalFormProps> = (props) => {
           <Heading fontFamily="body" fontSize="lg">
             {props.projectTitle}
           </Heading>
-          <FileUploadButton file={file} {...register('file')} />
+          <FileUploadButton files={file} {...register('file')} />
           <Button type="submit" isLoading={submitting}>Submit</Button>
         </VStack>
       </Card>

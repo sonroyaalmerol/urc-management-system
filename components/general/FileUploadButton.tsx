@@ -1,35 +1,46 @@
 import React from 'react'
-import { VStack, Heading, Wrap, WrapItem, Text, Box, InputProps } from '@chakra-ui/react'
+import { VStack, Wrap, WrapItem, Text, Box } from '@chakra-ui/react'
 
 import Button from './Button'
 
-import { AttachmentIcon } from '@chakra-ui/icons'
-
-import formatBytes from '../../lib/formatBytes'
 import FileDetails from './FileDetails'
 
 interface FileUploadButtonProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  file: FileList,
+  files: FileList,
   disabled?: boolean
 }
 
+const fileListToArray = (files: FileList) => {
+  const fileArray: File[] = []
+
+  for (let i = 0; i < files?.length ?? 0; i++) {
+    fileArray.push(files.item(i))
+  }
+
+  return fileArray
+}
+
 const FileUploadButton: React.ForwardRefRenderFunction<HTMLInputElement, FileUploadButtonProps> = (props, ref) => {
-  const { file } = props
+  const { files } = props
 
   const divProps = Object.assign({}, props)
-  delete divProps.file
+  delete divProps.files
 
   return (
     <VStack w="full" align="baseline" spacing={2}>
-      { file?.length > 0 && (
-        <FileDetails file={file[0]} />
-      ) }
+      <Wrap>
+        { fileListToArray(files).map((file) => (
+          <WrapItem key={file.name}>
+            <FileDetails file={file} />
+          </WrapItem>
+        )) }
+      </Wrap>
       <Box>
         <input
           type="file"
           style={{ display: 'none' }}
           id="upload-button-file"
-          multiple={false}
+          multiple={true}
           ref={ref}
           {...divProps}
         />
