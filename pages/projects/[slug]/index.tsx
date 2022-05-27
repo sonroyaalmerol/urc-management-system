@@ -107,7 +107,7 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
             <Spacer />
             <WrapItem>
               <HStack>
-                <EditProjectTitleButton projectId={project.id} />
+                <EditProjectTitleButton projectId={project.id} currentTitle={project.title} />
                 <AddProponentButton />
                 <NewSubmissionButton
                   capsuleUrl={`/projects/${project.slug}/submissions/new/capsule`}

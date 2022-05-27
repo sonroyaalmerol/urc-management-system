@@ -21,7 +21,8 @@ import IconButton from '../general/IconButton'
 import { useRouter } from 'next/router'
 
 interface EditProjectTitleButtonProps {
-  projectId: string
+  projectId: string,
+  currentTitle: string
 }
 
 const EditProjectTitleButton: React.FC<EditProjectTitleButtonProps> = (props) => {
@@ -73,7 +74,7 @@ const EditProjectTitleButton: React.FC<EditProjectTitleButtonProps> = (props) =>
               <Controller
                 name="title"
                 control={control}
-                defaultValue=""
+                defaultValue={props.currentTitle}
                 render={({ field }) => <Input {...field} />}
               />
             </VStack>
