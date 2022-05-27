@@ -307,7 +307,6 @@ const uploadFile = async (fileUrl) => {
 async function main() {
   let profile
   try {
-
     [ profile ] = await prisma.$transaction([
       prisma.profile.upsert({
         where: {
@@ -320,6 +319,17 @@ async function main() {
           middle_initial: 'A.',
           last_name: 'Almerol',
           honorific: 'Mr.',
+          roles: {
+            connectOrCreate: {
+              where: {
+                id: 'researcher'
+              },
+              create: {
+                id: 'researcher',
+                comment: 'Researcher'
+              }
+            }
+          }
         }
       }),
       prisma.projectStatus.upsert({
