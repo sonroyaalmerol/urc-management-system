@@ -31,7 +31,7 @@ const NewVerificationButton: React.FC = (props) => {
         leftIcon={<AddIcon/>}
         rightIcon={<ChevronDownIcon />}
       >
-        New Verification
+        New Request
       </MenuButton>
       <MenuList>
         <MenuItem

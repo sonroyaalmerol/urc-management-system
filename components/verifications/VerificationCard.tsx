@@ -176,6 +176,9 @@ const VerificationCard: React.FC<VerificationCardProps> = (props) => {
         <Text fontStyle="italic" fontSize="xs">
           Request submitted: { format(new Date(request.updated_at), 'MMM dd, yyyy h:mm a') }
         </Text>
+        <Text fontSize="sm">
+          <strong>Role/Position</strong>: {request.role}
+        </Text>
         {entry.description}
         <Wrap>
           { request.proof_uploads.map((file) => (
