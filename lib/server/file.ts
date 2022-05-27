@@ -88,7 +88,11 @@ const uploadFile = async (fileProps: FileProps, ownerId: string) : Promise<FileU
 }
 
 const deleteFile = async (fileId: string) : Promise<FileUpload | null> => {
-  const file = await prisma.fileUpload.findFirst({
+  if (!fileId) {
+    return null
+  }
+  
+  const file = await prisma.fileUpload.findUnique({
     where: {
       id: fileId
     }

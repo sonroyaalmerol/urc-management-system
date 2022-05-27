@@ -5,6 +5,7 @@ import Card from '../../general/Card'
 
 import type { ComponentProps } from '../../../types/profile-card'
 import RolesSection from './RolesSection'
+import AvatarUploadable from '../AvatarUploadable'
 
 const ProfileDetails: React.FC<ComponentProps> = (props) => {
   const profile = props.profile
@@ -39,7 +40,11 @@ const ProfileDetails: React.FC<ComponentProps> = (props) => {
         <Divider />
         <Wrap w="full" spacing={10} align="center" justify={{ base: 'center', lg: 'initial' }}>
           <WrapItem>
-            <Avatar src={`/api/files/get/${profile.photo_id}`} size="2xl" />
+            <AvatarUploadable
+              size="2xl"
+              photoId={profile.photo_id}
+              profileId={profile.id}
+            />
           </WrapItem>
           <WrapItem>
             <VStack align="baseline">
