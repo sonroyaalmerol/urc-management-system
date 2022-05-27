@@ -33,7 +33,7 @@ const NewProjectButton: React.FC<NewProjectButtonProps> = (props) => {
   const onSubmit: SubmitHandler<Partial<Project>> = async data => {
     const res = await fetch(`/api/management/projects`, {
       method: 'POST',
-      body: JSON.stringify(data)
+      body: JSON.stringify({...data, mode: 'create'})
     }).then((i) => i.json())
 
     if (res.success) {

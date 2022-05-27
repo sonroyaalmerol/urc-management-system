@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useDisclosure, Text, Input, VStack } from '@chakra-ui/react'
+import { useDisclosure, Text, Input, VStack, useToast } from '@chakra-ui/react'
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 
 import Button from '../general/Button'
@@ -18,18 +18,40 @@ import {
 import { EditIcon } from '@chakra-ui/icons'
 import type { Project } from '@prisma/client'
 import IconButton from '../general/IconButton'
+import { useRouter } from 'next/router'
 
 interface EditProjectTitleButtonProps {
-
+  projectId: string
 }
 
 const EditProjectTitleButton: React.FC<EditProjectTitleButtonProps> = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const { control, handleSubmit } = useForm<Partial<Project>>();
+  const { control, handleSubmit, reset } = useForm<Partial<Project>>();
+  const router = useRouter()
+  const toast = useToast()
 
-  const onSubmit: SubmitHandler<Partial<Project>> = data => {
-    console.log(data)
+  const onSubmit: SubmitHandler<Partial<Project>> = async data => {
+    const res = await fetch(`/api/management/projects`, {
+      method: 'POST',
+      body: JSON.stringify({...data, mode: 'update', id: props.projectId})
+    }).then((i) => i.json())
+
+    if (res.success) {
+      router.push(`/projects/${res.data.slug}`)
+      toast({
+        title: 'Success!',
+        description: 'Successfully updated project title!',
+        status: 'success'
+      })
+    } else {
+      toast({
+        title: 'Error!',
+        description: res.error,
+        status: 'error'
+      })
+    }
+    
     onClose()
   };
 

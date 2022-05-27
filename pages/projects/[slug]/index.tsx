@@ -2,7 +2,7 @@ import React from 'react'
 import ContentHeader from '../../../components/general/ContentHeader'
 import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
-import { VStack, HStack, Heading, Button, Wrap, WrapItem, Spacer, Select } from '@chakra-ui/react'
+import { VStack, HStack, Heading, Wrap, WrapItem, Spacer, Select } from '@chakra-ui/react'
 
 import { AddIcon } from '@chakra-ui/icons'
 
@@ -12,7 +12,6 @@ import { prisma } from '../../../lib/server/prisma'
 
 import type { Project } from '@prisma/client'
 import SubmissionList from '../../../components/projects/SubmissionList'
-import { type } from 'os'
 import NewSubmissionButton from '../../../components/projects/NewSubmissionButton'
 import EditProjectTitleButton from '../../../components/projects/EditProjectTitleButton'
 import AddProponentButton from '../../../components/projects/AddProponentButton'
@@ -108,7 +107,7 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
             <Spacer />
             <WrapItem>
               <HStack>
-                <EditProjectTitleButton />
+                <EditProjectTitleButton projectId={project.id} />
                 <AddProponentButton />
                 <NewSubmissionButton
                   capsuleUrl={`/projects/${project.slug}/submissions/new/capsule`}

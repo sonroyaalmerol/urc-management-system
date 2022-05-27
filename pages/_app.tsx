@@ -15,8 +15,11 @@ import '../styles/richTextArea.css'
 import type { AppProps } from 'next/app'
 import { NextSeo } from 'next-seo'
 import Error from '../components/general/Error'
+import { useRouter } from 'next/router'
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps: { session, ...pageProps } }) => {
+  const router = useRouter()
+
   return (
     <>
       <NextSeo 
@@ -29,7 +32,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps: { session, ...pagePro
             { pageProps?.statusCode ? (
               <Error statusCode={pageProps.statusCode} />
             ) : (
-              <Component {...pageProps} />
+              <Component key={router.asPath} {...pageProps} />
             ) }
           </Layout>
         </ChakraProvider>

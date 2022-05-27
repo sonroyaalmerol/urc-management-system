@@ -94,7 +94,7 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  const body = JSON.parse(req.body) as Partial<Project>
+  const body = JSON.parse(req.body) as Partial<Project & { mode: 'create' | 'update' }>
 
   if (roleChecker(session.profile.roles, 'researcher')) {
     const id: string = session.profile.id
@@ -103,21 +103,35 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
       return res.status(400).json({ error: 'Title is required!' })
     }
 
-    const project = await prisma.project.create({
-      data: {
-        title: body.title,
-        bridge_profiles: {
-          create: {
-            profile_id: id,
-            role_title: 'Main Proponent'
+    let project: Project = null
+    
+    if (body.mode === 'create') {
+      project = await prisma.project.create({
+        data: {
+          title: body.title,
+          bridge_profiles: {
+            create: {
+              profile_id: id,
+              role_title: 'Main Proponent'
+            }
+          },
+          slug: slugGenerator(body.title),
+          main_proponents: {
+            set: [`${session.profile.first_name} ${session.profile.middle_initial} ${session.profile.last_name}`]
           }
-        },
-        slug: slugGenerator(body.title),
-        main_proponents: {
-          set: [`${session.profile.first_name} ${session.profile.middle_initial} ${session.profile.last_name}`]
         }
-      }
-    })
+      })
+    } else if (body.mode === 'update') {
+      project = await prisma.project.update({
+        where: {
+          id: body.id
+        },
+        data: {
+          title: body.title,
+          slug: slugGenerator(body.title)
+        }
+      })
+    }
 
     return res.status(200).json({ success: true, data: project })
   }
