@@ -16,12 +16,12 @@ const NewVerificationButton: React.FC = (props) => {
   const router = useRouter()
 
   const URLs = {
-    externalResearchUrl: '',
-    journalPublicationUrl: '',
-    bookPublicationUrl: '',
-    researchDisseminationUrl: '',
-    researchPresentationUrl: '',
-    researchEventAttendanceUrl: ''
+    externalResearchUrl: '/verifications/external_research',
+    journalPublicationUrl: '/verifications/journal_publication',
+    bookPublicationUrl: '/verifications/book_publication',
+    researchDisseminationUrl: '/verifications/research_dissemination',
+    researchPresentationUrl: '/verifications/research_presentation',
+    researchEventAttendanceUrl: '/verifications/research_event_attendance'
   }
 
   return (
