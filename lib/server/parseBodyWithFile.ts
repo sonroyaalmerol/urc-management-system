@@ -54,8 +54,8 @@ const parseBodyWithFile = async (req: NextApiRequest, publicAccess: boolean) => 
             mimeType: fileMeta.type,
             body: buf,
             origName: fileMeta.name,
-            publicAccess: publicAccess
-          }, session?.userId as string).then((file) => {
+            publicAccess: publicAccess,
+          }, session?.profile.id as string).then((file) => {
             resolve({file, fields: processedFields})
           }).catch((err) => {
             console.error(err.message)
