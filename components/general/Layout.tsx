@@ -27,6 +27,10 @@ const menus = [
     url: '/verifications'
   },
   {
+    name: 'Institutes',
+    url: '/institutes'
+  },
+  {
     name: 'Settings',
     url: '/settings',
   }
