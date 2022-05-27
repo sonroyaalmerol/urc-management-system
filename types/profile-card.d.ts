@@ -13,11 +13,24 @@ import type {
   ProfileToResearchPresentationBridge,
   Project,
   ResearchDissemination,
+  ResearchEventAttendance,
   ResearchPresentation,
   Unit,
   User,
-  UserRole
+  UserRole,
+  VerificationRequest
 } from '@prisma/client'
+
+export interface ExtendedVerificationRequest extends VerificationRequest {
+  proof_uploads: FileUpload[];
+  external_research: ExternalResearch;
+  journal_publication: JournalPublication;
+  book_publication: BookPublication;
+  research_dissemination: ResearchDissemination;
+  research_event_attendance: ResearchEventAttendance;
+  research_presentation: ResearchPresentation;
+  profile: Profile;
+}
 
 export interface ExtendedBookPublication extends BookPublication {
   units: Unit[];

@@ -7,6 +7,7 @@ import { VStack, HStack, Heading, Wrap, WrapItem, Spacer, Select } from '@chakra
 import { NextSeo } from 'next-seo'
 
 import NewVerificationButton from '../../components/verifications/NewVerificationButton'
+import VerificationList from '../../components/verifications/VerificationList'
 
 interface VerificationsProps {
 
@@ -29,15 +30,6 @@ const Verifications: React.FC<VerificationsProps> = (props: InferGetServerSidePr
       return [typeFilter]
     }
   }, [typeFilter])
-
-  const [statusFilter, setStatusFilter] = React.useState('')
-  const status = React.useMemo(() => {
-    if (statusFilter === '') {
-      return ['verified', 'invalid', 'not_verified']
-    } else {
-      return [statusFilter]
-    }
-  }, [statusFilter])
 
   return (
     <>
@@ -82,24 +74,6 @@ const Verifications: React.FC<VerificationsProps> = (props: InferGetServerSidePr
                       <option value="research_event_attendance">Research Event Attendance</option>
                     </Select>
                   </WrapItem>
-                  <WrapItem>
-                    <Select
-                      borderColor="brand.blue"
-                      color="brand.blue"
-                      placeholder="Status"
-                      borderRadius={10}
-                      value={statusFilter}
-                      onChange={(e) => { setStatusFilter(e.target.value) }}
-                      _focus={{
-                        boxShadow: "none"
-                      }}
-                      cursor="pointer"
-                    >
-                      <option value="verified">Verified</option>
-                      <option value="invalid">Invalid</option>
-                      <option value="not_verified">Not Verified</option>
-                    </Select>
-                  </WrapItem>
                 </Wrap>
               </WrapItem>
             </Wrap>
@@ -111,6 +85,7 @@ const Verifications: React.FC<VerificationsProps> = (props: InferGetServerSidePr
             </HStack>
           </WrapItem>
         </Wrap>
+        <VerificationList types={types} />
       </VStack>
     </>
   )

@@ -1,33 +1,25 @@
 import React from 'react'
-import { Center, Spinner, chakra, VStack } from '@chakra-ui/react'
-
-import type { ProfileToProjectBridge, Profile, User, Project } from '@prisma/client'
-
-import { useDebounce } from 'use-debounce'
+import { Center, Spinner, chakra, VStack, SimpleGrid } from '@chakra-ui/react'
 
 import InfiniteScroll from 'react-infinite-scroller'
-import ProjectCard from './VerificationCard'
+import type { ExtendedVerificationRequest } from '../../types/profile-card'
+import VerificationCard from './VerificationCard'
 
-interface ProjectListProps {
-  search?: string
+interface VerificationListProps {
+  search?: string,
+  types?: string[]
 }
 
-const ProjectList: React.FC<ProjectListProps> = (props) => {
-  const [entries, setEntries] = React.useState<(Project & {
-    bridge_profiles: (ProfileToProjectBridge & {
-        profile: Profile & {
-            user: User;
-        };
-    })[];
-  })[]>([])
+const VerificationList: React.FC<VerificationListProps> = (props) => {
+  const [entries, setEntries] = React.useState<ExtendedVerificationRequest[]>([])
 
-  const [deferredSearch] = useDebounce(props.search, 500)
   const [count, setCount] = React.useState(0)
   const [loading, setLoading] = React.useState(true)
 
   const loadNewEntries = async (args?: { reset: Boolean }) => {
+    setLoading(true)
     const newEntries = await fetch(
-      `/api/management/projects?${props.search.length > 0 ? `&query=${props.search}` : ''}${entries.length > 0 && !args.reset ? `&cursor=${entries[entries.length - 1].id}` : ''}`
+      `/api/management/verifications?${props.types?.length > 0 ? `&types=${props.types.join(',')}` : ''}${entries.length > 0 && !args.reset ? `&cursor=${entries[entries.length - 1].id}` : ''}`
     ).then(res => res.json())
     setCount(newEntries?.totalCount ?? 0)
     
@@ -42,12 +34,14 @@ const ProjectList: React.FC<ProjectListProps> = (props) => {
   }
 
   React.useEffect(() => {
-    setLoading(true)
-  }, [props.search])
-
-  React.useEffect(() => {
+    console.log('test')
     loadNewEntries({ reset: true })
-  }, [deferredSearch])
+  }, [props.types])
+
+  const afterAction = (entryId: string) => {
+    setEntries((prev) => prev.filter((i) => i.id !== entryId))
+  }
+
   return (
     <>
       { !loading ? (
@@ -63,11 +57,11 @@ const ProjectList: React.FC<ProjectListProps> = (props) => {
           element={chakra.div}
           w="full"
         >
-          <VStack w="full">
-            { entries.map((project) => (
-              <ProjectCard key={project.id} project={project} />
+          <SimpleGrid w="full" columns={{ base: 1, md: 2, lg: 3 }}>
+            { entries.map((entry) => (
+              <VerificationCard key={entry.id} request={entry} afterAction={afterAction} />
             )) }
-          </VStack>
+          </SimpleGrid>
         </InfiniteScroll>
       ) : (
         <Center marginTop="2rem">
@@ -78,4 +72,4 @@ const ProjectList: React.FC<ProjectListProps> = (props) => {
   )
 }
 
-export default ProjectList
+export default VerificationList

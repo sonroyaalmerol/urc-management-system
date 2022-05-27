@@ -1,93 +1,230 @@
 import React from 'react'
-import { VStack, HStack, Heading, Text, Tag, Button, Wrap, WrapItem, Box, Center, Spinner, BoxProps } from '@chakra-ui/react'
+import { VStack, HStack, Heading, Text, Tag, Button, Wrap, WrapItem, Box, Center, Spinner, BoxProps, Avatar, SimpleGrid, useToast } from '@chakra-ui/react'
 
 import Card from '../general/Card'
-import SmallAvatar from '../general/SmallAvatar'
 
 import { format } from 'date-fns'
 
-import parse from '../../lib/client/parseHTML'
-
-import type { Project, ProfileToProjectBridge, Profile, User } from '@prisma/client'
 
 import { useRouter } from 'next/router'
-import ApprovalTag from '../general/ApprovalTag'
+import type { ExtendedVerificationRequest } from '../../types/profile-card'
+import FileDetails from '../general/FileDetails'
+import { CheckIcon, DeleteIcon } from '@chakra-ui/icons'
+import ButtonWithConfirmation from '../general/ButtonWithConfirmation'
 
-interface ProjectCardProps extends BoxProps {
-  project: (Project & {
-    bridge_profiles: (ProfileToProjectBridge & {
-        profile: Profile & {
-            user: User;
-        };
-    })[];
-  })
+interface VerificationCardProps extends BoxProps {
+  request: ExtendedVerificationRequest,
+  afterAction?: (entryId: string) => any
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = (props) => {
-  const { project } = props
+const VerificationCard: React.FC<VerificationCardProps> = (props) => {
+  const { request } = props
 
   const divProps = Object.assign({}, props)
-  delete divProps.project
+  delete divProps.request
 
-  const router = useRouter()
+  const toast = useToast()
+
+  const [loading, setLoading] = React.useState(false)
+
+  const setVerified = async (verified: boolean) => {
+    setLoading(true)
+
+    const res = await fetch(`/api/management/verifications/${request.id}`, {
+      method: 'POST',
+      body: JSON.stringify({ verified })
+    }).then((i) => i.json())
+
+    if (res.success) {
+      toast({
+        title: 'Success!',
+        description: `${entry.title} has been marked as ${verified ? 'verified' : 'invalid'}!`,
+        status: 'success'
+      })
+
+      if (props.afterAction) {
+        props.afterAction(request.id)
+      }
+    }
+    setLoading(false)
+  }
+
+  const entry = React.useMemo(() => {
+    switch (request.type) {
+      case 'BOOK_PUBLICATION':
+        return {
+          humanizedType: 'Book Publication',
+          title: request.book_publication.title,
+          description: (
+            <VStack align="baseline" spacing={0}>
+              <Text fontSize="sm"><strong>Authors</strong>: {request.book_publication.authors.join(', ')}</Text>
+              <Text fontSize="sm"><strong>Publisher</strong>: {request.book_publication.publisher}</Text>
+              <Text fontSize="sm"><strong>ISBN</strong>: {request.book_publication.isbn}</Text>
+              <Text fontSize="sm"><strong>Date Published</strong>: {request.book_publication.date_published}</Text>
+            </VStack>
+          )
+        }
+      case 'EXTERNAL_RESEARCH':
+        return {
+          humanizedType: 'External Research',
+          title: request.external_research.title,
+          description: (
+            <VStack align="baseline" spacing={0}>
+              <Text fontSize="sm"><strong>Organization</strong>: {request.external_research.organization}</Text>
+              <Text fontSize="sm"><strong>Duration</strong>: {request.external_research.duration}</Text>
+              <Text fontSize="sm"><strong>Cycle</strong>: {request.external_research.cycle}</Text>
+            </VStack>
+          )
+        }
+      case 'JOURNAL_PUBLICATION':
+        return {
+          humanizedType: 'Journal Publication',
+          title: request.journal_publication.title,
+          description: (
+            <VStack align="baseline" spacing={0}>
+              <Text fontSize="sm"><strong>Authors</strong>: {request.journal_publication.authors.join(', ')}</Text>
+              <Text fontSize="sm"><strong>ISSN</strong>: {request.journal_publication.issn}</Text>
+              <Text fontSize="sm"><strong>Journal</strong>: {request.journal_publication.journal}</Text>
+              <Text fontSize="sm"><strong>Is indexed</strong>: {request.journal_publication.is_indexed ? 'Yes' : 'No'}</Text>
+              <Text fontSize="sm"><strong>URL</strong>: {request.journal_publication.url}</Text>
+            </VStack>
+          )
+        }
+      case 'RESEARCH_DISSEMINATION':
+        return {
+          humanizedType: 'Research Dissemination',
+          title: request.research_dissemination.title,
+          description: (
+            <VStack align="baseline" spacing={0}>
+              <Text fontSize="sm"><strong>Location</strong>: {request.research_dissemination.location}</Text>
+              <Text fontSize="sm"><strong>Event Date</strong>: {request.research_dissemination.event_date}</Text>
+              <Text fontSize="sm"><strong>Organization</strong>: {request.research_dissemination.organization}</Text>
+              <Text fontSize="sm"><strong>URL</strong>: {request.research_dissemination.url}</Text>
+            </VStack>
+          )
+        }
+      case 'RESEARCH_EVENT_ATTENDANCE':
+        return {
+          humanizedType: 'Research Event Attendance',
+          title: request.research_event_attendance.event_name,
+          description: (
+            <VStack align="baseline" spacing={0}>
+              <Text fontSize="sm"><strong>Start Date</strong>: {format(new Date(request.research_event_attendance.start_date), 'MMM dd, yyyy h:mm a')}</Text>
+              <Text fontSize="sm"><strong>End Date</strong>: {format(new Date(request.research_event_attendance.end_date), 'MMM dd, yyyy h:mm a')}</Text>
+              <Text fontSize="sm"><strong>Description</strong>: {request.research_event_attendance.description}</Text>
+            </VStack>
+          )
+        }
+      case 'RESEARCH_PRESENTATION':
+        return {
+          humanizedType: 'Research Presentation',
+          title: request.research_presentation.title,
+          description: (
+            <VStack align="baseline" spacing={0}>
+              <Text fontSize="sm"><strong>Location</strong>: {request.research_presentation.location}</Text>
+              <Text fontSize="sm"><strong>Event Date</strong>: {request.research_presentation.event_date}</Text>
+              <Text fontSize="sm"><strong>Presentors</strong>: {request.research_presentation.presentors.join(', ')}</Text>
+              <Text fontSize="sm"><strong>Conference</strong>: {request.research_presentation.conference}</Text>
+              <Text fontSize="sm"><strong>URL</strong>: {request.research_presentation.url}</Text>
+            </VStack>
+          )
+        }
+    }
+  }, [request.type])
 
   return (
     <Card
-      as="a"
-      href={`/projects/${project.slug}`}
       transition="box-shadow 0.05s, background-color 0.1s"
-      _hover={{
-        backgroundColor: "brand.cardBackground",
-        boxShadow: "-5px 5px 30px -20px"
-      }}
-      _active={{
-        boxShadow: "-5px 5px 20px -20px"
-      }}
-      onClick={(e) => {
-        e.preventDefault()
-        router.push(`/projects/${project.slug}`)
-      }}
       {...divProps}
     >
-      <VStack alignItems="flex-start" spacing={4}>
-        <Heading
-          size="md"
-          fontFamily="body"
-          textAlign="left"
-        >
-          {project.title}
-        </Heading>
-        <Wrap align="center" spacing="2">
-          { project.bridge_profiles.length > 0 ? project.bridge_profiles.map((bridge) => (
-            <WrapItem key={bridge.profile.id}>
-              <SmallAvatar
-                {...bridge.profile}
-              />
-            </WrapItem>
-          )) : (
-            <>
-              { [...project.main_proponents, ...project.co_proponents].map((proponent, i) => (
-                <WrapItem key={`${proponent}-avatar-${i}`}>
-                  <SmallAvatar
-                    user={{ name: proponent }}
-                  />
-                </WrapItem>
-              )) }
-            </>
-          ) }
+      <VStack alignItems="flex-start" spacing={2}>
+        <Wrap spacing={2}>
+          <WrapItem>
+            <Heading
+              size="md"
+              fontFamily="body"
+              textAlign="left"
+            >
+              {entry.title}
+            </Heading>
+          </WrapItem>
+          <WrapItem>
+            <Tag
+              bgColor="brand.blue"
+              color="white"
+              borderRadius={10}
+              fontWeight="bold"
+            >
+              {entry.humanizedType}
+            </Tag>
+          </WrapItem>
         </Wrap>
-        <Text fontStyle="italic" fontSize="sm">
-          Last updated: { format(new Date(project.updated_at), 'MMM dd, yyyy h:mm a') }
-        </Text>
-        <Box fontSize="sm" noOfLines={2}>
-          {parse(project.abstract, { textOnly: true })}
-        </Box>
-        <HStack>
-          <ApprovalTag status={project.approved} />
+        <HStack spacing={4}>
+          <Avatar src={`/api/files/get/${request.profile.photo_id}`} size="sm" />
+          <Text 
+            as='a'
+            fontWeight="bold" 
+            fontSize="xs"
+            href={`/profiles/${request.profile.id}`}
+            target='_blank'
+          >
+            {request.profile.first_name} {request.profile.last_name}
+          </Text>
         </HStack>
+        <Text fontStyle="italic" fontSize="xs">
+          Request submitted: { format(new Date(request.updated_at), 'MMM dd, yyyy h:mm a') }
+        </Text>
+        {entry.description}
+        <Wrap>
+          { request.proof_uploads.map((file) => (
+            <WrapItem key={file.id}>
+              <FileDetails isViewable file={file} />
+            </WrapItem>
+          )) }
+        </Wrap>
       </VStack>
+      <SimpleGrid columns={2} mt="1rem" spacing={2}>
+        <ButtonWithConfirmation
+          color="white"
+          bgColor="brand.blue"
+          borderRadius={10}
+          leftIcon={<CheckIcon />}
+          _hover={{
+            color: 'brand.blue',
+            bgColor: 'brand.cardBackground'
+          }}
+          confirmationMessage={
+            `
+              Press confirm to mark the request, <u>${entry.title}</u>, as <b>VERIFIED</b>
+            `
+          }
+          onClick={() => { setVerified(true) }}
+          isLoading={loading}
+        >
+          Verified
+        </ButtonWithConfirmation>
+        <ButtonWithConfirmation
+          color="white"
+          bgColor="brand.red"
+          borderRadius={10}
+          leftIcon={<DeleteIcon />}
+          _hover={{
+            color: 'brand.red',
+            bgColor: 'brand.cardBackground'
+          }}
+          confirmationMessage={
+            `
+              Press confirm to mark the request, <u>${entry.title}</u>, as <b>INVALID</b>
+            `
+          }
+          onClick={() => { setVerified(false) }}
+          isLoading={loading}
+        >
+          Invalid
+        </ButtonWithConfirmation>
+      </SimpleGrid>
     </Card>
   )
 }
 
-export default ProjectCard
+export default VerificationCard

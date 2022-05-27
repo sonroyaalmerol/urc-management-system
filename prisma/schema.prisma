@@ -99,8 +99,13 @@ model VerificationRequest {
   description                   String?
   role                          String?
 
+  proof_uploads                 FileUpload[]
+
   type                          VerificationTypes
   status                        VerificationStatus              @default(NOT_VERIFIED)
+
+  verified_by_id                String?
+  verified_by                   Profile?                      @relation("verification_user_verified_by", fields: [verified_by_id], references: [id], onDelete: Cascade)
 
   external_research_id          String?
   external_research             ExternalResearch?             @relation(fields: [external_research_id], references: [id], onDelete: SetNull)
@@ -245,7 +250,7 @@ model ExternalResearch {
   slug                           String?
 
   project_status                ProjectStatus?                @relation(fields: [project_status_id], references: [id], onDelete: SetNull)
-  file_upload                    FileUpload?                    @relation(fields: [upload_id], references: [id], onDelete: SetNull)
+  file_uploads                  FileUpload[]
   research_presentations         ResearchPresentation[]
   journal_publications           JournalPublication[]
   bridge_profiles               ProfileToExternalResearchBridge[]
@@ -274,6 +279,9 @@ model FileUpload {
   book_publications               BookPublication[]
   submissions                     Submission[]
   profile_photos                  Profile[]
+  research_presentations          ResearchPresentation[]
+  research_disseminations         ResearchDissemination[]
+  verification_requests           VerificationRequest[]
 }
 
 model FullBlownProposalSubmission {
@@ -343,8 +351,7 @@ model ResearchEventAttendance {
   start_date      DateTime    
   end_date        DateTime    
   description     String
-  proof_upload_id String       
-  proof_upload    FileUpload? @relation(fields: [proof_upload_id], references: [id], onDelete: SetNull)
+  file_uploads                  FileUpload[]
   profile         Profile        @relation(fields: [profile_id], references: [id], onDelete: Cascade)
 
   verified                       Boolean                      @default(false)
@@ -366,6 +373,9 @@ model ResearchPresentation {
   budget                 Float?
   url                    String?
   slug                   String?                @unique
+
+  file_uploads           FileUpload[]
+
   external_research      ExternalResearch?   @relation(fields: [external_research_id], references: [id], onDelete: SetNull)
   project    Project? @relation(fields: [project_id], references: [id], onDelete: SetNull)
   bridge_profiles   ProfileToResearchPresentationBridge[]
@@ -402,6 +412,9 @@ model ResearchDissemination {
   created_at             DateTime               @default(now())
   updated_at             DateTime               @updatedAt
   url                    String?
+
+  file_uploads           FileUpload[]
+
   bridge_profiles   ProfileToResearchDisseminationBridge[]
   external_researches  ExternalResearch[]
   projects  Project[]
@@ -431,7 +444,6 @@ model JournalPublication {
   project_id String?                
   external_research_id   String?                
   created_at             DateTime               @default(now())
-  proof_upload_id        String?                 
   updated_at             DateTime               @updatedAt
   date_published         DateTime?             
   title                  String                 @unique
@@ -442,7 +454,9 @@ model JournalPublication {
   slug                   String?                @unique
   is_indexed             Boolean                @default(false)
   external_researches    ExternalResearch?   @relation(fields: [external_research_id], references: [id], onDelete: SetNull)
-  proof_upload           FileUpload?           @relation(fields: [proof_upload_id], references: [id], onDelete: SetNull)
+  
+  file_uploads           FileUpload[]
+  
   projects  Project? @relation(fields: [project_id], references: [id], onDelete: SetNull)
   bridge_profiles   ProfileToJournalPublicationBridge[]
   units Unit[]
@@ -468,16 +482,17 @@ model ProfileToJournalPublicationBridge {
 model BookPublication {
   id                     String                 @id @default(cuid())
   created_at             DateTime               @default(now())
-  proof_upload_id        String?                 
   updated_at             DateTime               @updatedAt
   title                  String                 @unique
   authors                String[]
   publisher              String?
   isbn                   String?
   slug                   String?                @unique
-  date_published         String?             
-  proof_upload           FileUpload?           @relation(fields: [proof_upload_id], references: [id], onDelete: SetNull)
+  date_published         String?
   bridge_profiles   ProfileToBookPublicationBridge[]
+
+  file_uploads                  FileUpload[]
+
   units Unit[]
 
   verified                       Boolean                      @default(false)
@@ -633,6 +648,8 @@ model Profile {
 
   actions_made                   Action[]     @relation("acted_users")
   actions_involved               Action[]
+
+  verified_requests              VerificationRequest[] @relation("verification_user_verified_by")
 
   comments                       Comment[]
   downloads                      Download[]

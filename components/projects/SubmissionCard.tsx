@@ -112,7 +112,7 @@ const SubmissionCard: React.FC<SubmissionCardProps> = (props) => {
     >
       <VStack w="full" alignItems="flex-start" spacing={4}>
         <HStack spacing={4} align="flex-start">
-          <Avatar size="sm" />
+          <Avatar src={`/api/files/get/${submission.profile.photo_id}`} size="sm" />
           <VStack align="flex-start">
             <Wrap>
               <WrapItem>
