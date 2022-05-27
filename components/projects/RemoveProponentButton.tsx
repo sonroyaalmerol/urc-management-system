@@ -1,4 +1,4 @@
-import React, { useId } from 'react'
+import React from 'react'
 
 import { useDisclosure, Text, Input, VStack, Icon, Flex, Avatar, Box, Center, Spinner, useToast } from '@chakra-ui/react'
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
@@ -15,7 +15,7 @@ import {
   ModalCloseButton,
 } from '@chakra-ui/react'
 
-import { MdGroupAdd } from 'react-icons/md'
+import { MdGroupOff } from 'react-icons/md'
 import type { Profile, ProfileToProjectBridge, Project } from '@prisma/client'
 import IconButton from '../general/IconButton'
 
@@ -29,21 +29,22 @@ import { useDebounce } from 'use-debounce'
 import { useRouter } from 'next/router'
 import useUUID from '../../lib/client/useUUID'
 
-interface AddProponentButtonProps {
+interface RemoveProponentButtonProps {
   projectId: string
 }
 
 interface FormFields { 
-  email: string,
-  role: string
+  email: string
 }
 
-const AddProponentButton: React.FC<AddProponentButtonProps> = (props) => {
+const RemoveProponentButton: React.FC<RemoveProponentButtonProps> = (props) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   const { control, handleSubmit, reset, setValue, watch } = useForm<FormFields>();
 
   const { email } = watch()
+
+  const key = useUUID()
 
   const [profiles, setProfiles] = React.useState<Profile[]>([])
   const [loadingProfiles, setLoadingProfiles] = React.useState(true)
@@ -54,7 +55,7 @@ const AddProponentButton: React.FC<AddProponentButtonProps> = (props) => {
 
   const loadNewEntries = async () => {
     const newEntries = await fetch(
-      `/api/management/profiles?${search?.length > 0 ? `&query=${search}` : ''}`
+      `/api/management/profiles?proponents_only=true&project_id=${props.projectId}${search?.length > 0 ? `&query=${search}` : ''}`
     ).then(res => res.json())
     
     setProfiles(newEntries?.data ?? [])
@@ -73,22 +74,21 @@ const AddProponentButton: React.FC<AddProponentButtonProps> = (props) => {
   }, [deferredSearch])
 
   const toast = useToast()
-  const key = useUUID()
   const router = useRouter()
 
   const onSubmit: SubmitHandler<FormFields> = async data => {
     setSubmitting(true)
-
+    
     const res = await fetch(`/api/management/projects`, {
       method: 'POST',
-      body: JSON.stringify({ ...data, mode: 'add-proponent', id: props.projectId })
+      body: JSON.stringify({ ...data, mode: 'remove-proponent', id: props.projectId })
     }).then((i) => i.json())
 
     if (res.success) {
       router.push(`${router.asPath.split('?')[0]}?key=${key}`)
       toast({
         title: 'Success!',
-        description: 'Successfully added proponent!',
+        description: 'Successfully removed proponent!',
         status: 'success'
       })
     } else {
@@ -107,14 +107,19 @@ const AddProponentButton: React.FC<AddProponentButtonProps> = (props) => {
   return (
     <>
       <IconButton
-        aria-label='Add Proponent'
+        aria-label='Remove Proponent'
         onClick={onOpen}
-        icon={<Icon as={MdGroupAdd} w={6} h={6} />}
+        icon={<Icon as={MdGroupOff} w={6} h={6} />}
+        bgColor="brand.red"
+        _hover={{
+          color: 'brand.red',
+          bgColor: 'brand.cardBackground'
+        }}
       />
       <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
-          <ModalHeader>Add Proponent</ModalHeader>
+          <ModalHeader>Remove Proponent</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <VStack spacing={4}>
@@ -154,18 +159,6 @@ const AddProponentButton: React.FC<AddProponentButtonProps> = (props) => {
                     )}
                   </AutoCompleteList>
                 </AutoComplete>
-                <Text fontStyle="italic" fontSize="xs" pl="1rem">
-                  Proponent must have their profile added to the system.
-                </Text>
-              </VStack>
-              <VStack w="full" align="baseline" spacing={1}>
-                <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Role Title</Text>
-                <Controller
-                  name="role"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => <Input {...field} />}
-                />
               </VStack>
             </VStack>
           </ModalBody>
@@ -181,4 +174,4 @@ const AddProponentButton: React.FC<AddProponentButtonProps> = (props) => {
   )
 }
 
-export default AddProponentButton
+export default RemoveProponentButton

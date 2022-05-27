@@ -2,7 +2,7 @@ import React from 'react'
 import ContentHeader from '../../../components/general/ContentHeader'
 import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
-import { VStack, HStack, Heading, Wrap, WrapItem, Spacer, Select } from '@chakra-ui/react'
+import { VStack, HStack, Heading, Wrap, WrapItem, Spacer, Select, SimpleGrid } from '@chakra-ui/react'
 
 import { AddIcon } from '@chakra-ui/icons'
 
@@ -15,13 +15,17 @@ import SubmissionList from '../../../components/projects/SubmissionList'
 import NewSubmissionButton from '../../../components/projects/NewSubmissionButton'
 import EditProjectTitleButton from '../../../components/projects/EditProjectTitleButton'
 import AddProponentButton from '../../../components/projects/AddProponentButton'
+import Card from '../../../components/general/Card'
+import { ExtendedProject } from '../../../types/profile-card'
+import InnerProfileCard from '../../../components/projects/InnerProfileCard'
+import RemoveProponentButton from '../../../components/projects/RemoveProponentButton'
 
 interface ProjectProps {
 
 }
 
 const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const project: Project = JSON.parse(props.project)
+  const project: ExtendedProject = JSON.parse(props.project)
 
   const [typeFilter, setTypeFilter] = React.useState('')
   const types = React.useMemo(() => {
@@ -50,7 +54,46 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
         <ContentHeader>
           {project.title}
         </ContentHeader>
-        <VStack spacing={5} w="full">
+        <VStack spacing={8} w="full">
+          <Wrap align="center" w="full">
+            <WrapItem>
+              <Wrap spacing={4} align="center">
+                <WrapItem>
+                  <Heading
+                    fontFamily="body"
+                    fontSize="xl"
+                  >
+                    Project Details
+                  </Heading>
+                </WrapItem>
+              </Wrap>
+            </WrapItem>
+            <Spacer />
+            <WrapItem>
+              <HStack>
+                <EditProjectTitleButton projectId={project.id} currentTitle={project.title} />
+                <AddProponentButton projectId={project.id} />
+                <RemoveProponentButton projectId={project.id} />
+              </HStack>
+            </WrapItem>
+          </Wrap>
+
+          <Card>
+            <VStack align="baseline">
+              <Heading
+                fontFamily="body"
+                fontSize="md"
+              >Proponents:</Heading>
+              <Wrap spacing={4}>
+                { project.bridge_profiles.map(({ profile, role_title }) => (
+                  <WrapItem key={profile.id}>
+                    <InnerProfileCard profile={profile} role={role_title} />
+                  </WrapItem>
+                )) }
+              </Wrap>
+            </VStack>
+          </Card>
+
           <Wrap align="center" w="full">
             <WrapItem>
               <Wrap spacing={4} align="center">
@@ -107,8 +150,6 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
             <Spacer />
             <WrapItem>
               <HStack>
-                <EditProjectTitleButton projectId={project.id} currentTitle={project.title} />
-                <AddProponentButton />
                 <NewSubmissionButton
                   capsuleUrl={`/projects/${project.slug}/submissions/new/capsule`}
                   fullBlownUrl={`/projects/${project.slug}/submissions/new/full`}
@@ -141,6 +182,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const project = await prisma.project.findUnique({
     where: {
       slug: slug as string
+    },
+    include: {
+      bridge_profiles: {
+        include: {
+          profile: true
+        }
+      }
     }
   })
 

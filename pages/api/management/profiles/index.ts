@@ -25,9 +25,21 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
     }))]
   })
 
-  const whereQuery = searchQuery.trim().length > 0 ? {
+  let whereQuery: any = searchQuery.trim().length > 0 ? {
     OR: orQuery
   } : undefined
+
+  if (req.query.proponents_only === 'true') {
+    whereQuery = { ...whereQuery,
+      bridge_projects: {
+        some: {
+          project: {
+            id: req.query.project_id
+          }
+        }
+      }
+    }
+  }
 
   let [totalCount, data] = await prisma.$transaction([
     prisma.profile.count({

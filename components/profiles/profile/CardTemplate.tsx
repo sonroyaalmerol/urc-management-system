@@ -43,7 +43,7 @@ const CardTemplate: React.FC<CardTemplateProps> = (props) => {
         </Heading>
         <Wrap align="center" spacing="2">
           { entry?.bridge_profiles.map((bridge) => (
-            <WrapItem key={bridge.profile.user.id}>
+            <WrapItem key={bridge.profile.id}>
               <SmallAvatar
                 {...bridge.profile}
               />

@@ -5,6 +5,20 @@ import {
   HStack,
 } from '@chakra-ui/react'
 
+const nameGenerator = ({ first_name, middle_initial, last_name }) => {
+  let tmp = ''
+  if (middle_initial) {
+    tmp = `${first_name ?? ''} ${middle_initial ?? ''} ${last_name ?? ''}`
+  }
+
+  tmp = `${first_name ?? ''} ${last_name ?? ''}`.trim()
+
+  if (tmp.length > 0) {
+    return tmp
+  }
+  return null
+}
+
 const SmallAvatar: React.FC<Partial<Profile & {
   user?: Partial<User>;
 }>> = (props) => {
@@ -12,7 +26,11 @@ const SmallAvatar: React.FC<Partial<Profile & {
     <HStack>
       <Avatar size="xs" src={props.photo_id ? `/api/files/get/${props.photo_id}` : undefined} />
       <Text fontSize="xs" fontWeight="bold">
-        {props.user?.name ?? "University Research Council"}
+        {nameGenerator({ 
+          first_name: props.first_name, 
+          middle_initial: props.middle_initial, 
+          last_name: props.last_name 
+        }) ?? "University Research Council"}
       </Text>
     </HStack>
   )

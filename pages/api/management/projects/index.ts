@@ -94,18 +94,21 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  const body = JSON.parse(req.body) as Partial<Project & { mode: 'create' | 'update' }>
+  const body = JSON.parse(req.body) as Partial<
+    (Project & { mode: 'create' | 'update' }) |
+    ({ id: string, email: string, role: string, mode: 'add-proponent' | 'remove-proponent' })
+  >
 
   if (roleChecker(session.profile.roles, 'researcher')) {
     const id: string = session.profile.id
 
-    if (!body.title) {
-      return res.status(400).json({ error: 'Title is required!' })
-    }
-
     let project: Project = null
     
     if (body.mode === 'create') {
+      if (!body.title) {
+        return res.status(400).json({ error: 'Title is required!' })
+      }
+
       project = await prisma.project.create({
         data: {
           title: body.title,
@@ -122,6 +125,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
         }
       })
     } else if (body.mode === 'update') {
+      if (!body.title) {
+        return res.status(400).json({ error: 'Title is required!' })
+      }
+
       project = await prisma.project.update({
         where: {
           id: body.id
@@ -131,6 +138,55 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
           slug: slugGenerator(body.title)
         }
       })
+    } else if (body.mode === 'add-proponent') {
+      if (!body.email) {
+        return res.status(400).json({ error: 'Email is required!' })
+      }
+
+      if (!body.role) {
+        return res.status(400).json({ error: 'Role is required!' })
+      }
+
+      try {
+        project = await prisma.project.update({
+          where: {
+            id: body.id
+          },
+          data: {
+            bridge_profiles: {
+              create: {
+                role_title: body.role,
+                profile: {
+                  connect: {
+                    email: body.email as string
+                  }
+                }
+              }
+            }
+          }
+        })
+      } catch (err) {
+        return res.status(500).json({ error: err.message })
+      }
+    } else if (body.mode === 'remove-proponent') {
+      if (!body.email) {
+        return res.status(400).json({ error: 'Email is required!' })
+      }
+
+      try {
+        await prisma.profileToProjectBridge.deleteMany({
+          where: {
+            profile: {
+              email: body.email
+            },
+            project: {
+              id: body.id
+            }
+          }
+        })
+      } catch (err) {
+        return res.status(500).json({ error: err.message })
+      }
     }
 
     return res.status(200).json({ success: true, data: project })

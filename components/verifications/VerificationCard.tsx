@@ -59,7 +59,7 @@ const ProjectCard: React.FC<ProjectCardProps> = (props) => {
         </Heading>
         <Wrap align="center" spacing="2">
           { project.bridge_profiles.length > 0 ? project.bridge_profiles.map((bridge) => (
-            <WrapItem key={bridge.profile.user.id}>
+            <WrapItem key={bridge.profile.id}>
               <SmallAvatar
                 {...bridge.profile}
               />
