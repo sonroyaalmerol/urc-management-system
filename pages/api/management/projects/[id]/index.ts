@@ -1,11 +1,11 @@
-import { prisma } from '../../../../lib/server/prisma'
+import { prisma } from '../../../../../lib/server/prisma'
 import { getSession } from 'next-auth/react'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
 
 import type { BudgetProposalSubmission, CapsuleProposalSubmission, FileUpload, FullBlownProposalSubmission, Submission, SubmissionStatus, SubmissionTypes } from '@prisma/client'
-import parseBodyWithFile from '../../../../lib/server/parseBodyWithFile'
+import parseBodyWithFile from '../../../../../lib/server/parseBodyWithFile'
 
 export const config = {
   api: {

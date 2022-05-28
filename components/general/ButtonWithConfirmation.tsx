@@ -26,7 +26,7 @@ const ButtonWithConfirmation: React.ForwardRefRenderFunction<HTMLButtonElement, 
   return (
     <>
       <Button onClick={onOpen} {...divProps} />
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} blockScrollOnMount={false}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Confirmation</ModalHeader>

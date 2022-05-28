@@ -1,5 +1,6 @@
 import type {
   BookPublication,
+  Comment,
   ExternalResearch,
   Institute,
   JournalPublication,
@@ -15,11 +16,25 @@ import type {
   ResearchDissemination,
   ResearchEvent,
   ResearchPresentation,
+  Submission,
   Unit,
   User,
   UserRole,
   VerificationRequest
 } from '@prisma/client'
+
+export interface ExtendedSubmission extends Submission {
+  deliverable_submission: DeliverableSubmission;
+  budget_proposal_submission: BudgetProposalSubmission;
+  capsule_proposal_submission: CapsuleProposalSubmission;
+  full_blown_proposal_submission: FullBlownProposalSubmission;
+  profile: Profile;
+  project: Project;
+  files: FileUpload[];
+  comments: (Comment & {
+    profile: Profile;
+  })[];
+}
 
 export interface ExtendedInstitute extends Institute {
   bridge_profiles: (ProfileToInstituteBridge & {
