@@ -31,7 +31,6 @@ const BookPublicationForm: React.FC<BookPublicationFormProps> = (props) => {
             <AutoCompleteInput
               api="/api/management/verifications/book_publications"
               name="title"
-              formWatch={watch}
               formSetValue={setValue}
             />
             <Text fontStyle="italic" fontSize="xs" pl="1rem">

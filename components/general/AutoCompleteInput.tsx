@@ -16,13 +16,11 @@ interface ExtendedAutoCompleteInputProps {
   name: string
   primaryDisplayName?: string
   secondaryDisplayName?: string
-  formWatch: UseFormWatch<any>
   formSetValue: UseFormSetValue<any>
+  watchExists?: (exists: boolean) => any
 }
 
 const AutoCompleteInput: React.FC<ExtendedAutoCompleteInputProps> = (props) => {
-
-  const watchedValues = props.formWatch()
   const [loadingTitles, setLoadingTitles] = React.useState(true)
 
   const [entries, setEntries] = React.useState<any[]>([])
@@ -30,11 +28,19 @@ const AutoCompleteInput: React.FC<ExtendedAutoCompleteInputProps> = (props) => {
   const [search, setSearch] = React.useState('')
   const [deferredSearch] = useDebounce(search, 500)
 
+  const exists = React.useMemo(() => {
+    const toReturn = entries.filter((entry) => entry[props.name] === search).length > 0
+    if ('watchExists' in props) {
+      props.watchExists(toReturn)
+    }
+    return toReturn
+  }, [entries])
+
   const loadNewEntries = async () => {
     const newEntries = await fetch(
       `${props.api}?${search?.length > 0 ? `&query=${search}` : ''}`
     ).then(res => res.json())
-    console.log(newEntries.data)
+
     setEntries(newEntries?.data ?? [])
     setLoadingTitles(false)
   }
@@ -81,11 +87,13 @@ const AutoCompleteInput: React.FC<ExtendedAutoCompleteInputProps> = (props) => {
       <ACInput
         autoComplete='off'
         onChange={(e) => {
+          props.formSetValue(props.name, e.target.value)
           setSearch(e.target.value)
         }}
         onBlur={(e) => {
-          if (e.target.value !== watchedValues[props.name] && e.target.value !== '') {
+          if (!exists && e.target.value !== '' && !('watchExists' in props)) {
             e.target.value = ''
+            props.formSetValue(props.name, e.target.value)
           }
         }}
       />

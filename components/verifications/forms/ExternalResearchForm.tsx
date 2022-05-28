@@ -16,6 +16,12 @@ interface ExternalResearchFormProps {
 const ExternalResearchForm: React.FC<ExternalResearchFormProps> = (props) => {
   const { control, handleSubmit, register, watch, setValue } = useForm<Partial<ExternalResearch> & Partial<VerificationRequest>>();
 
+  const [exists, setExists] = React.useState(true)
+
+  const watchExists = (x) => {
+    setExists(x)
+  }
+
   const onSubmit: SubmitHandler<Partial<ExternalResearch> & Partial<VerificationRequest>> = data => {
     console.log(data)
   };
@@ -32,13 +38,18 @@ const ExternalResearchForm: React.FC<ExternalResearchFormProps> = (props) => {
             <AutoCompleteInput
               api="/api/management/verifications/external_researches"
               name="title"
-              formWatch={watch}
               formSetValue={setValue}
+              watchExists={watchExists}
             />
             <Text fontStyle="italic" fontSize="xs" pl="1rem">
               Existing entries will be showed.
             </Text>
           </VStack>
+          { !exists && (
+            <>
+              <Text>Test</Text>
+            </>
+          ) }
           <Button type="submit">Submit</Button>
         </VStack>
       </Card>

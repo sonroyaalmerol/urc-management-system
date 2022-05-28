@@ -33,7 +33,6 @@ const ResearchPresentationForm: React.FC<ResearchPresentationFormProps> = (props
             <AutoCompleteInput
               api="/api/management/verifications/research_presentations"
               name="title"
-              formWatch={watch}
               formSetValue={setValue}
             />
             <Text fontStyle="italic" fontSize="xs" pl="1rem">

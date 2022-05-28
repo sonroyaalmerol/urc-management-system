@@ -33,7 +33,6 @@ const ResearchEventAttendanceForm: React.FC<ResearchEventAttendanceFormProps> = 
             <AutoCompleteInput
               api="/api/management/verifications/research_event_attendances"
               name="title"
-              formWatch={watch}
               formSetValue={setValue}
             />
             <Text fontStyle="italic" fontSize="xs" pl="1rem">

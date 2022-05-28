@@ -93,7 +93,6 @@ const AddProponentButton: React.FC<AddProponentButtonProps> = (props) => {
                   name="email"
                   primaryDisplayName="first_name"
                   secondaryDisplayName="last_name"
-                  formWatch={watch}
                   formSetValue={setValue}
                 />
                 <Text fontStyle="italic" fontSize="xs" pl="1rem">

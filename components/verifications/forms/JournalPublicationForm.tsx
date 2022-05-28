@@ -33,7 +33,6 @@ const JournalPublicationForm: React.FC<JournalPublicationFormProps> = (props) =>
             <AutoCompleteInput
               api="/api/management/verifications/journal_publications"
               name="title"
-              formWatch={watch}
               formSetValue={setValue}
             />
             <Text fontStyle="italic" fontSize="xs" pl="1rem">

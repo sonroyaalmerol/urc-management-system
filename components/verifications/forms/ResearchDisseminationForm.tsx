@@ -33,7 +33,6 @@ const ResearchDisseminationForm: React.FC<ResearchDisseminationFormProps> = (pro
             <AutoCompleteInput
               api="/api/management/verifications/research_disseminations"
               name="title"
-              formWatch={watch}
               formSetValue={setValue}
             />
             <Text fontStyle="italic" fontSize="xs" pl="1rem">
