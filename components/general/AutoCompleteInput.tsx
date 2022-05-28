@@ -28,13 +28,13 @@ const AutoCompleteInput: React.FC<ExtendedAutoCompleteInputProps> = (props) => {
   const [search, setSearch] = React.useState('')
   const [deferredSearch] = useDebounce(search, 500)
 
-  const exists = React.useMemo(() => {
-    const toReturn = entries.filter((entry) => entry[props.name] === search).length > 0
+  const [exists, setExists] = React.useState(false)
+
+  React.useEffect(() => {
     if ('watchExists' in props) {
-      props.watchExists(toReturn)
+      props.watchExists(exists)
     }
-    return toReturn
-  }, [entries])
+  }, [exists])
 
   const loadNewEntries = async () => {
     const newEntries = await fetch(
@@ -81,6 +81,7 @@ const AutoCompleteInput: React.FC<ExtendedAutoCompleteInputProps> = (props) => {
       onChange={(vals) => {
         props.formSetValue(props.name, vals)
         setSearch(vals)
+        setExists(true)
       }}
       value={search}
     >
@@ -89,6 +90,7 @@ const AutoCompleteInput: React.FC<ExtendedAutoCompleteInputProps> = (props) => {
         onChange={(e) => {
           props.formSetValue(props.name, e.target.value)
           setSearch(e.target.value)
+          setExists(false)
         }}
         onBlur={(e) => {
           if (!exists && e.target.value !== '' && !('watchExists' in props)) {
