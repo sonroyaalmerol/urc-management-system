@@ -122,8 +122,8 @@ model VerificationRequest {
   research_presentation_id      String?
   research_presentation         ResearchPresentation?         @relation(fields: [research_presentation_id], references: [id], onDelete: SetNull)
 
-  research_event_attendance_id  String?
-  research_event_attendance     ResearchEventAttendance?      @relation(fields: [research_event_attendance_id], references: [id], onDelete: SetNull)
+  research_event_id             String?
+  research_event                ResearchEvent?      @relation(fields: [research_event_id], references: [id], onDelete: SetNull)
 
   profile_id                    String?
   profile                       Profile?                          @relation(fields: [profile_id], references: [id], onDelete: Cascade)
@@ -135,7 +135,7 @@ enum VerificationTypes {
   BOOK_PUBLICATION
   RESEARCH_DISSEMINATION
   RESEARCH_PRESENTATION
-  RESEARCH_EVENT_ATTENDANCE
+  RESEARCH_EVENT
 }
 
 enum VerificationStatus {
@@ -274,7 +274,7 @@ model FileUpload {
   downloads                       Download[]
   external_researches             ExternalResearch[]
   institute_news                  InstituteNews[]
-  research_event_attendances      ResearchEventAttendance[]
+  research_events                 ResearchEvent[]
   journal_publications            JournalPublication[]
   book_publications               BookPublication[]
   submissions                     Submission[]
@@ -341,21 +341,35 @@ model ProfileToInstituteBridge {
   @@id([profile_id, institute_id])
 }
 
-model ResearchEventAttendance {
+model ResearchEvent {
   id              String       @id @default(cuid())
 
-  profile_id      String
   created_at      DateTime     @default(now())
   updated_at      DateTime     @updatedAt
-  event_name      String
-  start_date      DateTime    
-  end_date        DateTime    
-  description     String
+  event_name      String       @unique
+  start_date      String    
+  end_date        String    
+  description     String?
   file_uploads                  FileUpload[]
-  profile         Profile        @relation(fields: [profile_id], references: [id], onDelete: Cascade)
+
+  bridge_profiles               ProfileToResearchEventBridge[]
 
   verified                       Boolean                      @default(false)
   verification_requests          VerificationRequest[]
+}
+
+model ProfileToResearchEventBridge {
+  profile_id String
+  research_event_id String
+  role_title String
+
+  created_at           DateTime?           @default(now())
+  updated_at           DateTime?           @updatedAt
+
+  profile Profile @relation(fields: [profile_id], references: [id], onDelete: Cascade)
+  research_event ResearchEvent @relation(fields: [research_event_id], references: [id], onDelete: Cascade)
+
+  @@id([profile_id, research_event_id])
 }
 
 model ResearchPresentation {
@@ -656,17 +670,17 @@ model Profile {
   submissions                    Submission[]
   file_uploads                   FileUpload[]  @relation("upload_to_owner")
   institute_news                 InstituteNews[]
-  research_event_attendances     ResearchEventAttendance[]
 
   verification_requests          VerificationRequest[]
 
-  bridge_institutes            ProfileToInstituteBridge[]
+  bridge_institutes                     ProfileToInstituteBridge[]
   bridge_book_publications              ProfileToBookPublicationBridge[]
   bridge_research_presentations         ProfileToResearchPresentationBridge[]
   bridge_research_disseminations        ProfileToResearchDisseminationBridge[]
   bridge_journal_publications           ProfileToJournalPublicationBridge[]
-  bridge_external_researches   ProfileToExternalResearchBridge[]
-  bridge_projects ProfileToProjectBridge[]
+  bridge_external_researches            ProfileToExternalResearchBridge[]
+  bridge_projects                       ProfileToProjectBridge[]
+  bridge_research_events                ProfileToResearchEventBridge[]
 }
 
 model ProfileToExternalResearchBridge {

@@ -80,7 +80,7 @@ const Verifications: React.FC<VerificationsProps> = (props: InferGetServerSidePr
                       <option value="book_publication">Book Publication</option>
                       <option value="research_dissemination">Research Dissemination</option>
                       <option value="research_presentation">Research Presentation</option>
-                      <option value="research_event_attendance">Research Event Attendance</option>
+                      <option value="research_event">Research Event</option>
                     </Select>
                   </WrapItem>
                   <WrapItem>

@@ -14,7 +14,7 @@ import JournalPublicationForm from '../../components/verifications/forms/Journal
 import BookPublicationForm from '../../components/verifications/forms/BookPublicationForm'
 import ResearchDisseminationForm from '../../components/verifications/forms/ResearchDisseminationForm'
 import ResearchPresentationForm from '../../components/verifications/forms/ResearchPresentationForm'
-import ResearchEventAttendanceForm from '../../components/verifications/forms/ResearchEventAttendanceForm'
+import ResearchEventForm from '../../components/verifications/forms/ResearchEventForm'
 
 interface NewSubmissionProps {
 
@@ -35,8 +35,8 @@ const NewVerification: React.FC<NewSubmissionProps> = (props: InferGetServerSide
         return 'Research Dissemination'
       case 'RESEARCH_PRESENTATION':
         return 'Research Presentation'
-      case 'RESEARCH_EVENT_ATTENDANCE':
-        return 'Research Event Attendance'
+      case 'RESEARCH_EVENT':
+        return 'Research Event'
     }
   }
 
@@ -52,8 +52,8 @@ const NewVerification: React.FC<NewSubmissionProps> = (props: InferGetServerSide
         return <ResearchDisseminationForm />
       case 'RESEARCH_PRESENTATION':
         return <ResearchPresentationForm />
-      case 'RESEARCH_EVENT_ATTENDANCE':
-        return <ResearchEventAttendanceForm />
+      case 'RESEARCH_EVENT':
+        return <ResearchEventForm />
     }
   }
 

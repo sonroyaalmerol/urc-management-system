@@ -44,7 +44,7 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
         journal_publication: true,
         book_publication: true,
         research_dissemination: true,
-        research_event_attendance: true,
+        research_event: true,
         research_presentation: true,
         proof_uploads: true,
         profile: true

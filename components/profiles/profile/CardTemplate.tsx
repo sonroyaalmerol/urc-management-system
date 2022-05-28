@@ -12,7 +12,7 @@ import type {
   ExtendedJournalPublication,
   ExtendedProject,
   ExtendedResearchDissemination,
-  ExtendedResearchEventAttendance,
+  ExtendedResearchEvent,
   ExtendedResearchPresentation
 } from '../../../types/profile-card'
 
@@ -26,7 +26,7 @@ interface CardTemplateProps {
     ExtendedResearchDissemination |
     ExtendedResearchPresentation |
     ExtendedProject |
-    ExtendedResearchEventAttendance
+    ExtendedResearchEvent
   href?: string
   role?: string
   onClick?: () => void

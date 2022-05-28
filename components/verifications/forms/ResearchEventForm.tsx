@@ -3,7 +3,7 @@ import { VStack, Heading, Text, Center, Spinner, Input, useToast } from '@chakra
 
 import Button from '../../general/Button'
 
-import type { ExternalResearch, ResearchEventAttendance, VerificationRequest } from '@prisma/client'
+import type { ExternalResearch, ResearchEvent, VerificationRequest } from '@prisma/client'
 import Card from '../../general/Card'
 
 import { useForm, SubmitHandler } from "react-hook-form"
@@ -11,11 +11,11 @@ import FileUploadButton from '../../general/FileUploadButton'
 
 import AutoCompleteInput from '../../general/AutoCompleteInput'
 
-interface ResearchEventAttendanceFormProps {
+interface ResearchEventFormProps {
 }
 
-const ResearchEventAttendanceForm: React.FC<ResearchEventAttendanceFormProps> = (props) => {
-  const { control, handleSubmit, register, watch, setValue } = useForm<Partial<ResearchEventAttendance> & Partial<VerificationRequest>>();
+const ResearchEventForm: React.FC<ResearchEventFormProps> = (props) => {
+  const { control, handleSubmit, register, watch, setValue } = useForm<Partial<ResearchEvent> & Partial<VerificationRequest>>();
 
   const [exists, setExists] = React.useState(true)
 
@@ -40,7 +40,7 @@ const ResearchEventAttendanceForm: React.FC<ResearchEventAttendanceFormProps> = 
           <VStack w="full" align="baseline" spacing={1}>
             <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Event Name</Text>
             <AutoCompleteInput
-              api="/api/management/verifications/research_event_attendances"
+              api="/api/management/verifications/research_events"
               name="title"
               formSetValue={setValue}
               watchExists={(x) => {
@@ -78,4 +78,4 @@ const ResearchEventAttendanceForm: React.FC<ResearchEventAttendanceFormProps> = 
   )
 }
 
-export default ResearchEventAttendanceForm
+export default ResearchEventForm

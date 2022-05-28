@@ -4,7 +4,7 @@ import slugGenerator from '../../../../lib/slugGenerator'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
-import type { Project } from '@prisma/client'
+import type { Project, ResearchDissemination, VerificationRequest } from '@prisma/client'
 
 import relevancy from 'relevancy'
 import roleChecker from '../../../../lib/roleChecker'
@@ -51,19 +51,9 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
         },
         ...whereQuery
       },
-      include: {
-        bridge_profiles: {
-          include: {
-            profile: {
-              include: {
-                user: true
-              }
-            }
-          }
-        }
-      },
-      orderBy: {
-        updated_at: 'desc'
+      select: {
+        id: true,
+        title: true
       }
     })
   ])
@@ -91,104 +81,66 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const body = JSON.parse(req.body) as Partial<
-    (Project & { mode: 'create' | 'update' }) |
-    ({ id: string, email: string, role: string, mode: 'add-proponent' | 'remove-proponent' })
+    ResearchDissemination & VerificationRequest
   >
 
-  if (roleChecker(session.profile.roles, 'researcher')) {
-    const id: string = session.profile.id
-
-    let project: Project = null
-    
-    if (body.mode === 'create') {
-      if (!body.title) {
-        return res.status(400).json({ error: 'Title is required!' })
-      }
-
-      project = await prisma.project.create({
-        data: {
-          title: body.title,
-          bridge_profiles: {
-            create: {
-              profile_id: id,
-              role_title: 'Main Proponent'
-            }
-          },
-          slug: slugGenerator(body.title),
-          main_proponents: {
-            set: [`${session.profile.first_name} ${session.profile.middle_initial} ${session.profile.last_name}`]
-          }
-        }
-      })
-    } else if (body.mode === 'update') {
-      if (!body.title) {
-        return res.status(400).json({ error: 'Title is required!' })
-      }
-
-      project = await prisma.project.update({
-        where: {
-          id: body.id
-        },
-        data: {
-          title: body.title,
-          slug: slugGenerator(body.title)
-        }
-      })
-    } else if (body.mode === 'add-proponent') {
-      if (!body.email) {
-        return res.status(400).json({ error: 'Email is required!' })
-      }
-
-      if (!body.role) {
-        return res.status(400).json({ error: 'Role is required!' })
-      }
-
-      try {
-        project = await prisma.project.update({
-          where: {
-            id: body.id
-          },
-          data: {
-            bridge_profiles: {
-              create: {
-                role_title: body.role,
-                profile: {
-                  connect: {
-                    email: body.email as string
-                  }
-                }
-              }
-            }
-          }
-        })
-      } catch (err) {
-        return res.status(500).json({ error: err.message })
-      }
-    } else if (body.mode === 'remove-proponent') {
-      if (!body.email) {
-        return res.status(400).json({ error: 'Email is required!' })
-      }
-
-      try {
-        await prisma.profileToProjectBridge.deleteMany({
-          where: {
-            profile: {
-              email: body.email
-            },
-            project: {
-              id: body.id
-            }
-          }
-        })
-      } catch (err) {
-        return res.status(500).json({ error: err.message })
-      }
-    }
-
-    return res.status(200).json({ success: true, data: project })
+  if (!body.title) {
+    return res.status(400).json({ error: 'Title is required!' })
   }
 
-  return res.status(401).json({ error: 'Unauthorized access.' })
+  if (!body.role) {
+    return res.status(400).json({ error: 'Role is required!' })
+  }
+
+  let currentEntry = await prisma.researchDissemination.findUnique({
+    where: {
+      title: body.title
+    }
+  })
+
+  if (!currentEntry) {
+    if (!body.organization) {
+      return res.status(400).json({ error: 'Organization is required!' })
+    }
+
+    if (!body.location) {
+      return res.status(400).json({ error: 'Location is required!' })
+    }
+
+    if (!body.event_date) {
+      return res.status(400).json({ error: 'Event Date is required!' })
+    }
+
+    currentEntry = await prisma.researchDissemination.create({
+      data: {
+        title: body.title,
+        organization: body.organization,
+        location: body.location,
+        event_date: body.event_date,
+        url: body.url
+      }
+    })
+  }
+
+  const verificationRequest = await prisma.verificationRequest.create({
+    data: {
+      profile: {
+        connect: {
+          id: session.profile.id
+        }
+      },
+      role: body.role,
+      type: 'RESEARCH_DISSEMINATION',
+      description: body.description,
+      research_dissemination: {
+        connect: {
+          id: currentEntry.id
+        }
+      }
+    }
+  })
+
+  return res.status(200).json({ success: true, data: verificationRequest })
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

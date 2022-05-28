@@ -103,15 +103,15 @@ const VerificationCard: React.FC<VerificationCardProps> = (props) => {
             </VStack>
           )
         }
-      case 'RESEARCH_EVENT_ATTENDANCE':
+      case 'RESEARCH_EVENT':
         return {
-          humanizedType: 'Research Event Attendance',
-          title: request.research_event_attendance.event_name,
+          humanizedType: 'Research Event',
+          title: request.research_event.event_name,
           description: (
             <VStack align="baseline" spacing={0}>
-              <Text fontSize="sm"><strong>Start Date</strong>: {format(new Date(request.research_event_attendance.start_date), 'MMM dd, yyyy h:mm a')}</Text>
-              <Text fontSize="sm"><strong>End Date</strong>: {format(new Date(request.research_event_attendance.end_date), 'MMM dd, yyyy h:mm a')}</Text>
-              <Text fontSize="sm"><strong>Description</strong>: {request.research_event_attendance.description}</Text>
+              <Text fontSize="sm"><strong>Start Date</strong>: {format(new Date(request.research_event.start_date), 'MMM dd, yyyy h:mm a')}</Text>
+              <Text fontSize="sm"><strong>End Date</strong>: {format(new Date(request.research_event.end_date), 'MMM dd, yyyy h:mm a')}</Text>
+              <Text fontSize="sm"><strong>Description</strong>: {request.research_event.description}</Text>
             </VStack>
           )
         }

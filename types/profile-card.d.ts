@@ -13,7 +13,7 @@ import type {
   ProfileToResearchPresentationBridge,
   Project,
   ResearchDissemination,
-  ResearchEventAttendance,
+  ResearchEvent,
   ResearchPresentation,
   Unit,
   User,
@@ -21,7 +21,7 @@ import type {
   VerificationRequest
 } from '@prisma/client'
 
-export interface ExtendedResearchEventAttendance extends ResearchEventAttendance {
+export interface ExtendedResearchEvent extends ResearchEvent {
   profile: Profile;
   file_uploads: FileUpload[];
 }
@@ -32,7 +32,7 @@ export interface ExtendedVerificationRequest extends VerificationRequest {
   journal_publication: JournalPublication;
   book_publication: BookPublication;
   research_dissemination: ResearchDissemination;
-  research_event_attendance: ResearchEventAttendance;
+  research_event: ResearchEvent;
   research_presentation: ResearchPresentation;
   profile: Profile;
 }

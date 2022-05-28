@@ -4,7 +4,7 @@ import slugGenerator from '../../../../lib/slugGenerator'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
-import type { Project, ResearchPresentation, VerificationRequest } from '@prisma/client'
+import type { ResearchEvent, VerificationRequest } from '@prisma/client'
 
 import relevancy from 'relevancy'
 import roleChecker from '../../../../lib/roleChecker'
@@ -14,7 +14,7 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 
   const queryFilter = searchQuery.split(' ').filter(s => s.trim().length > 0)
   const queryFields = [
-    'title'
+    'event_name'
   ]
   let orQuery = []
   queryFields.forEach((field) => {
@@ -31,29 +31,29 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
   } : undefined
 
   let [totalCount, data] = await prisma.$transaction([
-    prisma.researchPresentation.count({
+    prisma.researchEvent.count({
       where: {
-        title: {
+        event_name: {
           not: ''
         },
         ...whereQuery
       }
     }),
-    prisma.researchPresentation.findMany({
+    prisma.researchEvent.findMany({
       skip: req.query.cursor ? 1 : undefined,
       take: 5,
       cursor: req.query.cursor ? {
         id: req.query.cursor as string
       } : undefined,
       where: {
-        title: {
+        event_name: {
           not: ''
         },
         ...whereQuery
       },
       select: {
         id: true,
-        title: true
+        event_name: true
       }
     })
   ])
@@ -81,43 +81,42 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const body = JSON.parse(req.body) as Partial<
-    ResearchPresentation & VerificationRequest
+    ResearchEvent & VerificationRequest
   >
 
-  if (!body.title) {
-    return res.status(400).json({ error: 'Title is required!' })
+  if (!body.event_name) {
+    return res.status(400).json({ error: 'Event Name is required!' })
   }
 
   if (!body.role) {
     return res.status(400).json({ error: 'Role is required!' })
   }
 
-  let currentEntry = await prisma.researchPresentation.findUnique({
+  let currentEntry = await prisma.researchEvent.findUnique({
     where: {
-      title: body.title
+      event_name: body.event_name
     }
   })
 
   if (!currentEntry) {
-    if (!body.location) {
-      return res.status(400).json({ error: 'Location is required!' })
+    if (!body.start_date) {
+      return res.status(400).json({ error: 'Start Date is required!' })
     }
 
-    if (!body.event_date) {
-      return res.status(400).json({ error: 'Event Date is required!' })
+    if (!body.end_date) {
+      return res.status(400).json({ error: 'End Date is required!' })
     }
 
-    if (!body.conference) {
-      return res.status(400).json({ error: 'Conference is required!' })
+    if (!body.description) {
+      return res.status(400).json({ error: 'Description is required!' })
     }
 
-    currentEntry = await prisma.researchPresentation.create({
+    currentEntry = await prisma.researchEvent.create({
       data: {
-        title: body.title,
-        location: body.location,
-        event_date: body.event_date,
-        conference: body.conference,
-        url: body.url
+        event_name: body.event_name,
+        start_date: body.start_date,
+        end_date: body.end_date,
+        description: body.description
       }
     })
   }
@@ -130,9 +129,8 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
         }
       },
       role: body.role,
-      type: 'RESEARCH_PRESENTATION',
-      description: body.description,
-      research_presentation: {
+      type: 'RESEARCH_EVENT',
+      research_event: {
         connect: {
           id: currentEntry.id
         }

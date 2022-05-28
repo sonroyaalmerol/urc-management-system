@@ -21,7 +21,7 @@ const NewVerificationButton: React.FC = (props) => {
     bookPublicationUrl: '/verifications/book_publication',
     researchDisseminationUrl: '/verifications/research_dissemination',
     researchPresentationUrl: '/verifications/research_presentation',
-    researchEventAttendanceUrl: '/verifications/research_event_attendance'
+    researchEventUrl: '/verifications/research_event'
   }
 
   return (
@@ -86,13 +86,13 @@ const NewVerificationButton: React.FC = (props) => {
         </MenuItem>
         <MenuItem
           as="a"
-          href={URLs.researchEventAttendanceUrl}
+          href={URLs.researchEventUrl}
           onClick={(e) => {
             e.preventDefault()
-            router.push(URLs.researchEventAttendanceUrl)
+            router.push(URLs.researchEventUrl)
           }}
         >
-          Research Event Attendance
+          Research Event
         </MenuItem>
       </MenuList>
     </Menu>

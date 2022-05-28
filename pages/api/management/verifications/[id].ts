@@ -165,27 +165,36 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
         })
       ])
       break
-    case 'RESEARCH_EVENT_ATTENDANCE':
+    case 'RESEARCH_EVENT':
       await prisma.$transaction([
-        prisma.researchEventAttendance.updateMany({
+        prisma.researchEvent.updateMany({
           where: {
-            id: verificationRequest.research_event_attendance_id,
+            id: verificationRequest.research_event_id,
             verified: false
           },
           data: {
             verified: body.verified
           }
         }),
-        prisma.researchEventAttendance.update({
+        prisma.researchEvent.update({
           where: {
-            id: verificationRequest.research_event_attendance_id
+            id: verificationRequest.research_event_id
           },
           data: {
-            profile: body.verified ? {
-              connect: {
-                id: verificationRequest.profile_id
+            bridge_profiles: body.verified ? {
+              create: {
+                role_title: verificationRequest.role,
+                profile: {
+                  connect: {
+                    id: verificationRequest.profile_id
+                  }
+                }
               }
-            } : null
+            } : {
+              deleteMany: {
+                profile_id: verificationRequest.profile_id
+              }
+            }
           }
         })
       ])

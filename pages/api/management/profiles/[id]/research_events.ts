@@ -26,15 +26,17 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
   } : undefined
 
   let [totalCount, data] = await prisma.$transaction([
-    prisma.researchEventAttendance.count({
+    prisma.researchEvent.count({
       where: {
         ...whereQuery,
-        profile: {
-          id: req.query.id as string
+        bridge_profiles: {
+          some: {
+            profile_id: req.query.id as string
+          }
         }
       }
     }),
-    prisma.researchEventAttendance.findMany({
+    prisma.researchEvent.findMany({
       skip: req.query.cursor ? 1 : undefined,
       take: 4,
       cursor: req.query.cursor ? {
@@ -42,12 +44,22 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
       } : undefined,
       where: {
         ...whereQuery,
-        profile: {
-          id: req.query.id as string
+        bridge_profiles: {
+          some: {
+            profile_id: req.query.id as string
+          }
         }
       },
       include: {
-        profile: true,
+        bridge_profiles: {
+          include: {
+            profile: {
+              include: {
+                user: true
+              }
+            }
+          }
+        },
       },
       orderBy: [
         {
