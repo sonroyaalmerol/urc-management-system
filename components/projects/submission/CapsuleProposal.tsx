@@ -44,20 +44,8 @@ const CapsuleProposal: React.FC<CapsuleProposalProps> = (props) => {
       <Wrap align="center" spacing={4}>
         <WrapItem>
           <Heading fontFamily="body" fontSize="lg">
-            {props.submission.project.title}
+            Details
           </Heading>
-        </WrapItem>
-        <WrapItem>
-          <Tag
-            bgColor={humanizeStatus(props.submission.status).color}
-            textColor="white"
-            borderRadius="20px"
-            fontSize="xs"
-            fontWeight="bold"
-            paddingX="0.8rem"
-          >
-            {humanizeStatus(props.submission.status).text}
-          </Tag>
         </WrapItem>
       </Wrap>
       <Card>

@@ -15,12 +15,52 @@ const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session:
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  const body = JSON.parse(req.body) as Partial<UserRole>
-
+  const body = JSON.parse(req.body) as { approved: boolean }
   const { id } = req.query
 
+  /* 
+  const submission = await prisma.submission.findUnique({
+    where: {
+      id: id as string
+    },
+    include: {
+      project: true,
+      budget_proposal_submission: true,
+      capsule_proposal_submission: true,
+      deliverable_submission: true,
+      full_blown_proposal_submission: true
+    }
+  })
+  switch (submission.type) {
+    case 'BUDGET':
+      break
+    case 'CAPSULE':
 
-  return res.status(200).json({ success: true })
+      break
+    case 'DELIVERABLE':
+
+      break
+    case 'FULL':
+
+      break
+  }
+  */
+
+  const submission = await prisma.submission.update({
+    where: {
+      id: id as string
+    },
+    data: {
+      status: body.approved ? 'APPROVED' : 'NOT_APPROVED',
+      processed_by: {
+        connect: {
+          id: session.profile.id
+        }
+      }
+    }
+  })
+
+  return res.status(200).json({ success: true, data: submission })
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

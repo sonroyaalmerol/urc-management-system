@@ -13,6 +13,9 @@ interface ActionsProps {
 const Actions: React.FC<ActionsProps> = (props) => {
   const toast = useToast()
 
+  const [status, setStatus] = React.useState(props.submission.status)
+  const [submitting, setSubmitting] = React.useState(false)
+
   const humanizeType = (type: SubmissionTypes) => {
     switch(type) {
       case 'BUDGET':
@@ -26,14 +29,38 @@ const Actions: React.FC<ActionsProps> = (props) => {
     }
   }
 
+  const doAction = async (approved: boolean) => {
+    setSubmitting(true)
+    const res: { success: boolean, data: Submission } | { error: string } = await fetch(`/api/management/submissions/${props.submission.id}/actions`, {
+      method: 'POST',
+      body: JSON.stringify({ approved })
+    }).then((i) => i.json())
+
+    if ('success' in res) {
+      setStatus(res.data.status)
+      toast({
+        title: 'Success!',
+        description: `Successfully ${res.data.status === 'APPROVED' ? 'approved' : 'rejected'} submission!`,
+        status: 'success'
+      })
+    } else {
+      toast({
+        title: 'Error!',
+        description: res.error,
+        status: 'error'
+      })
+    }
+    setSubmitting(false)
+  }
+
   return (
     <VStack align="baseline" w="full" spacing={4}>
       <Heading fontFamily="body" fontSize="lg">
         Actions
       </Heading>
       <Card>
-        <SimpleGrid columns={props.submission.status === 'NOT_PROCESSED' ? 2 : 1} spacing={2}>
-          { props.submission.status !== 'APPROVED' && (
+        <SimpleGrid columns={status === 'NOT_PROCESSED' ? 2 : 1} spacing={2}>
+          { status !== 'APPROVED' && (
             <ButtonWithConfirmation
               color="white"
               bgColor="brand.blue"
@@ -48,13 +75,13 @@ const Actions: React.FC<ActionsProps> = (props) => {
                   Press confirm to mark the <u>${humanizeType(props.submission.type)}</u> as <b>APPROVED</b>
                 `
               }
-              onClick={() => {  }}
-              isLoading={false}
+              onClick={() => { doAction(true) }}
+              isLoading={submitting}
             >
               Mark as Approved
             </ButtonWithConfirmation>
           ) }
-          { props.submission.status !== 'NOT_APPROVED' && (
+          { status !== 'NOT_APPROVED' && (
             <ButtonWithConfirmation
               color="white"
               bgColor="brand.red"
@@ -69,8 +96,8 @@ const Actions: React.FC<ActionsProps> = (props) => {
                   Press confirm to mark the <u>${humanizeType(props.submission.type)}</u> as <b>REJECTED</b>
                 `
               }
-              onClick={() => { }}
-              isLoading={false}
+              onClick={() => { doAction(false) }}
+              isLoading={submitting}
             >
               Mark as Rejected
             </ButtonWithConfirmation>

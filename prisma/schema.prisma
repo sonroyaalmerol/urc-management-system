@@ -84,6 +84,9 @@ model Submission {
   project_id                    String       
   project                       Project                          @relation(fields: [project_id], references: [id], onDelete: Cascade)
 
+  processed_by_id               String?
+  processed_by                  Profile?                         @relation("processed_by_relation", fields: [processed_by_id], references: [id], onDelete: SetNull)
+
   profile_id                       String
   profile                          Profile                          @relation(fields: [profile_id], references: [id], onDelete: Cascade)
   files                             FileUpload[]
@@ -671,6 +674,7 @@ model Profile {
   actions_involved               Action[]
 
   verified_requests              VerificationRequest[] @relation("verification_user_verified_by")
+  processed_submissions          Submission[] @relation("processed_by_relation")
 
   comments                       Comment[]
   downloads                      Download[]
