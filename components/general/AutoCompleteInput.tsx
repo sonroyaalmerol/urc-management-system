@@ -13,10 +13,10 @@ import { useDebounce } from 'use-debounce'
 
 interface ExtendedAutoCompleteInputProps {
   api: string
-  name: string
+  name?: string
   primaryDisplayName?: string
   secondaryDisplayName?: string
-  formSetValue: UseFormSetValue<any>
+  formSetValue?: UseFormSetValue<any>
   watchExists?: (exists: boolean) => any
 }
 
@@ -79,7 +79,9 @@ const AutoCompleteInput: React.FC<ExtendedAutoCompleteInputProps> = (props) => {
       openOnFocus
       disableFilter
       onChange={(vals) => {
-        props.formSetValue(props.name, vals)
+        if ('formSetValue' in props && 'name' in props) {
+          props.formSetValue(props.name, vals)
+        }
         setSearch(vals)
         setExists(true)
       }}
@@ -88,14 +90,18 @@ const AutoCompleteInput: React.FC<ExtendedAutoCompleteInputProps> = (props) => {
       <ACInput
         autoComplete='off'
         onChange={(e) => {
-          props.formSetValue(props.name, e.target.value)
+          if ('formSetValue' in props && 'name' in props) {
+            props.formSetValue(props.name, e.target.value)
+          }
           setSearch(e.target.value)
           setExists(false)
         }}
         onBlur={(e) => {
           if (!exists && e.target.value !== '' && !('watchExists' in props)) {
             e.target.value = ''
-            props.formSetValue(props.name, e.target.value)
+            if ('formSetValue' in props && 'name' in props) {
+              props.formSetValue(props.name, e.target.value)
+            }
           }
         }}
       />
@@ -103,9 +109,9 @@ const AutoCompleteInput: React.FC<ExtendedAutoCompleteInputProps> = (props) => {
         {!loadingTitles ? entries.map((entry) => (
           <AutoCompleteItem
             key={entry.id}
-            value={entry[props.name]}
+            value={entry[props.name ?? 'id']}
           >
-            {displayGenerator(entry[props.primaryDisplayName], entry[props.secondaryDisplayName], entry[props.name])}
+            {displayGenerator(entry[props.primaryDisplayName], entry[props.secondaryDisplayName], entry[props.name ?? 'id'])}
           </AutoCompleteItem>
         )) : (
           <Center marginTop="2rem">

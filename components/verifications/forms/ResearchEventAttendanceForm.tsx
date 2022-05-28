@@ -1,5 +1,5 @@
 import React from 'react'
-import { VStack, Heading, Text, Center, Spinner } from '@chakra-ui/react'
+import { VStack, Heading, Text, Center, Spinner, Input, useToast } from '@chakra-ui/react'
 
 import Button from '../../general/Button'
 
@@ -17,8 +17,17 @@ interface ResearchEventAttendanceFormProps {
 const ResearchEventAttendanceForm: React.FC<ResearchEventAttendanceFormProps> = (props) => {
   const { control, handleSubmit, register, watch, setValue } = useForm<Partial<ResearchEventAttendance> & Partial<VerificationRequest>>();
 
+  const [exists, setExists] = React.useState(true)
+
+  const toast = useToast()
+
   const onSubmit: SubmitHandler<Partial<ExternalResearch> & Partial<VerificationRequest>> = data => {
     console.log(data)
+    toast({
+      title: 'Under construction!',
+      description: 'This is not yet ready.',
+      status: 'info'
+    })
   };
 
   return (
@@ -34,11 +43,34 @@ const ResearchEventAttendanceForm: React.FC<ResearchEventAttendanceFormProps> = 
               api="/api/management/verifications/research_event_attendances"
               name="title"
               formSetValue={setValue}
+              watchExists={(x) => {
+                setExists(x)
+              }}
             />
             <Text fontStyle="italic" fontSize="xs" pl="1rem">
               Existing entries will be showed.
             </Text>
           </VStack>
+          <VStack w="full" align="baseline" spacing={1}>
+            <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Role/Position</Text>
+            <Input {...register('role')} />
+          </VStack>
+          { !exists && (
+            <>
+              <VStack w="full" align="baseline" spacing={1}>
+                <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Start Date</Text>
+                <Input {...register('start_date')} />
+              </VStack>
+              <VStack w="full" align="baseline" spacing={1}>
+                <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">End Date</Text>
+                <Input {...register('end_date')} />
+              </VStack>
+              <VStack w="full" align="baseline" spacing={1}>
+                <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Description</Text>
+                <Input {...register('description')} />
+              </VStack>
+            </>
+          ) }
           <Button type="submit">Submit</Button>
         </VStack>
       </Card>

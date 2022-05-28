@@ -2,7 +2,7 @@ import React from 'react'
 import ContentHeader from '../../../../components/general/ContentHeader'
 import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
-import { VStack, Heading, Text, HStack, Avatar, Wrap, WrapItem, Tag, Textarea } from '@chakra-ui/react'
+import { VStack, Heading, Text, HStack, Avatar, Wrap, WrapItem, Tag, Textarea, useToast } from '@chakra-ui/react'
 
 import Button from '../../../../components/general/Button'
 
@@ -197,8 +197,15 @@ const Submission: React.FC<SubmissionProps> = (props: InferGetServerSidePropsTyp
 
   const { control, handleSubmit } = useForm<Partial<Comment>>();
 
+  const toast = useToast()
+
   const onSubmit: SubmitHandler<Partial<Comment>> = data => {
     console.log(data)
+    toast({
+      title: 'Under construction!',
+      description: 'This is not yet ready.',
+      status: 'info'
+    })
   };
 
   const humanizeType = (type: SubmissionTypes) => {

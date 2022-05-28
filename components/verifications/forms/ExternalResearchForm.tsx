@@ -1,5 +1,5 @@
 import React from 'react'
-import { VStack, Heading, Text, Center, Spinner } from '@chakra-ui/react'
+import { VStack, Heading, Text, Center, Spinner, Input, useToast } from '@chakra-ui/react'
 
 import Button from '../../general/Button'
 
@@ -18,8 +18,15 @@ const ExternalResearchForm: React.FC<ExternalResearchFormProps> = (props) => {
 
   const [exists, setExists] = React.useState(true)
 
+  const toast = useToast()
+
   const onSubmit: SubmitHandler<Partial<ExternalResearch> & Partial<VerificationRequest>> = data => {
     console.log(data)
+    toast({
+      title: 'Under construction!',
+      description: 'This is not yet ready.',
+      status: 'info'
+    })
   };
 
   return (
@@ -43,9 +50,24 @@ const ExternalResearchForm: React.FC<ExternalResearchFormProps> = (props) => {
               Existing entries will be showed.
             </Text>
           </VStack>
+          <VStack w="full" align="baseline" spacing={1}>
+            <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Role/Position</Text>
+            <Input {...register('role')} />
+          </VStack>
           { !exists && (
             <>
-              <Text>Test</Text>
+              <VStack w="full" align="baseline" spacing={1}>
+                <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Organization</Text>
+                <Input {...register('organization')} />
+              </VStack>
+              <VStack w="full" align="baseline" spacing={1}>
+                <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Duration</Text>
+                <Input {...register('duration')} />
+              </VStack>
+              <VStack w="full" align="baseline" spacing={1}>
+                <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Cycle</Text>
+                <Input {...register('cycle')} />
+              </VStack>
             </>
           ) }
           <Button type="submit">Submit</Button>
