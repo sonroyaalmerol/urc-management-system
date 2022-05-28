@@ -19,15 +19,10 @@ import { MdGroupAdd } from 'react-icons/md'
 import type { Profile, ProfileToProjectBridge, Project } from '@prisma/client'
 import IconButton from '../general/IconButton'
 
-import {
-  AutoComplete,
-  AutoCompleteInput,
-  AutoCompleteItem,
-  AutoCompleteList,
-} from "@choc-ui/chakra-autocomplete"
 import { useDebounce } from 'use-debounce'
 import { useRouter } from 'next/router'
 import useUUID from '../../lib/client/useUUID'
+import AutoCompleteInput from '../general/AutoCompleteInput'
 
 interface AddProponentButtonProps {
   projectId: string
@@ -43,34 +38,7 @@ const AddProponentButton: React.FC<AddProponentButtonProps> = (props) => {
 
   const { control, handleSubmit, reset, setValue, watch } = useForm<FormFields>();
 
-  const { email } = watch()
-
-  const [profiles, setProfiles] = React.useState<Profile[]>([])
-  const [loadingProfiles, setLoadingProfiles] = React.useState(true)
   const [submitting, setSubmitting] = React.useState(false)
-
-  const [search, setSearch] = React.useState('')
-  const [deferredSearch] = useDebounce(search, 500)
-
-  const loadNewEntries = async () => {
-    const newEntries = await fetch(
-      `/api/management/profiles?${search?.length > 0 ? `&query=${search}` : ''}`
-    ).then(res => res.json())
-    
-    setProfiles(newEntries?.data ?? [])
-    setLoadingProfiles(false)
-  }
-
-  React.useEffect(() => {
-    setLoadingProfiles(true)
-    if (deferredSearch === search) {
-      setLoadingProfiles(false)
-    }
-  }, [search])
-
-  React.useEffect(() => {
-    loadNewEntries()
-  }, [deferredSearch])
 
   const toast = useToast()
   const key = useUUID()
@@ -120,40 +88,14 @@ const AddProponentButton: React.FC<AddProponentButtonProps> = (props) => {
             <VStack spacing={4}>
               <VStack w="full" align="baseline" spacing={1}>
                 <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Proponent Email</Text>
-                <AutoComplete 
-                  openOnFocus
-                  disableFilter
-                  onChange={(vals) => {
-                    setValue('email', vals)
-                  }}
-                  value={search}
-                >
-                  <AutoCompleteInput
-                    autoComplete='off'
-                    onChange={(e) => {
-                      setSearch(e.target.value)
-                    }}
-                    onBlur={(e) => {
-                      if (e.target.value !== email) {
-                        e.target.value = ''
-                      }
-                    }}
-                  />
-                  <AutoCompleteList>
-                    {!loadingProfiles ? profiles.map((profile) => (
-                      <AutoCompleteItem
-                        key={profile.id}
-                        value={profile.email}
-                      >
-                        {profile.first_name} {profile.last_name} &lt;{profile.email}&gt;
-                      </AutoCompleteItem>
-                    )) : (
-                      <Center marginTop="2rem">
-                        <Spinner color="brand.blue" />
-                      </Center>
-                    )}
-                  </AutoCompleteList>
-                </AutoComplete>
+                <AutoCompleteInput
+                  api="/api/management/profiles"
+                  name="email"
+                  primaryDisplayName="first_name"
+                  secondaryDisplayName="last_name"
+                  formWatch={watch}
+                  formSetValue={setValue}
+                />
                 <Text fontStyle="italic" fontSize="xs" pl="1rem">
                   Proponent must have their profile added to the system.
                 </Text>
