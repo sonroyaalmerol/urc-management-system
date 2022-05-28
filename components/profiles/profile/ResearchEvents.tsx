@@ -1,9 +1,9 @@
 import React from 'react'
 
-import ListTemplate from './ListTemplate'
+import ListTemplate from '../../general/templates/ListTemplate'
 
 import type { ComponentProps, ExtendedResearchEvent } from '../../../types/profile-card'
-import CardTemplate from './CardTemplate'
+import CardTemplate from '../../general/templates/CardTemplate'
 
 import {
   Modal,

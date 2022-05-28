@@ -5,18 +5,34 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  const instituteChecker = session.profile.bridge_institutes.map((institute) => {
+  let instituteChecker = session.profile.bridge_institutes.map((institute) => {
     return {
       institute_id: institute.institute_id
     }
   })
+
+  let instituteId = null
+
+  if (req.query.institute) {
+    instituteChecker = []
+
+    const institute = await prisma.institute.findUnique({
+      where: {
+        id: req.query.institute as string
+      }
+    })
+
+    if (institute.short_name !== 'URC') {
+      instituteId = req.query.institute
+    }
+  }
 
   const [totalCount, data] = await prisma.$transaction([
     prisma.instituteNews.count({
       where: {
         OR: [
           {
-            institute_id: null
+            institute_id: instituteId
           },
           ...instituteChecker
         ]
@@ -31,7 +47,7 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
       where: {
         OR: [
           {
-            institute_id: null
+            institute_id: instituteId
           },
           ...instituteChecker
         ]

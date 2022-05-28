@@ -7,7 +7,7 @@ import CardTemplate from '../../general/templates/CardTemplate'
 import { useRouter } from 'next/router'
 
 const InternalProjects: React.FC<ComponentProps> = (props) => {
-  const profile = props.profile
+  const institute = props.institute
 
   const [entries, setEntries] = React.useState<ExtendedProject[]>([])
 
@@ -16,7 +16,7 @@ const InternalProjects: React.FC<ComponentProps> = (props) => {
 
   const loadNewEntries = async (args?: { reset: Boolean }) => {
     const newEntries = await fetch(
-      `/api/management/profiles/${profile.id}/projects?${entries.length > 0 && !args?.reset ? `&cursor=${entries[entries.length - 1].id}` : ''}`
+      `/api/management/institutes/${institute.id}/projects?${entries.length > 0 && !args?.reset ? `&cursor=${entries[entries.length - 1].id}` : ''}`
     ).then(res => res.json())
     setCount(newEntries?.totalCount ?? 0)
     
@@ -46,14 +46,12 @@ const InternalProjects: React.FC<ComponentProps> = (props) => {
       onNew={() => {
         router.push(`/projects`)
       }}
-      profileId={profile.id}
     >
       { entries.map((entry) => (
         <CardTemplate
           key={entry.id}
           entry={entry}
           href={`/projects/${entry.slug}`}
-          role={entry.bridge_profiles.filter((bridge) => bridge.profile_id === profile.id)[0].role_title}
         />
       )) }
     </ListTemplate>

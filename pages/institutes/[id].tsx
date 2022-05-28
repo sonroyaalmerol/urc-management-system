@@ -6,9 +6,11 @@ import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "nex
 import { prisma } from '../../lib/server/prisma'
 
 import { NextSeo } from 'next-seo'
-import { VStack } from '@chakra-ui/react'
+import { Heading, VStack } from '@chakra-ui/react'
 import { ExtendedInstitute } from '../../types/profile-card'
 import InstituteDetails from '../../components/institutes/institute/InstituteDetails'
+import InternalProjects from '../../components/institutes/institute/InternalProjects'
+import MemoList from '../../components/dashboard/MemoList'
 
 interface InstituteProps {
 
@@ -28,6 +30,17 @@ const Institute: React.FC<InstituteProps> = (props: InferGetServerSidePropsType<
         </ContentHeader>
         <VStack spacing={5} w="full">
           <InstituteDetails institute={institute} />
+          <InternalProjects institute={institute} />
+          <VStack w="full" align="baseline">
+            <Heading
+              fontFamily="body"
+              fontSize="xl"
+              my="1rem"
+            >
+              Memos
+            </Heading>
+            <MemoList institute={institute} />
+          </VStack>
         </VStack>
       </VStack>
     </>
@@ -56,6 +69,20 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       bridge_profiles: {
         include: {
           profile: true
+        }
+      },
+      projects: {
+        include: {
+          bridge_profiles: {
+            include: {
+              profile: {
+                include: {
+                  user: true
+                }
+              }
+            }
+          },
+          units: true
         }
       },
       institute_news: true

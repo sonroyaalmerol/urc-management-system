@@ -322,6 +322,8 @@ model Institute {
   photo               FileUpload?  @relation(fields: [photo_id], references: [id], onDelete: SetNull)
   created_at          DateTime?             @default(now())
   updated_at          DateTime?             @updatedAt
+
+  projects            Project[]
   institute_news      InstituteNews[]
   bridge_profiles ProfileToInstituteBridge[]
 }
@@ -608,6 +610,9 @@ model Project {
 
   academic_term_id                 String?
   academic_term                    AcademicTerm?     @relation(fields: [academic_term_id], references: [id], onDelete: SetNull)
+
+  institute_id                     String?
+  institute                        Institute?     @relation(fields: [institute_id], references: [id], onDelete: SetNull)
 
   submissions                      Submission[]
   deliverables                     Deliverable[]

@@ -6,9 +6,11 @@ import type { InstituteNews, User, FileUpload, Institute } from '@prisma/client'
 
 import InfiniteScroll from 'react-infinite-scroller'
 
+interface MemoListProps {
+  institute?: Institute
+}
 
-
-const MemoList: React.FC = () => {
+const MemoList: React.FC<MemoListProps> = (props) => {
   const [memos, setMemos] = React.useState<(InstituteNews & {
     user: User;
     uploads: FileUpload[];
@@ -19,7 +21,9 @@ const MemoList: React.FC = () => {
   const [loading, setLoading] = React.useState(true)
 
   const loadNewEntries = async () => {
-    const newMemos = await fetch(`/api/management/news${memos.length > 0 ? `?cursor=${memos[memos.length - 1].id}` : ''}`).then(res => res.json())
+    const newMemos = await fetch(
+      `/api/management/news?${memos.length > 0 ? `&cursor=${memos[memos.length - 1].id}` : ''}${props.institute ? `&institute=${props.institute.id}` : ''}`
+    ).then(res => res.json())
     setCount(newMemos?.totalCount ?? 0)
 
     setMemos((currMemos) => {
