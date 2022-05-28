@@ -6,9 +6,11 @@ import Card from '../../general/Card'
 import type { ComponentProps } from '../../../types/profile-card'
 import RolesSection from './RolesSection'
 import AvatarUploadable from '../../general/AvatarUploadable'
+import { useSession } from 'next-auth/react'
 
 const ProfileDetails: React.FC<ComponentProps> = (props) => {
   const profile = props.profile
+  const session = useSession()
 
   return (
     <VStack w="full">
@@ -44,6 +46,7 @@ const ProfileDetails: React.FC<ComponentProps> = (props) => {
                 size="2xl"
                 photoId={profile.photo_id}
                 profileId={profile.id}
+                disabled={session.data.profile.id !== profile.id}
               />
             </WrapItem>
             <WrapItem>

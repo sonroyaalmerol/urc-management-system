@@ -12,6 +12,7 @@ interface AvatarUploadable extends AvatarProps {
   profileId?: string
   instituteId?: string
   photoId: string
+  disabled?: boolean
 }
 
 
@@ -25,8 +26,6 @@ const AvatarUploadable: React.FC<AvatarUploadable> = (props) => {
 
   const [submitting, setSubmitting] = React.useState(false)
   const [photoId, setPhotoId] = React.useState(props.photoId)
-
-  const session = useSession()
 
   const { files } = watch()
 
@@ -64,7 +63,7 @@ const AvatarUploadable: React.FC<AvatarUploadable> = (props) => {
       overflow="hidden"
     >
       <Avatar src={`/api/files/get/${photoId}`} {...divProps} />
-      { true && (
+      { !props.disabled && (
         <>
           <input
             type="file"
