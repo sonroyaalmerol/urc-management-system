@@ -3,6 +3,8 @@ import ContentHeader from '../../components/general/ContentHeader'
 import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
 
+import { prisma } from '../../lib/server/prisma'
+
 import { NextSeo } from 'next-seo'
 import { VStack } from '@chakra-ui/react'
 import ProfileDetails from '../../components/profiles/profile/ProfileDetails'
