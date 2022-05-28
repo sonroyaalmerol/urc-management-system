@@ -24,7 +24,8 @@ const Verifications: React.FC<VerificationsProps> = (props: InferGetServerSidePr
         'journal_publication',
         'book_publication',
         'research_dissemination',
-        'research_presentation'
+        'research_presentation',
+        'research_event'
       ]
     } else {
       return [typeFilter]

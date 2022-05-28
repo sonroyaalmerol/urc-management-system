@@ -15,19 +15,35 @@ interface ResearchEventFormProps {
 }
 
 const ResearchEventForm: React.FC<ResearchEventFormProps> = (props) => {
-  const { control, handleSubmit, register, watch, setValue } = useForm<Partial<ResearchEvent> & Partial<VerificationRequest>>();
+  const { control, handleSubmit, register, reset, setValue } = useForm<Partial<ResearchEvent> & Partial<VerificationRequest>>();
 
   const [exists, setExists] = React.useState(true)
+  const [submitting, setSubmitting] = React.useState(false)
 
   const toast = useToast()
 
-  const onSubmit: SubmitHandler<Partial<ExternalResearch> & Partial<VerificationRequest>> = data => {
-    console.log(data)
-    toast({
-      title: 'Under construction!',
-      description: 'This is not yet ready.',
-      status: 'info'
-    })
+  const onSubmit: SubmitHandler<Partial<ExternalResearch> & Partial<VerificationRequest>> = async data => {
+    setSubmitting(true)
+    const res = await fetch(`/api/management/verifications/research_events`, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    }).then((i) => i.json())
+
+    if (res.success) {
+      toast({
+        title: 'Success!',
+        description: `Successfully created verification request!`,
+        status: 'success'
+      })
+    } else {
+      toast({
+        title: 'Error!',
+        description: res.error,
+        status: 'error'
+      })
+    }
+    setSubmitting(false)
+    reset()
   };
 
   return (
@@ -41,7 +57,7 @@ const ResearchEventForm: React.FC<ResearchEventFormProps> = (props) => {
             <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Event Name</Text>
             <AutoCompleteInput
               api="/api/management/verifications/research_events"
-              name="title"
+              name="event_name"
               formSetValue={setValue}
               watchExists={(x) => {
                 setExists(x)
@@ -71,7 +87,7 @@ const ResearchEventForm: React.FC<ResearchEventFormProps> = (props) => {
               </VStack>
             </>
           ) }
-          <Button type="submit">Submit</Button>
+          <Button type="submit" isLoading={submitting}>Submit</Button>
         </VStack>
       </Card>
     </VStack>

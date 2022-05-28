@@ -13,19 +13,35 @@ interface BookPublicationFormProps {
 }
 
 const BookPublicationForm: React.FC<BookPublicationFormProps> = (props) => {
-  const { control, handleSubmit, register, watch, setValue } = useForm<Partial<BookPublication> & Partial<VerificationRequest>>();
+  const { control, handleSubmit, register, reset, setValue } = useForm<Partial<BookPublication> & Partial<VerificationRequest>>();
 
   const [exists, setExists] = React.useState(true)
+  const [submitting, setSubmitting] = React.useState(false)
 
   const toast = useToast()
 
-  const onSubmit: SubmitHandler<Partial<ExternalResearch> & Partial<VerificationRequest>> = data => {
-    console.log(data)
-    toast({
-      title: 'Under construction!',
-      description: 'This is not yet ready.',
-      status: 'info'
-    })
+  const onSubmit: SubmitHandler<Partial<ExternalResearch> & Partial<VerificationRequest>> = async data => {
+    setSubmitting(true)
+    const res = await fetch(`/api/management/verifications/book_publications`, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    }).then((i) => i.json())
+
+    if (res.success) {
+      toast({
+        title: 'Success!',
+        description: `Successfully created verification request!`,
+        status: 'success'
+      })
+    } else {
+      toast({
+        title: 'Error!',
+        description: res.error,
+        status: 'error'
+      })
+    }
+    setSubmitting(false)
+    reset()
   };
 
   return (
@@ -69,7 +85,7 @@ const BookPublicationForm: React.FC<BookPublicationFormProps> = (props) => {
               </VStack>
             </>
           ) }
-          <Button type="submit">Submit</Button>
+          <Button type="submit" isLoading={submitting}>Submit</Button>
         </VStack>
       </Card>
     </VStack>
