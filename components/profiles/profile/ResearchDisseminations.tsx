@@ -4,6 +4,19 @@ import ListTemplate from './ListTemplate'
 import type { ComponentProps, ExtendedResearchDissemination } from '../../../types/profile-card'
 import CardTemplate from './CardTemplate'
 
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+} from '@chakra-ui/react'
+import Button from '../../general/Button'
+import { useRouter } from 'next/router'
+
 const ResearchDisseminations: React.FC<ComponentProps> = (props) => {
   const profile = props.profile
 
@@ -33,6 +46,10 @@ const ResearchDisseminations: React.FC<ComponentProps> = (props) => {
     loadNewEntries()
   }, [])
 
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
+  const router = useRouter()
+
   return (
     <ListTemplate
       title="Research Disseminations"
@@ -40,9 +57,34 @@ const ResearchDisseminations: React.FC<ComponentProps> = (props) => {
       hasMore={entries.length < count}
       loadMore={loadNewEntries}
       profileId={profile.id}
+      onNew={() => {
+        router.push(`/verifications/research_dissemination`)
+      }}
     >
       { entries.map((entry) => (
-        <CardTemplate key={entry.id} entry={entry} role={entry.bridge_profiles.filter((bridge) => bridge.profile_id === profile.id)[0].role_title} />
+        <>
+          <CardTemplate 
+            key={entry.id} 
+            entry={entry} 
+            role={entry.bridge_profiles.filter((bridge) => bridge.profile_id === profile.id)[0].role_title} 
+            onClick={onOpen}
+          />
+          <Modal key={`${entry.id}-modal`} isOpen={isOpen} onClose={onClose} blockScrollOnMount={false}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>{entry.title}</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+              </ModalBody>
+
+              <ModalFooter>
+                <Button colorScheme='blue' mr={3} onClick={onClose}>
+                  Close
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+        </>
       )) }
     </ListTemplate>
   )

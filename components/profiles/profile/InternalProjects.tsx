@@ -4,6 +4,7 @@ import ListTemplate from './ListTemplate'
 
 import type { ComponentProps, ExtendedProject } from '../../../types/profile-card'
 import CardTemplate from './CardTemplate'
+import { useRouter } from 'next/router'
 
 const InternalProjects: React.FC<ComponentProps> = (props) => {
   const profile = props.profile
@@ -34,6 +35,8 @@ const InternalProjects: React.FC<ComponentProps> = (props) => {
     loadNewEntries()
   }, [])
 
+  const router = useRouter()
+
   return (
     <ListTemplate
       title="Internal Projects"
@@ -41,7 +44,7 @@ const InternalProjects: React.FC<ComponentProps> = (props) => {
       hasMore={entries.length < count}
       loadMore={loadNewEntries}
       onNew={() => {
-        console.log('test')
+        router.push(`/projects`)
       }}
       profileId={profile.id}
     >

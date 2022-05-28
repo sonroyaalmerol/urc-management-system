@@ -14,7 +14,7 @@ const InnerCard: React.FC<InnerCardProps> = (props) => {
 
   return (
     <Box
-      as={props.href ? "a" : undefined}
+      as={props.href ? "a" : props.onClick ? "button" : undefined}
       href={props.href}
       onClick={props.href ? (e) => {
         e.preventDefault()
@@ -24,10 +24,10 @@ const InnerCard: React.FC<InnerCardProps> = (props) => {
       padding="1rem"
       borderRadius={10}
       transition="background-color 0.05s"
-      _hover={props.href ? {
+      _hover={props.href || props.onClick ? {
         bgColor: "brand.cardBackgroundHover"
       } : undefined}
-      _active={props.href ? {
+      _active={props.href || props.onClick ? {
         bgColor: "brand.cardBackgroundActive"
       } : undefined}
       {...divProps}

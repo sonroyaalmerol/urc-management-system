@@ -5,6 +5,19 @@ import ListTemplate from './ListTemplate'
 import type { ComponentProps, ExtendedResearchEventAttendance } from '../../../types/profile-card'
 import CardTemplate from './CardTemplate'
 
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+} from '@chakra-ui/react'
+import Button from '../../general/Button'
+import { useRouter } from 'next/router'
+
 const ResearchEventAttendance: React.FC<ComponentProps> = (props) => {
   const profile = props.profile
 
@@ -34,6 +47,10 @@ const ResearchEventAttendance: React.FC<ComponentProps> = (props) => {
     loadNewEntries()
   }, [])
 
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
+  const router = useRouter()
+
   return (
     <ListTemplate
       title="Research Event Attendances"
@@ -41,9 +58,33 @@ const ResearchEventAttendance: React.FC<ComponentProps> = (props) => {
       hasMore={entries.length < count}
       loadMore={loadNewEntries}
       profileId={profile.id}
+      onNew={() => {
+        router.push(`/verifications/research_event_attendance`)
+      }}
     >
       { entries.map((entry) => (
-        <CardTemplate key={entry.id} entry={entry} />
+        <>
+          <CardTemplate 
+            key={entry.id} 
+            entry={entry} 
+            onClick={onOpen}
+          />
+          <Modal key={`${entry.id}-modal`} isOpen={isOpen} onClose={onClose} blockScrollOnMount={false}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>{entry.event_name}</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+              </ModalBody>
+
+              <ModalFooter>
+                <Button colorScheme='blue' mr={3} onClick={onClose}>
+                  Close
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+        </>
       )) }
     </ListTemplate>
   )

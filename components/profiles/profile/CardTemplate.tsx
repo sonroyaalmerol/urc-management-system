@@ -29,13 +29,14 @@ interface CardTemplateProps {
     ExtendedResearchEventAttendance
   href?: string
   role?: string
+  onClick?: () => void
 }
 
 const CardTemplate: React.FC<CardTemplateProps> = (props) => {
   const entry = props.entry
 
   return (
-    <InnerCard href={props.href} w="full">
+    <InnerCard href={props.href} onClick={props.onClick} w="full">
       <VStack alignItems="flex-start" spacing={4}>
         <Heading
           size="md"
