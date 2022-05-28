@@ -4,10 +4,17 @@ import slugGenerator from '../../../../lib/slugGenerator'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
-import type { ExternalResearch, Project, VerificationRequest } from '@prisma/client'
+import type { ExternalResearch, FileUpload, Project, VerificationRequest } from '@prisma/client'
 
 import relevancy from 'relevancy'
 import roleChecker from '../../../../lib/roleChecker'
+import parseBodyWithFile from '../../../../lib/server/parseBodyWithFile'
+
+export const config = {
+  api: {
+    bodyParser: false
+  }
+}
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const searchQuery = (req.query?.query as string) ?? ''
@@ -80,43 +87,46 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  const body = JSON.parse(req.body) as Partial<
+  const body: { files: {
+    fieldName: string,
+    value: FileUpload
+  }[], fields: Partial<
     ExternalResearch & VerificationRequest
-  >
+  > } = await parseBodyWithFile(req, { publicAccess: false })
 
-  if (!body.title) {
+  if (!body.fields.title) {
     return res.status(400).json({ error: 'Title is required!' })
   }
 
-  if (!body.role) {
+  if (!body.fields.role) {
     return res.status(400).json({ error: 'Role is required!' })
   }
 
   let currentEntry = await prisma.externalResearch.findUnique({
     where: {
-      title: body.title
+      title: body.fields.title
     }
   })
 
   if (!currentEntry) {
-    if (!body.organization) {
+    if (!body.fields.organization) {
       return res.status(400).json({ error: 'Organization is required!' })
     }
 
-    if (!body.duration) {
+    if (!body.fields.duration) {
       return res.status(400).json({ error: 'Duration is required!' })
     }
 
-    if (!body.cycle) {
+    if (!body.fields.cycle) {
       return res.status(400).json({ error: 'Cycle is required!' })
     }
 
     currentEntry = await prisma.externalResearch.create({
       data: {
-        title: body.title,
-        organization: body.organization,
-        duration: body.duration,
-        cycle: body.cycle
+        title: body.fields.title,
+        organization: body.fields.organization,
+        duration: body.fields.duration,
+        cycle: body.fields.cycle
       }
     })
   }
@@ -128,13 +138,16 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
           id: session.profile.id
         }
       },
-      role: body.role,
+      role: body.fields.role,
       type: 'EXTERNAL_RESEARCH',
-      description: body.description,
+      description: body.fields.description,
       external_research: {
         connect: {
           id: currentEntry.id
         }
+      },
+      proof_uploads: {
+        connect: body.files?.map(f => ({ id: f.value.id })) || []
       }
     }
   })

@@ -4,10 +4,17 @@ import slugGenerator from '../../../../lib/slugGenerator'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
-import type { ResearchEvent, VerificationRequest } from '@prisma/client'
+import type { FileUpload, ResearchEvent, VerificationRequest } from '@prisma/client'
 
 import relevancy from 'relevancy'
 import roleChecker from '../../../../lib/roleChecker'
+import parseBodyWithFile from '../../../../lib/server/parseBodyWithFile'
+
+export const config = {
+  api: {
+    bodyParser: false
+  }
+}
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const searchQuery = (req.query?.query as string) ?? ''
@@ -80,43 +87,46 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  const body = JSON.parse(req.body) as Partial<
+  const body: { files: {
+    fieldName: string,
+    value: FileUpload
+  }[], fields: Partial<
     ResearchEvent & VerificationRequest
-  >
+  > } = await parseBodyWithFile(req, { publicAccess: false })
 
-  if (!body.event_name) {
+  if (!body.fields.event_name) {
     return res.status(400).json({ error: 'Event Name is required!' })
   }
 
-  if (!body.role) {
+  if (!body.fields.role) {
     return res.status(400).json({ error: 'Role is required!' })
   }
 
   let currentEntry = await prisma.researchEvent.findUnique({
     where: {
-      event_name: body.event_name
+      event_name: body.fields.event_name
     }
   })
 
   if (!currentEntry) {
-    if (!body.start_date) {
+    if (!body.fields.start_date) {
       return res.status(400).json({ error: 'Start Date is required!' })
     }
 
-    if (!body.end_date) {
+    if (!body.fields.end_date) {
       return res.status(400).json({ error: 'End Date is required!' })
     }
 
-    if (!body.description) {
+    if (!body.fields.description) {
       return res.status(400).json({ error: 'Description is required!' })
     }
 
     currentEntry = await prisma.researchEvent.create({
       data: {
-        event_name: body.event_name,
-        start_date: body.start_date,
-        end_date: body.end_date,
-        description: body.description
+        event_name: body.fields.event_name,
+        start_date: body.fields.start_date,
+        end_date: body.fields.end_date,
+        description: body.fields.description
       }
     })
   }
@@ -128,12 +138,15 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
           id: session.profile.id
         }
       },
-      role: body.role,
+      role: body.fields.role,
       type: 'RESEARCH_EVENT',
       research_event: {
         connect: {
           id: currentEntry.id
         }
+      },
+      proof_uploads: {
+        connect: body.files?.map(f => ({ id: f.value.id })) || []
       }
     }
   })

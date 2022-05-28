@@ -4,10 +4,17 @@ import slugGenerator from '../../../../lib/slugGenerator'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
-import type { BookPublication, Project, VerificationRequest } from '@prisma/client'
+import type { BookPublication, FileUpload, Project, VerificationRequest } from '@prisma/client'
 
 import relevancy from 'relevancy'
 import roleChecker from '../../../../lib/roleChecker'
+import parseBodyWithFile from '../../../../lib/server/parseBodyWithFile'
+
+export const config = {
+  api: {
+    bodyParser: false
+  }
+}
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const searchQuery = (req.query?.query as string) ?? ''
@@ -80,43 +87,46 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  const body = JSON.parse(req.body) as Partial<
+  const body: { files: {
+    fieldName: string,
+    value: FileUpload
+  }[], fields: Partial<
     BookPublication & VerificationRequest
-  >
+  >} = await parseBodyWithFile(req, { publicAccess: false })
 
-  if (!body.title) {
+  if (!body.fields.title) {
     return res.status(400).json({ error: 'Title is required!' })
   }
 
-  if (!body.role) {
+  if (!body.fields.role) {
     return res.status(400).json({ error: 'Role is required!' })
   }
 
   let currentEntry = await prisma.bookPublication.findUnique({
     where: {
-      title: body.title
+      title: body.fields.title
     }
   })
 
   if (!currentEntry) {
-    if (!body.publisher) {
+    if (!body.fields.publisher) {
       return res.status(400).json({ error: 'Publisher is required!' })
     }
 
-    if (!body.isbn) {
+    if (!body.fields.isbn) {
       return res.status(400).json({ error: 'ISBN is required!' })
     }
 
-    if (!body.date_published) {
+    if (!body.fields.date_published) {
       return res.status(400).json({ error: 'Date Published is required!' })
     }
 
     currentEntry = await prisma.bookPublication.create({
       data: {
-        title: body.title,
-        publisher: body.publisher,
-        isbn: body.isbn,
-        date_published: body.date_published
+        title: body.fields.title,
+        publisher: body.fields.publisher,
+        isbn: body.fields.isbn,
+        date_published: body.fields.date_published
       }
     })
   }
@@ -128,13 +138,16 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
           id: session.profile.id
         }
       },
-      role: body.role,
+      role: body.fields.role,
       type: 'BOOK_PUBLICATION',
-      description: body.description,
+      description: body.fields.description,
       book_publication: {
         connect: {
           id: currentEntry.id
         }
+      },
+      proof_uploads: {
+        connect: body.files?.map(f => ({ id: f.value.id })) || []
       }
     }
   })

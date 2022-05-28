@@ -8,24 +8,26 @@ import Card from '../../general/Card'
 
 import { useForm, SubmitHandler } from "react-hook-form"
 import AutoCompleteInput from '../../general/AutoCompleteInput'
+import fetchWithFile from '../../../lib/client/fetchWithFile'
+import FileUploadButton from '../../general/FileUploadButton'
+import { useRouter } from 'next/router'
 
 interface BookPublicationFormProps {
 }
 
 const BookPublicationForm: React.FC<BookPublicationFormProps> = (props) => {
-  const { control, handleSubmit, register, reset, setValue } = useForm<Partial<BookPublication> & Partial<VerificationRequest>>();
+  const { watch, handleSubmit, register, reset, setValue } = useForm<Partial<BookPublication> & Partial<VerificationRequest> & { proof_files: FileList }>();
 
   const [exists, setExists] = React.useState(true)
   const [submitting, setSubmitting] = React.useState(false)
 
   const toast = useToast()
+  const { proof_files } = watch()
+  const router = useRouter()
 
-  const onSubmit: SubmitHandler<Partial<ExternalResearch> & Partial<VerificationRequest>> = async data => {
+  const onSubmit: SubmitHandler<Partial<ExternalResearch> & Partial<VerificationRequest> & { proof_files: FileList }> = async data => {
     setSubmitting(true)
-    const res = await fetch(`/api/management/verifications/book_publications`, {
-      method: 'POST',
-      body: JSON.stringify(data)
-    }).then((i) => i.json())
+    const res = await fetchWithFile(`/api/management/verifications/book_publications`, data)
 
     if (res.success) {
       toast({
@@ -33,6 +35,7 @@ const BookPublicationForm: React.FC<BookPublicationFormProps> = (props) => {
         description: `Successfully created verification request!`,
         status: 'success'
       })
+      router.push('/verifications')
     } else {
       toast({
         title: 'Error!',
@@ -85,6 +88,10 @@ const BookPublicationForm: React.FC<BookPublicationFormProps> = (props) => {
               </VStack>
             </>
           ) }
+          <VStack w="full" align="baseline" spacing={1}>
+            <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Proof Upload</Text>
+            <FileUploadButton files={proof_files} {...register('proof_files')} />
+          </VStack>
           <Button type="submit" isLoading={submitting}>Submit</Button>
         </VStack>
       </Card>

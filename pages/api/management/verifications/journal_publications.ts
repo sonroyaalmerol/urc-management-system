@@ -4,10 +4,17 @@ import slugGenerator from '../../../../lib/slugGenerator'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
-import type { JournalPublication, Project, VerificationRequest } from '@prisma/client'
+import type { FileUpload, JournalPublication, Project, VerificationRequest } from '@prisma/client'
 
 import relevancy from 'relevancy'
 import roleChecker from '../../../../lib/roleChecker'
+import parseBodyWithFile from '../../../../lib/server/parseBodyWithFile'
+
+export const config = {
+  api: {
+    bodyParser: false
+  }
+}
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const searchQuery = (req.query?.query as string) ?? ''
@@ -80,39 +87,42 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  const body = JSON.parse(req.body) as Partial<
+  const body: { files: {
+    fieldName: string,
+    value: FileUpload
+  }[], fields: Partial<
     JournalPublication & VerificationRequest
-  >
+  > } = await parseBodyWithFile(req, { publicAccess: false })
 
-  if (!body.title) {
+  if (!body.fields.title) {
     return res.status(400).json({ error: 'Title is required!' })
   }
 
-  if (!body.role) {
+  if (!body.fields.role) {
     return res.status(400).json({ error: 'Role is required!' })
   }
 
   let currentEntry = await prisma.journalPublication.findUnique({
     where: {
-      title: body.title
+      title: body.fields.title
     }
   })
 
   if (!currentEntry) {
-    if (!body.journal) {
+    if (!body.fields.journal) {
       return res.status(400).json({ error: 'Journal is required!' })
     }
 
-    if (!body.issn) {
+    if (!body.fields.issn) {
       return res.status(400).json({ error: 'ISSN is required!' })
     }
 
     currentEntry = await prisma.journalPublication.create({
       data: {
-        title: body.title,
-        issn: body.issn,
-        journal: body.journal,
-        url: body.url
+        title: body.fields.title,
+        issn: body.fields.issn,
+        journal: body.fields.journal,
+        url: body.fields.url
       }
     })
   }
@@ -124,13 +134,16 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
           id: session.profile.id
         }
       },
-      role: body.role,
+      role: body.fields.role,
       type: 'JOURNAL_PUBLICATION',
-      description: body.description,
+      description: body.fields.description,
       journal_publication: {
         connect: {
           id: currentEntry.id
         }
+      },
+      proof_uploads: {
+        connect: body.files?.map(f => ({ id: f.value.id })) || []
       }
     }
   })

@@ -4,10 +4,17 @@ import slugGenerator from '../../../../lib/slugGenerator'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
-import type { Project, ResearchDissemination, VerificationRequest } from '@prisma/client'
+import type { FileUpload, Project, ResearchDissemination, VerificationRequest } from '@prisma/client'
 
 import relevancy from 'relevancy'
 import roleChecker from '../../../../lib/roleChecker'
+import parseBodyWithFile from '../../../../lib/server/parseBodyWithFile'
+
+export const config = {
+  api: {
+    bodyParser: false
+  }
+}
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const searchQuery = (req.query?.query as string) ?? ''
@@ -80,44 +87,47 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  const body = JSON.parse(req.body) as Partial<
+  const body: { files: {
+    fieldName: string,
+    value: FileUpload
+  }[], fields: Partial<
     ResearchDissemination & VerificationRequest
-  >
+  > } = await parseBodyWithFile(req, { publicAccess: false })
 
-  if (!body.title) {
+  if (!body.fields.title) {
     return res.status(400).json({ error: 'Title is required!' })
   }
 
-  if (!body.role) {
+  if (!body.fields.role) {
     return res.status(400).json({ error: 'Role is required!' })
   }
 
   let currentEntry = await prisma.researchDissemination.findUnique({
     where: {
-      title: body.title
+      title: body.fields.title
     }
   })
 
   if (!currentEntry) {
-    if (!body.organization) {
+    if (!body.fields.organization) {
       return res.status(400).json({ error: 'Organization is required!' })
     }
 
-    if (!body.location) {
+    if (!body.fields.location) {
       return res.status(400).json({ error: 'Location is required!' })
     }
 
-    if (!body.event_date) {
+    if (!body.fields.event_date) {
       return res.status(400).json({ error: 'Event Date is required!' })
     }
 
     currentEntry = await prisma.researchDissemination.create({
       data: {
-        title: body.title,
-        organization: body.organization,
-        location: body.location,
-        event_date: body.event_date,
-        url: body.url
+        title: body.fields.title,
+        organization: body.fields.organization,
+        location: body.fields.location,
+        event_date: body.fields.event_date,
+        url: body.fields.url
       }
     })
   }
@@ -129,13 +139,16 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
           id: session.profile.id
         }
       },
-      role: body.role,
+      role: body.fields.role,
       type: 'RESEARCH_DISSEMINATION',
-      description: body.description,
+      description: body.fields.description,
       research_dissemination: {
         connect: {
           id: currentEntry.id
         }
+      },
+      proof_uploads: {
+        connect: body.files?.map(f => ({ id: f.value.id })) || []
       }
     }
   })
