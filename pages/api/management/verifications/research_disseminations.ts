@@ -33,11 +33,9 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
   let [totalCount, data] = await prisma.$transaction([
     prisma.researchDissemination.count({
       where: {
-        bridge_profiles: roleChecker(session.profile.roles, 'researcher') ? {
-          some: {
-            profile_id: session.profile.id
-          }
-        } : undefined,
+        title: {
+          not: ''
+        },
         ...whereQuery
       }
     }),
@@ -48,11 +46,9 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
         id: req.query.cursor as string
       } : undefined,
       where: {
-        bridge_profiles: roleChecker(session.profile.roles, 'researcher') ? {
-          some: {
-            profile_id: session.profile.id
-          }
-        } : undefined,
+        title: {
+          not: ''
+        },
         ...whereQuery
       },
       include: {

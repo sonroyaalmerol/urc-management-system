@@ -33,9 +33,9 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
   let [totalCount, data] = await prisma.$transaction([
     prisma.researchEventAttendance.count({
       where: {
-        profile: roleChecker(session.profile.roles, 'researcher') ? {
-          id: session.profile.id
-        } : undefined,
+        event_name: {
+          not: ''
+        },
         ...whereQuery
       }
     }),
@@ -46,9 +46,9 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
         id: req.query.cursor as string
       } : undefined,
       where: {
-        profile: roleChecker(session.profile.roles, 'researcher') ? {
-          id: session.profile.id
-        } : undefined,
+        event_name: {
+          not: ''
+        },
         ...whereQuery
       },
       include: {
