@@ -519,7 +519,6 @@ async function main() {
         })
         await prisma.submission.create({
           data: {
-            title: research.name,
             project_id: project.id,
             type: 'CAPSULE',
             profile: {
