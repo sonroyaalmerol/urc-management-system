@@ -26,13 +26,15 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
     }
   })
 
+  console.log(verificationRequest)
+
   switch (verificationRequest.type) {
     case 'BOOK_PUBLICATION':
       await prisma.$transaction([
         prisma.bookPublication.updateMany({
           where: {
             id: verificationRequest.book_publication_id,
-            verified: null
+            verified: false
           },
           data: {
             verified: body.verified
@@ -43,7 +45,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
             id: verificationRequest.book_publication_id
           },
           data: {
-            bridge_profiles: {
+            bridge_profiles: body.verified ? {
               create: {
                 role_title: verificationRequest.role,
                 profile: {
@@ -51,6 +53,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
                     id: verificationRequest.profile_id
                   }
                 }
+              }
+            } : {
+              deleteMany: {
+                profile_id: verificationRequest.profile_id
               }
             }
           }
@@ -62,7 +68,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
         prisma.externalResearch.updateMany({
           where: {
             id: verificationRequest.external_research_id,
-            verified: null
+            verified: false
           },
           data: {
             verified: body.verified
@@ -70,10 +76,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
         }),
         prisma.externalResearch.update({
           where: {
-            id: verificationRequest.book_publication_id
+            id: verificationRequest.external_research_id
           },
           data: {
-            bridge_profiles: {
+            bridge_profiles: body.verified ? {
               create: {
                 role_title: verificationRequest.role,
                 profile: {
@@ -81,6 +87,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
                     id: verificationRequest.profile_id
                   }
                 }
+              }
+            } : {
+              deleteMany: {
+                profile_id: verificationRequest.profile_id
               }
             }
           }
@@ -92,7 +102,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
         prisma.journalPublication.updateMany({
           where: {
             id: verificationRequest.journal_publication_id,
-            verified: null
+            verified: false
           },
           data: {
             verified: body.verified
@@ -100,10 +110,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
         }),
         prisma.journalPublication.update({
           where: {
-            id: verificationRequest.book_publication_id
+            id: verificationRequest.journal_publication_id
           },
           data: {
-            bridge_profiles: {
+            bridge_profiles: body.verified ? {
               create: {
                 role_title: verificationRequest.role,
                 profile: {
@@ -111,6 +121,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
                     id: verificationRequest.profile_id
                   }
                 }
+              }
+            } : {
+              deleteMany: {
+                profile_id: verificationRequest.profile_id
               }
             }
           }
@@ -122,7 +136,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
         prisma.researchDissemination.updateMany({
           where: {
             id: verificationRequest.research_dissemination_id,
-            verified: null
+            verified: false
           },
           data: {
             verified: body.verified
@@ -130,10 +144,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
         }),
         prisma.researchDissemination.update({
           where: {
-            id: verificationRequest.book_publication_id
+            id: verificationRequest.research_dissemination_id
           },
           data: {
-            bridge_profiles: {
+            bridge_profiles: body.verified ? {
               create: {
                 role_title: verificationRequest.role,
                 profile: {
@@ -141,6 +155,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
                     id: verificationRequest.profile_id
                   }
                 }
+              }
+            } : {
+              deleteMany: {
+                profile_id: verificationRequest.profile_id
               }
             }
           }
@@ -152,7 +170,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
         prisma.researchEventAttendance.updateMany({
           where: {
             id: verificationRequest.research_event_attendance_id,
-            verified: null
+            verified: false
           },
           data: {
             verified: body.verified
@@ -160,14 +178,14 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
         }),
         prisma.researchEventAttendance.update({
           where: {
-            id: verificationRequest.book_publication_id
+            id: verificationRequest.research_event_attendance_id
           },
           data: {
-            profile: {
+            profile: body.verified ? {
               connect: {
                 id: verificationRequest.profile_id
               }
-            }
+            } : null
           }
         })
       ])
@@ -177,7 +195,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
         prisma.researchPresentation.updateMany({
           where: {
             id: verificationRequest.research_presentation_id,
-            verified: null
+            verified: false
           },
           data: {
             verified: body.verified
@@ -185,10 +203,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
         }),
         prisma.researchPresentation.update({
           where: {
-            id: verificationRequest.book_publication_id
+            id: verificationRequest.research_presentation_id
           },
           data: {
-            bridge_profiles: {
+            bridge_profiles: body.verified ? {
               create: {
                 role_title: verificationRequest.role,
                 profile: {
@@ -196,6 +214,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
                     id: verificationRequest.profile_id
                   }
                 }
+              }
+            } : {
+              deleteMany: {
+                profile_id: verificationRequest.profile_id
               }
             }
           }

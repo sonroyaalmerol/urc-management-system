@@ -12,6 +12,7 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
   const { types: types_raw, status: status_raw } = req.query
 
   const types = (types_raw as string)?.split(',').map((i) => i.trim().toUpperCase()) as VerificationTypes[] ?? []
+  const status = (status_raw as string)?.split(',').map((i) => i.trim().toUpperCase()) as VerificationStatus[] ?? []
 
   let [totalCount, data] = await prisma.$transaction([
     prisma.verificationRequest.count({
@@ -19,7 +20,9 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
         type: {
           in: types
         },
-        status: 'NOT_VERIFIED'
+        status: {
+          in: status
+        }
       }
     }),
     prisma.verificationRequest.findMany({
@@ -32,7 +35,9 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
         type: {
           in: types
         },
-        status: 'NOT_VERIFIED'
+        status: {
+          in: status
+        }
       },
       include: {
         external_research: true,

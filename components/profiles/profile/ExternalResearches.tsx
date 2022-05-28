@@ -42,7 +42,7 @@ const ExternalResearches: React.FC<ComponentProps> = (props) => {
       profileId={profile.id}
     >
       { entries.map((entry) => (
-        <CardTemplate key={entry.id} entry={entry} />
+        <CardTemplate key={entry.id} entry={entry} role={entry.bridge_profiles.filter((bridge) => bridge.profile_id === profile.id)[0].role_title} />
       )) }
     </ListTemplate>
   )

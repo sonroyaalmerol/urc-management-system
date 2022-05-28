@@ -1,23 +1,21 @@
 import React from 'react'
 
-import type {
-  ComponentProps,
-  ExtendedBookPublication
-} from '../../../types/profile-card'
-import CardTemplate from './CardTemplate'
 import ListTemplate from './ListTemplate'
 
-const BookPublications: React.FC<ComponentProps> = (props) => {
+import type { ComponentProps, ExtendedResearchEventAttendance } from '../../../types/profile-card'
+import CardTemplate from './CardTemplate'
+
+const ResearchEventAttendance: React.FC<ComponentProps> = (props) => {
   const profile = props.profile
 
-  const [entries, setEntries] = React.useState<ExtendedBookPublication[]>([])
+  const [entries, setEntries] = React.useState<ExtendedResearchEventAttendance[]>([])
 
   const [count, setCount] = React.useState(0)
   const [loading, setLoading] = React.useState(true)
 
   const loadNewEntries = async (args?: { reset: Boolean }) => {
     const newEntries = await fetch(
-      `/api/management/profiles/${profile.id}/book_publications?${entries.length > 0 && !args?.reset ? `&cursor=${entries[entries.length - 1].id}` : ''}`
+      `/api/management/profiles/${profile.id}/research_event_attendances?${entries.length > 0 && !args?.reset ? `&cursor=${entries[entries.length - 1].id}` : ''}`
     ).then(res => res.json())
     setCount(newEntries?.totalCount ?? 0)
     
@@ -38,21 +36,17 @@ const BookPublications: React.FC<ComponentProps> = (props) => {
 
   return (
     <ListTemplate
-      title="Book Publications"
+      title="Research Event Attendances"
       loading={loading}
       hasMore={entries.length < count}
       loadMore={loadNewEntries}
       profileId={profile.id}
     >
       { entries.map((entry) => (
-        <CardTemplate
-          key={entry.id}
-          entry={entry}
-          role={entry.bridge_profiles.filter((bridge) => bridge.profile_id === profile.id)[0].role_title}
-        />
+        <CardTemplate key={entry.id} entry={entry} />
       )) }
     </ListTemplate>
   )
 }
 
-export default BookPublications
+export default ResearchEventAttendance

@@ -13,6 +13,7 @@ import BookPublications from '../../components/profiles/profile/BookPublications
 import ResearchDisseminations from '../../components/profiles/profile/ResearchDisseminations'
 import ResearchPresentations from '../../components/profiles/profile/ResearchPresentations'
 import { ExtendedProfile } from '../../types/profile-card'
+import ResearchEventAttendance from '../../components/profiles/profile/ResearchEventAttendance'
 
 interface ProfileProps {
 
@@ -38,6 +39,7 @@ const Profile: React.FC<ProfileProps> = (props: InferGetServerSidePropsType<type
           <BookPublications profile={profile} />
           <ResearchDisseminations profile={profile} />
           <ResearchPresentations profile={profile} />
+          <ResearchEventAttendance profile={profile} />
         </VStack>
       </VStack>
     </>

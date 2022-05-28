@@ -12,6 +12,7 @@ import type {
   ExtendedJournalPublication,
   ExtendedProject,
   ExtendedResearchDissemination,
+  ExtendedResearchEventAttendance,
   ExtendedResearchPresentation
 } from '../../../types/profile-card'
 
@@ -24,8 +25,10 @@ interface CardTemplateProps {
     ExtendedJournalPublication |
     ExtendedResearchDissemination |
     ExtendedResearchPresentation |
-    ExtendedProject
+    ExtendedProject |
+    ExtendedResearchEventAttendance
   href?: string
+  role?: string
 }
 
 const CardTemplate: React.FC<CardTemplateProps> = (props) => {
@@ -39,17 +42,28 @@ const CardTemplate: React.FC<CardTemplateProps> = (props) => {
           fontFamily="body"
           textAlign="left"
         >
-          {entry?.title}
+          {'title' in entry ? entry?.title : entry.event_name}
         </Heading>
         <Wrap align="center" spacing="2">
-          { entry?.bridge_profiles.map((bridge) => (
+          { 'bridge_profiles' in entry ? entry?.bridge_profiles.map((bridge) => (
             <WrapItem key={bridge.profile.id}>
               <SmallAvatar
                 {...bridge.profile}
               />
             </WrapItem>
-          )) }
+          )) : (
+            <WrapItem key={entry.profile.id}>
+              <SmallAvatar
+                {...entry.profile}
+              />
+            </WrapItem>
+          ) }
         </Wrap>
+        { props.role ? (
+          <Text fontSize="sm">
+            <strong>Role</strong>: {props.role}
+          </Text>
+        ) : null }
         <Text fontStyle="italic" fontSize="sm">
           Last updated: { format(new Date(entry?.updated_at), 'MMM dd, yyyy h:mm a') }
         </Text>

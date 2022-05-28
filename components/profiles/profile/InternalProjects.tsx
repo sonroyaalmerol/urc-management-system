@@ -50,6 +50,7 @@ const InternalProjects: React.FC<ComponentProps> = (props) => {
           key={entry.id}
           entry={entry}
           href={`/projects/${entry.slug}`}
+          role={entry.bridge_profiles.filter((bridge) => bridge.profile_id === profile.id)[0].role_title}
         />
       )) }
     </ListTemplate>

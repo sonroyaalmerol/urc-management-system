@@ -21,6 +21,11 @@ import type {
   VerificationRequest
 } from '@prisma/client'
 
+export interface ExtendedResearchEventAttendance extends ResearchEventAttendance {
+  profile: Profile;
+  file_uploads: FileUpload[];
+}
+
 export interface ExtendedVerificationRequest extends VerificationRequest {
   proof_uploads: FileUpload[];
   external_research: ExternalResearch;
@@ -39,7 +44,7 @@ export interface ExtendedBookPublication extends BookPublication {
           user: User;
       };
   })[];
-  proof_upload: FileUpload;
+  file_uploads: FileUpload[];
 }
 
 export interface ExtendedExternalResearch extends ExternalResearch {
@@ -49,7 +54,7 @@ export interface ExtendedExternalResearch extends ExternalResearch {
       };
   })[];
   disseminations: ResearchDissemination[];
-  file_upload: FileUpload;
+  file_uploads: FileUpload[];
   journal_publications: JournalPublication[];
   research_presentations: ResearchPresentation[];
 }
@@ -70,7 +75,7 @@ export interface ExtendedJournalPublication extends JournalPublication {
           user: User;
       };
   })[];
-  proof_upload: FileUpload;
+  file_uploads: FileUpload[];
 }
 
 export interface ExtendedResearchDissemination extends ResearchDissemination {
@@ -80,6 +85,7 @@ export interface ExtendedResearchDissemination extends ResearchDissemination {
           user: User;
       };
   })[];
+  file_uploads: FileUpload[];
 }
 
 export interface ExtendedResearchPresentation extends ResearchPresentation {
@@ -89,6 +95,7 @@ export interface ExtendedResearchPresentation extends ResearchPresentation {
           user: User;
       };
   })[];
+  file_uploads: FileUpload[];
 }
 
 export interface ExtendedProfile extends Profile {

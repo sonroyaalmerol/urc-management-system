@@ -61,7 +61,7 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
           }
         },
         disseminations: true,
-        file_upload: true,
+        file_uploads: true,
         journal_publications: true,
         research_presentations: true,
       },

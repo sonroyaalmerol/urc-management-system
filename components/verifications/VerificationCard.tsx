@@ -152,7 +152,7 @@ const VerificationCard: React.FC<VerificationCardProps> = (props) => {
           </WrapItem>
           <WrapItem>
             <Tag
-              bgColor="brand.blue"
+              bgColor="brand.lightBlue"
               color="white"
               borderRadius={10}
               fontWeight="bold"
@@ -160,6 +160,30 @@ const VerificationCard: React.FC<VerificationCardProps> = (props) => {
               {entry.humanizedType}
             </Tag>
           </WrapItem>
+          { request.status === 'VERIFIED' && (
+            <WrapItem>
+              <Tag
+                bgColor="brand.blue"
+                color="white"
+                borderRadius={10}
+                fontWeight="bold"
+              >
+                Verified
+              </Tag>
+            </WrapItem>
+          ) }
+          { request.status === 'INVALID' && (
+            <WrapItem>
+              <Tag
+                bgColor="brand.red"
+                color="white"
+                borderRadius={10}
+                fontWeight="bold"
+              >
+                Invalid
+              </Tag>
+            </WrapItem>
+          ) }
         </Wrap>
         <HStack spacing={4}>
           <Avatar src={`/api/files/get/${request.profile.photo_id}`} size="sm" />
@@ -189,45 +213,50 @@ const VerificationCard: React.FC<VerificationCardProps> = (props) => {
         </Wrap>
       </VStack>
       <Spacer />
-      <SimpleGrid columns={2} mt="1rem" spacing={2}>
-        <ButtonWithConfirmation
-          color="white"
-          bgColor="brand.blue"
-          borderRadius={10}
-          leftIcon={<CheckIcon />}
-          _hover={{
-            color: 'brand.blue',
-            bgColor: 'brand.cardBackground'
-          }}
-          confirmationMessage={
-            `
-              Press confirm to mark the request, <u>${entry.title}</u>, as <b>VERIFIED</b>
-            `
-          }
-          onClick={() => { setVerified(true) }}
-          isLoading={loading}
-        >
-          Verified
-        </ButtonWithConfirmation>
-        <ButtonWithConfirmation
-          color="white"
-          bgColor="brand.red"
-          borderRadius={10}
-          leftIcon={<DeleteIcon />}
-          _hover={{
-            color: 'brand.red',
-            bgColor: 'brand.cardBackground'
-          }}
-          confirmationMessage={
-            `
-              Press confirm to mark the request, <u>${entry.title}</u>, as <b>INVALID</b>
-            `
-          }
-          onClick={() => { setVerified(false) }}
-          isLoading={loading}
-        >
-          Invalid
-        </ButtonWithConfirmation>
+      <SimpleGrid columns={request.status === 'NOT_VERIFIED' ? 2 : 1} mt="1rem" spacing={2}>
+        { (request.status === 'INVALID' || request.status === 'NOT_VERIFIED') && (
+          <ButtonWithConfirmation
+            color="white"
+            bgColor="brand.blue"
+            borderRadius={10}
+            leftIcon={<CheckIcon />}
+            _hover={{
+              color: 'brand.blue',
+              bgColor: 'brand.cardBackground'
+            }}
+            confirmationMessage={
+              `
+                Press confirm to mark the request, <u>${entry.title}</u>, as <b>VERIFIED</b>
+              `
+            }
+            onClick={() => { setVerified(true) }}
+            isLoading={loading}
+          >
+            Mark as Verified
+          </ButtonWithConfirmation>
+        ) }
+
+        { (request.status === 'VERIFIED' || request.status === 'NOT_VERIFIED') && (
+          <ButtonWithConfirmation
+            color="white"
+            bgColor="brand.red"
+            borderRadius={10}
+            leftIcon={<DeleteIcon />}
+            _hover={{
+              color: 'brand.red',
+              bgColor: 'brand.cardBackground'
+            }}
+            confirmationMessage={
+              `
+                Press confirm to mark the request, <u>${entry.title}</u>, as <b>INVALID</b>
+              `
+            }
+            onClick={() => { setVerified(false) }}
+            isLoading={loading}
+          >
+            Mark as Invalid
+          </ButtonWithConfirmation>
+        ) }
       </SimpleGrid>
     </Card>
   )

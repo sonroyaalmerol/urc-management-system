@@ -10,7 +10,7 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 
   const queryFilter = searchQuery.split(' ').filter(s => s.trim().length > 0)
   const queryFields = [
-    'title'
+    'event_name'
   ]
   let orQuery = []
   queryFields.forEach((field) => {
@@ -26,17 +26,15 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
   } : undefined
 
   let [totalCount, data] = await prisma.$transaction([
-    prisma.bookPublication.count({
+    prisma.researchEventAttendance.count({
       where: {
         ...whereQuery,
-        bridge_profiles: {
-          some: {
-            profile_id: req.query.id as string
-          }
+        profile: {
+          id: req.query.id as string
         }
       }
     }),
-    prisma.bookPublication.findMany({
+    prisma.researchEventAttendance.findMany({
       skip: req.query.cursor ? 1 : undefined,
       take: 4,
       cursor: req.query.cursor ? {
@@ -44,28 +42,16 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
       } : undefined,
       where: {
         ...whereQuery,
-        bridge_profiles: {
-          some: {
-            profile_id: req.query.id as string
-          }
+        profile: {
+          id: req.query.id as string
         }
       },
       include: {
-        file_uploads: true,
-        bridge_profiles: {
-          include: {
-            profile: {
-              include: {
-                user: true
-              }
-            }
-          }
-        },
-        units: true
+        profile: true,
       },
       orderBy: [
         {
-          title: 'asc'
+          event_name: 'asc'
         },
         {
           updated_at: 'desc'

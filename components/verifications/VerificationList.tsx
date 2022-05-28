@@ -7,7 +7,8 @@ import VerificationCard from './VerificationCard'
 
 interface VerificationListProps {
   search?: string,
-  types?: string[]
+  types?: string[],
+  status?: string[]
 }
 
 const VerificationList: React.FC<VerificationListProps> = (props) => {
@@ -19,7 +20,7 @@ const VerificationList: React.FC<VerificationListProps> = (props) => {
   const loadNewEntries = async (args?: { reset: Boolean }) => {
     setLoading(true)
     const newEntries = await fetch(
-      `/api/management/verifications?${props.types?.length > 0 ? `&types=${props.types.join(',')}` : ''}${entries.length > 0 && !args.reset ? `&cursor=${entries[entries.length - 1].id}` : ''}`
+      `/api/management/verifications?${props.types?.length > 0 ? `&types=${props.types.join(',')}` : ''}${props.status?.length > 0 ? `&status=${props.status}` : ''}${entries.length > 0 && !args.reset ? `&cursor=${entries[entries.length - 1].id}` : ''}`
     ).then(res => res.json())
     setCount(newEntries?.totalCount ?? 0)
     
@@ -34,9 +35,8 @@ const VerificationList: React.FC<VerificationListProps> = (props) => {
   }
 
   React.useEffect(() => {
-    console.log('test')
     loadNewEntries({ reset: true })
-  }, [props.types])
+  }, [props.types, props.status])
 
   const afterAction = (entryId: string) => {
     setEntries((prev) => prev.filter((i) => i.id !== entryId))
@@ -59,7 +59,11 @@ const VerificationList: React.FC<VerificationListProps> = (props) => {
         >
           <SimpleGrid w="full" columns={{ base: 1, lg: 2 }} spacing={4}>
             { entries.map((entry) => (
-              <VerificationCard key={entry.id} request={entry} afterAction={afterAction} />
+              <VerificationCard
+                key={entry.id}
+                request={entry}
+                afterAction={afterAction}
+              />
             )) }
           </SimpleGrid>
         </InfiniteScroll>
