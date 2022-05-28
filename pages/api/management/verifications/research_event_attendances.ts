@@ -36,9 +36,6 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
         profile: roleChecker(session.profile.roles, 'researcher') ? {
           id: session.profile.id
         } : undefined,
-        event_name: {
-          not: ''
-        },
         ...whereQuery
       }
     }),
@@ -52,9 +49,6 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
         profile: roleChecker(session.profile.roles, 'researcher') ? {
           id: session.profile.id
         } : undefined,
-        event_name: {
-          not: ''
-        },
         ...whereQuery
       },
       include: {

@@ -38,9 +38,6 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
             profile_id: session.profile.id
           }
         } : undefined,
-        title: {
-          not: ''
-        },
         ...whereQuery
       }
     }),
@@ -56,9 +53,6 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
             profile_id: session.profile.id
           }
         } : undefined,
-        title: {
-          not: ''
-        },
         ...whereQuery
       },
       include: {
