@@ -21,6 +21,13 @@ import type {
   VerificationRequest
 } from '@prisma/client'
 
+export interface ExtendedInstitute extends Institute {
+  bridge_profiles: (ProfileToInstituteBridge & {
+      profile: Profile;
+  })[];
+  institute_news: InstituteNews[];
+}
+
 export interface ExtendedResearchEvent extends ResearchEvent {
   profile: Profile;
   file_uploads: FileUpload[];
@@ -126,5 +133,6 @@ export interface ExtendedProfile extends Profile {
 }
 
 export interface ComponentProps {
-  profile: Partial<ExtendedProfile>;
+  profile?: Partial<ExtendedProfile>;
+  institute?: Partial<ExtendedInstitute>;
 }

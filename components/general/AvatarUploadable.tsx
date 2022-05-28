@@ -9,7 +9,8 @@ import fetchWithFile from '../../lib/client/fetchWithFile'
 import { useSession } from 'next-auth/react'
 
 interface AvatarUploadable extends AvatarProps {
-  profileId: string
+  profileId?: string
+  instituteId?: string
   photoId: string
 }
 
@@ -17,6 +18,7 @@ interface AvatarUploadable extends AvatarProps {
 const AvatarUploadable: React.FC<AvatarUploadable> = (props) => {
   const divProps = Object.assign({}, props)
   delete divProps.profileId
+  delete divProps.instituteId
   delete divProps.photoId
 
   const { register, watch, reset } = useForm<{ files: FileList }>();
@@ -30,7 +32,12 @@ const AvatarUploadable: React.FC<AvatarUploadable> = (props) => {
 
   const uploadAvatar = async () => {
     setSubmitting(true)
-    const res = await fetchWithFile(`/api/management/profiles/${props.profileId}/avatar`, { avatar: files })
+    let res = null
+    if ('profileId' in props) {
+      res = await fetchWithFile(`/api/management/profiles/${props.profileId}/avatar`, { avatar: files })
+    } else if ('instituteId' in props) {
+      res = await fetchWithFile(`/api/management/institutes/${props.instituteId}/avatar`, { avatar: files })
+    }
 
     if (res) {
       setPhotoId(res.data)
@@ -57,7 +64,7 @@ const AvatarUploadable: React.FC<AvatarUploadable> = (props) => {
       overflow="hidden"
     >
       <Avatar src={`/api/files/get/${photoId}`} {...divProps} />
-      { session.data.profile.id === props.profileId && (
+      { true && (
         <>
           <input
             type="file"

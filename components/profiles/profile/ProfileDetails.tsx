@@ -5,7 +5,7 @@ import Card from '../../general/Card'
 
 import type { ComponentProps } from '../../../types/profile-card'
 import RolesSection from './RolesSection'
-import AvatarUploadable from '../AvatarUploadable'
+import AvatarUploadable from '../../general/AvatarUploadable'
 
 const ProfileDetails: React.FC<ComponentProps> = (props) => {
   const profile = props.profile

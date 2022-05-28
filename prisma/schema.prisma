@@ -278,6 +278,7 @@ model FileUpload {
   journal_publications            JournalPublication[]
   book_publications               BookPublication[]
   submissions                     Submission[]
+  institute_logos                 Institute[]
   profile_photos                  Profile[]
   research_presentations          ResearchPresentation[]
   research_disseminations         ResearchDissemination[]
@@ -317,7 +318,8 @@ model Institute {
   description         String?
   address             String?
   research_areas      String?
-  logo_url            String?
+  photo_id            String?
+  photo               FileUpload?  @relation(fields: [photo_id], references: [id], onDelete: SetNull)
   created_at          DateTime?             @default(now())
   updated_at          DateTime?             @updatedAt
   institute_news      InstituteNews[]

@@ -6,6 +6,7 @@ import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "nex
 import { NextSeo } from 'next-seo'
 import { HStack, VStack } from '@chakra-ui/react'
 import SearchInput from '../../components/general/SearchInput'
+import InstituteList from '../../components/institutes/InstituteList'
 
 interface InstitutesProps {
 
@@ -32,6 +33,7 @@ const Institutes: React.FC<InstitutesProps> = (props: InferGetServerSidePropsTyp
               }}
             />
           </HStack>
+          <InstituteList search={search} />
         </VStack>
       </VStack>
     </>
