@@ -52,7 +52,7 @@ const DeliverableCard: React.FC<DeliverableCardProps> = (props) => {
         </Text>
         <Spacer />
         <Text fontSize="sm" fontStyle="italic">
-          {format(new Date(deliverable.deadline), 'MMM dd, yyyy')}
+          Deadline: {format(new Date(deliverable.deadline), 'MMM dd, yyyy')}
         </Text>
       </VStack>
     </InnerCard>
