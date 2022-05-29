@@ -1,17 +1,58 @@
 import React from 'react'
 
-import { Avatar, Divider, Heading, Tag, Text, VStack, Wrap, WrapItem } from '@chakra-ui/react'
+import { Avatar, Divider, Heading, Spacer, Tag, Text, useToast, VStack, Wrap, WrapItem } from '@chakra-ui/react'
 import Card from '../../general/Card'
 
 import type { ComponentProps } from '../../../types/profile-card'
 import AvatarUploadable from '../../general/AvatarUploadable'
+import IconButton from '../../general/IconButton'
+import { CheckIcon, EditIcon } from '@chakra-ui/icons'
+import EditableText from '../../general/EditableText'
+import EditableTextarea from '../../general/EditableTextarea'
+
+import { useForm, SubmitHandler, Controller } from "react-hook-form"
+import type { Institute } from '@prisma/client'
 
 const InstituteDetails: React.FC<ComponentProps> = (props) => {
   const institute = props.institute
+  const [submitting, setSubmitting] = React.useState(false)
+
+  const toast = useToast()
+
+  const { handleSubmit, control } = useForm<Partial<Institute>>({
+    defaultValues: institute
+  });
+
+  const onSubmit: SubmitHandler<Partial<Institute>> = async data => {
+    setSubmitting(true)
+
+    const res = await fetch(`/api/management/institutes/${institute.id}`, { 
+      method: 'POST',
+      body: JSON.stringify(data)
+    }).then((i) => i.json())
+
+    if (res.success) {
+      toast({
+        title: 'Success!',
+        description: `Successfully modified details!`,
+        status: 'success'
+      })
+    } else {
+      toast({
+        title: 'Error!',
+        description: res.error,
+        status: 'error'
+      })
+    }
+
+    setSubmitting(false)
+  };
+
+  const [editing, setEditing] = React.useState(false)
 
   return (
-    <VStack w="full">
-      <Wrap w="full" my="1rem">
+    <VStack w="full" as="form" onSubmit={handleSubmit(onSubmit)}>
+      <Wrap w="full" my="1rem" align="center">
         <WrapItem>
           <Heading
             fontFamily="body"
@@ -19,6 +60,17 @@ const InstituteDetails: React.FC<ComponentProps> = (props) => {
           >
             Institute Details
           </Heading>
+        </WrapItem>
+        <Spacer />
+        <WrapItem>
+          <IconButton
+            padding={0} 
+            aria-label='Edit'
+            icon={!editing ? <EditIcon /> : <CheckIcon />}
+            onClick={() => setEditing((prev) => !prev)}
+            type={!editing ? "submit" : "button"}
+            isLoading={submitting}
+          />
         </WrapItem>
       </Wrap>
       <Card>
@@ -33,7 +85,7 @@ const InstituteDetails: React.FC<ComponentProps> = (props) => {
             </WrapItem>
             <WrapItem>
               <VStack align="baseline">
-                <Wrap align="baseline">
+                <Wrap align="baseline" w="full">
                   <WrapItem>
                     <Heading
                       fontFamily="body"
@@ -43,9 +95,16 @@ const InstituteDetails: React.FC<ComponentProps> = (props) => {
                     </Heading>
                   </WrapItem>
                   <WrapItem>
-                    <Text>
-                      {institute.email}
-                    </Text>
+                    <Controller
+                      name="email"
+                      control={control}
+                      render={({ field }) => 
+                        <EditableText 
+                          editMode={editing}
+                          {...field}
+                        />
+                      }
+                    />
                   </WrapItem>
                 </Wrap>
                 <Wrap align="baseline">
@@ -58,9 +117,16 @@ const InstituteDetails: React.FC<ComponentProps> = (props) => {
                     </Heading>
                   </WrapItem>
                   <WrapItem>
-                    <Text>
-                      {institute.address}
-                    </Text>
+                    <Controller
+                      name="address"
+                      control={control}
+                      render={({ field }) => 
+                        <EditableText 
+                          editMode={editing} 
+                          {...field}
+                        />
+                      }
+                    />
                   </WrapItem>
                 </Wrap>
                 <Wrap align="baseline">
@@ -73,9 +139,16 @@ const InstituteDetails: React.FC<ComponentProps> = (props) => {
                     </Heading>
                   </WrapItem>
                   <WrapItem>
-                    <Text>
-                      {institute.contact_number}
-                    </Text>
+                    <Controller
+                      name="contact_number"
+                      control={control}
+                      render={({ field }) => 
+                        <EditableText 
+                          editMode={editing}
+                          {...field}
+                        />
+                      }
+                    />
                   </WrapItem>
                 </Wrap>
                 <Wrap align="baseline">
@@ -88,19 +161,36 @@ const InstituteDetails: React.FC<ComponentProps> = (props) => {
                     </Heading>
                   </WrapItem>
                   <WrapItem>
-                    <Text>
-                      {institute.research_areas}
-                    </Text>
+                    <Controller
+                      name="research_areas"
+                      control={control}
+                      render={({ field }) => 
+                        <EditableText
+                          editMode={editing}
+                          {...field}
+                        />
+                      }
+                    />
                   </WrapItem>
                 </Wrap>
               </VStack>
             </WrapItem>
           </Wrap>
-          <Wrap align="baseline">
-            <WrapItem>
-              <Text fontSize="sm">
-                {institute.description}
-              </Text>
+          <Wrap align="baseline" w="full">
+            <WrapItem w="full">
+              <Controller
+                name="description"
+                control={control}
+                render={({ field }) => 
+                  <EditableTextarea 
+                    editMode={editing}  
+                    plainTextStyle={{
+                      fontSize: 'sm'
+                    }}
+                    {...field} 
+                  />
+                }
+              />
             </WrapItem>
           </Wrap>
         </VStack>
