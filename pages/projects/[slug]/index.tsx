@@ -19,6 +19,9 @@ import Card from '../../../components/general/Card'
 import { ExtendedProject } from '../../../types/profile-card'
 import InnerProfileCard from '../../../components/projects/InnerProfileCard'
 import RemoveProponentButton from '../../../components/projects/RemoveProponentButton'
+import Button from '../../../components/general/Button'
+import DeliverableList from '../../../components/projects/DeliverableList'
+import NewDeliverableButton from '../../../components/projects/NewDeliverableButton'
 
 interface ProjectProps {
 
@@ -30,7 +33,7 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
   const [typeFilter, setTypeFilter] = React.useState('')
   const types = React.useMemo(() => {
     if (typeFilter === '') {
-      return ['budget', 'full', 'capsule']
+      return ['budget', 'full', 'capsule', 'deliverable']
     } else {
       return [typeFilter]
     }
@@ -102,6 +105,28 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
                     fontFamily="body"
                     fontSize="xl"
                   >
+                    Deliverables
+                  </Heading>
+                </WrapItem>
+              </Wrap>
+            </WrapItem>
+            <Spacer />
+            <WrapItem>
+              <HStack>
+                <NewDeliverableButton projectSlug={project.slug} />
+              </HStack>
+            </WrapItem>
+          </Wrap>
+          <DeliverableList project={project} />
+
+          <Wrap align="center" w="full">
+            <WrapItem>
+              <Wrap spacing={4} align="center">
+                <WrapItem>
+                  <Heading
+                    fontFamily="body"
+                    fontSize="xl"
+                  >
                     Submissions
                   </Heading>
                 </WrapItem>
@@ -122,6 +147,7 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
                       >
                         <option value="capsule">Capsule Proposal</option>
                         <option value="full">Full-blown Proposal</option>
+                        <option value="deliverable">Deliverable Submission</option>
                         <option value="budget">Budget Proposal</option>
                       </Select>
                     </WrapItem>

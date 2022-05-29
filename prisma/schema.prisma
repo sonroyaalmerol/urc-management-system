@@ -218,6 +218,7 @@ model Deliverable {
   deadline                DateTime                 
   title                   String
   description             String?
+  done                    Boolean                   @default(false)
   created_at              DateTime                  @default(now())
   updated_at              DateTime                  @updatedAt
   project_id              String                    
