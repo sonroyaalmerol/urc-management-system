@@ -10,6 +10,7 @@ import type {
   ExtendedBookPublication,
   ExtendedExternalResearch,
   ExtendedJournalPublication,
+  ExtendedProfile,
   ExtendedProject,
   ExtendedResearchDissemination,
   ExtendedResearchEvent,
@@ -26,7 +27,8 @@ interface CardTemplateProps {
     ExtendedResearchDissemination |
     ExtendedResearchPresentation |
     ExtendedProject |
-    ExtendedResearchEvent
+    ExtendedResearchEvent |
+    ExtendedProfile
   href?: string
   role?: string
   onClick?: () => void
@@ -43,7 +45,13 @@ const CardTemplate: React.FC<CardTemplateProps> = (props) => {
           fontFamily="body"
           textAlign="left"
         >
-          {'title' in entry ? entry?.title : entry.event_name}
+          {'title' in entry ? (
+            entry?.title
+          ) : 'event_name' in entry ? (
+            entry.event_name
+          ) : (
+            `${entry.first_name} ${entry.last_name}`
+          )}
         </Heading>
         <Wrap align="center" spacing="2">
           { 'bridge_profiles' in entry ? entry?.bridge_profiles.map((bridge) => (
@@ -52,10 +60,16 @@ const CardTemplate: React.FC<CardTemplateProps> = (props) => {
                 {...bridge.profile}
               />
             </WrapItem>
-          )) : (
-            <WrapItem key={entry.profile.id}>
+          )) : 'profile' in entry ? (
+            <WrapItem>
               <SmallAvatar
                 {...entry.profile}
+              />
+            </WrapItem>
+          ) : (
+            <WrapItem>
+              <SmallAvatar
+                {...entry}
               />
             </WrapItem>
           ) }
@@ -71,9 +85,9 @@ const CardTemplate: React.FC<CardTemplateProps> = (props) => {
         <HStack>
           { "verified" in entry ? (
             <VerifiedTag status={entry?.verified} />
-          ) : (
+          ) : 'approved' in entry ? (
             <ApprovalTag status={entry?.approved} />
-          ) }
+          ) : null }
         </HStack>
       </VStack>
     </InnerCard>

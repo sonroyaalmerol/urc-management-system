@@ -11,6 +11,7 @@ import { ExtendedInstitute } from '../../types/profile-card'
 import InstituteDetails from '../../components/institutes/institute/InstituteDetails'
 import InternalProjects from '../../components/institutes/institute/InternalProjects'
 import MemoList from '../../components/dashboard/MemoList'
+import Members from '../../components/institutes/institute/Members'
 
 interface InstituteProps {
 
@@ -30,6 +31,7 @@ const Institute: React.FC<InstituteProps> = (props: InferGetServerSidePropsType<
         </ContentHeader>
         <VStack spacing={5} w="full">
           <InstituteDetails institute={institute} />
+          <Members institute={institute} />
           <InternalProjects institute={institute} />
           <VStack w="full" align="baseline">
             <Heading
