@@ -7,6 +7,7 @@ import { AddIcon } from '@chakra-ui/icons'
 import Button from '../../general/Button'
 
 import { useSession } from 'next-auth/react'
+import IconButton from '../IconButton'
 
 interface ListTemplateProps extends BoxProps {
   title: string
@@ -27,7 +28,7 @@ const ListTemplate: React.FC<ListTemplateProps> = (props) => {
 
   return (
     <VStack w="full">
-      <Wrap w="full" my="1rem">
+      <Wrap w="full" my="1rem" align="center">
         <WrapItem>
           <Heading
             fontFamily="body"
@@ -39,15 +40,12 @@ const ListTemplate: React.FC<ListTemplateProps> = (props) => {
         <Spacer />
         { ('profileId' in props && currentProfile.id === props.profileId) && (
           <WrapItem>
-            <Button 
+            <IconButton 
               aria-label="Add Entry"
-              leftIcon={<AddIcon />}
-              size="xs"
-              paddingY={0}
+              icon={<AddIcon />}
+              padding={0}
               onClick={props.onNew}
-            >
-              New
-            </Button>
+            />
           </WrapItem>
         ) }
       </Wrap>

@@ -1,20 +1,64 @@
 import React from 'react'
 
-import { Avatar, Divider, Heading, Tag, Text, VStack, Wrap, WrapItem } from '@chakra-ui/react'
+import { Avatar, Divider, Heading, Spacer, Tag, Text, useToast, VStack, Wrap, WrapItem } from '@chakra-ui/react'
 import Card from '../../general/Card'
+
+import EditableText from '../../general/EditableText'
+import EditableTextarea from '../../general/EditableTextarea'
+
+import { useForm, SubmitHandler, Controller } from "react-hook-form"
 
 import type { ComponentProps } from '../../../types/profile-card'
 import RolesSection from './RolesSection'
 import AvatarUploadable from '../../general/AvatarUploadable'
 import { useSession } from 'next-auth/react'
+import type { Profile } from '@prisma/client'
+import IconButton from '../../general/IconButton'
+import { CheckIcon, EditIcon } from '@chakra-ui/icons'
 
 const ProfileDetails: React.FC<ComponentProps> = (props) => {
   const profile = props.profile
+
+  const [submitting, setSubmitting] = React.useState(false)
+
+  const { handleSubmit, control } = useForm<Partial<Profile>>({
+    defaultValues: profile
+  });
+
+  const toast = useToast()
+
+  const onSubmit: SubmitHandler<Partial<Profile>> = async data => {
+    setSubmitting(true)
+
+    const res = await fetch(`/api/management/profiles/${profile.id}`, { 
+      method: 'POST',
+      body: JSON.stringify(data)
+    }).then((i) => i.json())
+
+    if (res.success) {
+      toast({
+        title: 'Success!',
+        description: `Successfully modified details!`,
+        status: 'success'
+      })
+    } else {
+      toast({
+        title: 'Error!',
+        description: res.error,
+        status: 'error'
+      })
+    }
+
+    setSubmitting(false)
+  };
+
+  const [editing, setEditing] = React.useState(false)
+
   const session = useSession()
 
   return (
-    <VStack w="full">
-      <Wrap w="full" my="1rem">
+    <VStack w="full" as="form" onSubmit={handleSubmit(onSubmit)}>
+      <Wrap w="full" my="1rem" align="center">
         <WrapItem>
           <Heading
             fontFamily="body"
@@ -37,6 +81,17 @@ const ProfileDetails: React.FC<ComponentProps> = (props) => {
             </Tag>
           </WrapItem>
         ) }
+        <Spacer />
+        <WrapItem>
+          <IconButton
+            padding={0} 
+            aria-label='Edit'
+            icon={!editing ? <EditIcon /> : <CheckIcon />}
+            onClick={() => setEditing((prev) => !prev)}
+            type={!editing ? "submit" : "button"}
+            isLoading={submitting}
+          />
+        </WrapItem>
       </Wrap>
       <Card>
         <VStack spacing={6} align="baseline">
@@ -61,9 +116,16 @@ const ProfileDetails: React.FC<ComponentProps> = (props) => {
                     </Heading>
                   </WrapItem>
                   <WrapItem>
-                    <Text>
-                      {profile.email}
-                    </Text>
+                    <Controller
+                      name="email"
+                      control={control}
+                      render={({ field }) => 
+                        <EditableText 
+                          editMode={false}
+                          {...field}
+                        />
+                      }
+                    />
                   </WrapItem>
                 </Wrap>
                 <Wrap align="baseline">
@@ -76,9 +138,16 @@ const ProfileDetails: React.FC<ComponentProps> = (props) => {
                     </Heading>
                   </WrapItem>
                   <WrapItem>
-                    <Text>
-                      {profile.first_name}
-                    </Text>
+                    <Controller
+                      name="first_name"
+                      control={control}
+                      render={({ field }) => 
+                        <EditableText 
+                          editMode={editing}
+                          {...field}
+                        />
+                      }
+                    />
                   </WrapItem>
                 </Wrap>
                 <Wrap align="baseline">
@@ -91,9 +160,16 @@ const ProfileDetails: React.FC<ComponentProps> = (props) => {
                     </Heading>
                   </WrapItem>
                   <WrapItem>
-                    <Text>
-                      {profile.middle_initial}
-                    </Text>
+                    <Controller
+                      name="middle_initial"
+                      control={control}
+                      render={({ field }) => 
+                        <EditableText 
+                          editMode={editing}
+                          {...field}
+                        />
+                      }
+                    />
                   </WrapItem>
                 </Wrap>
                 <Wrap align="baseline">
@@ -106,9 +182,16 @@ const ProfileDetails: React.FC<ComponentProps> = (props) => {
                     </Heading>
                   </WrapItem>
                   <WrapItem>
-                    <Text>
-                      {profile.last_name}
-                    </Text>
+                    <Controller
+                      name="last_name"
+                      control={control}
+                      render={({ field }) => 
+                        <EditableText 
+                          editMode={editing}
+                          {...field}
+                        />
+                      }
+                    />
                   </WrapItem>
                 </Wrap>
                 <Wrap align="baseline">
@@ -121,9 +204,16 @@ const ProfileDetails: React.FC<ComponentProps> = (props) => {
                     </Heading>
                   </WrapItem>
                   <WrapItem>
-                    <Text>
-                      {profile.titles}
-                    </Text>
+                    <Controller
+                      name="titles"
+                      control={control}
+                      render={({ field }) => 
+                        <EditableText 
+                          editMode={editing}
+                          {...field}
+                        />
+                      }
+                    />
                   </WrapItem>
                 </Wrap>
                 <Wrap align="baseline">
@@ -136,9 +226,16 @@ const ProfileDetails: React.FC<ComponentProps> = (props) => {
                     </Heading>
                   </WrapItem>
                   <WrapItem>
-                    <Text>
-                      {profile.honorific}
-                    </Text>
+                    <Controller
+                      name="honorific"
+                      control={control}
+                      render={({ field }) => 
+                        <EditableText 
+                          editMode={editing}
+                          {...field}
+                        />
+                      }
+                    />
                   </WrapItem>
                 </Wrap>
               </VStack>
