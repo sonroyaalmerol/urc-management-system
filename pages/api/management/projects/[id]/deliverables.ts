@@ -4,8 +4,7 @@ import { getSession } from 'next-auth/react'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
 
-import type { BudgetProposalSubmission, CapsuleProposalSubmission, Deliverable, FileUpload, FullBlownProposalSubmission, Submission, SubmissionStatus, SubmissionTypes } from '@prisma/client'
-import parseBodyWithFile from '../../../../../lib/server/parseBodyWithFile'
+import type { Deliverable } from '@prisma/client'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const { id } = req.query
@@ -13,7 +12,8 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
   const [totalCount, data] = await prisma.$transaction([
     prisma.deliverable.count({
       where: {
-        project_id: id as string
+        project_id: id as string,
+        done: false
       }
     }),
     prisma.deliverable.findMany({
@@ -23,7 +23,8 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
         id: req.query.cursor as string
       } : undefined,
       where: {
-        project_id: id as string
+        project_id: id as string,
+        done: false
       },
       orderBy: {
         updated_at: 'desc'
