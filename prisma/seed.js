@@ -665,6 +665,12 @@ async function main() {
           content: article.description,
           uploads: {
             connect: bridgeConstructor
+          },
+          verified: true,
+          institute: {
+            connect: {
+              short_name: 'URC'
+            }
           }
         },
       })
