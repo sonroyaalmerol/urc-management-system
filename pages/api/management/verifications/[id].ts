@@ -233,6 +233,33 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
         })
       ])
       break
+      case 'INSTITUTE_NEWS':
+        await prisma.$transaction([
+          prisma.instituteNews.update({
+            where: {
+              id: verificationRequest.institute_news_id
+            },
+            data: {
+              verified: body.verified
+            }
+          })
+        ])
+        break
+      case 'PROJECT_INSTITUTE':
+        await prisma.$transaction([
+          prisma.projectToInstituteBridge.update({
+            where: {
+              project_id_institute_id: {
+                project_id: verificationRequest.project_institute_project_id,
+                institute_id: verificationRequest.project_institute_institute_id
+              }
+            },
+            data: {
+              verified: body.verified
+            }
+          })
+        ])
+        break
   }
 
   return res.status(200).json({ success: true })

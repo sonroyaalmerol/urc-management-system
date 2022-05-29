@@ -11,6 +11,8 @@ import type { ExtendedVerificationRequest } from '../../types/profile-card'
 import FileDetails from '../general/FileDetails'
 import { CheckIcon, DeleteIcon } from '@chakra-ui/icons'
 import ButtonWithConfirmation from '../general/ButtonWithConfirmation'
+import parseHTML from '../../lib/client/parseHTML'
+import ViewMemoButton from './ViewMemoButton'
 
 interface VerificationCardProps extends BoxProps {
   request: ExtendedVerificationRequest,
@@ -129,6 +131,30 @@ const VerificationCard: React.FC<VerificationCardProps> = (props) => {
             </VStack>
           )
         }
+      case 'INSTITUTE_NEWS':
+        return {
+          humanizedType: 'Institute News',
+          title: request.institute_news.title,
+          description: (
+            <VStack align="baseline" spacing={0}>
+              <Text fontSize="sm"><strong>Institute</strong>: {request.institute_news.institute.short_name ?? request.institute_news.institute.name}</Text>
+              <Text fontSize="sm" fontWeight="bold">Content:</Text>
+              <VStack align="baseline" spacing={2}>
+                <Box fontSize="sm" noOfLines={2}>
+                  {parseHTML(request.institute_news.content, { textOnly: true })}
+                </Box>
+                <ViewMemoButton instituteNews={request.institute_news} />
+                <Wrap>
+                  { request.institute_news.uploads.map((file) => (
+                    <WrapItem key={file.id}>
+                      <FileDetails isViewable file={file} />
+                    </WrapItem>
+                  )) }
+                </Wrap>
+              </VStack>
+            </VStack>
+          )
+        }
     }
   }, [request.type])
 
@@ -147,7 +173,7 @@ const VerificationCard: React.FC<VerificationCardProps> = (props) => {
               fontFamily="body"
               textAlign="left"
             >
-              {entry.title}
+              {entry?.title}
             </Heading>
           </WrapItem>
           <WrapItem>
@@ -200,9 +226,11 @@ const VerificationCard: React.FC<VerificationCardProps> = (props) => {
         <Text fontStyle="italic" fontSize="xs">
           Request submitted: { format(new Date(request.updated_at), 'MMM dd, yyyy h:mm a') }
         </Text>
-        <Text fontSize="sm">
-          <strong>Role/Position</strong>: {request.role}
-        </Text>
+        { request.role && (
+          <Text fontSize="sm">
+            <strong>Role/Position</strong>: {request.role}
+          </Text>
+        ) }
         {entry.description}
         <Wrap>
           { request.proof_uploads.map((file) => (

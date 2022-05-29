@@ -47,7 +47,19 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
         research_event: true,
         research_presentation: true,
         proof_uploads: true,
-        profile: true
+        profile: true,
+        institute_news: {
+          include: {
+            institute: true,
+            uploads: true
+          }
+        },
+        project_institute: {
+          include: {
+            project: true,
+            institute: true
+          }
+        }
       },
       orderBy: {
         updated_at: 'desc'

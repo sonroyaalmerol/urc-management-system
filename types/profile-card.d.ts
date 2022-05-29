@@ -3,7 +3,9 @@ import type {
   Comment,
   Deliverable,
   ExternalResearch,
+  FileUpload,
   Institute,
+  InstituteNews,
   JournalPublication,
   Profile,
   ProfileToBookPublicationBridge,
@@ -15,6 +17,7 @@ import type {
   ProfileToResearchPresentationBridge,
   Project,
   ProjectStatus,
+  ProjectToInstituteBridge,
   ResearchDissemination,
   ResearchEvent,
   ResearchPresentation,
@@ -60,6 +63,14 @@ export interface ExtendedVerificationRequest extends VerificationRequest {
   research_dissemination: ResearchDissemination;
   research_event: ResearchEvent;
   research_presentation: ResearchPresentation;
+  institute_news: InstituteNews & {
+    institute: Institute;
+    uploads: FileUpload[];
+  };
+  project_institute: ProjectToInstituteBridge & {
+    project: Project;
+    institute: Institute;
+  }
   profile: Profile;
 }
 

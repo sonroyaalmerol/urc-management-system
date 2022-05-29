@@ -1,17 +1,20 @@
 import React from 'react'
-import ContentHeader from '../../components/general/ContentHeader'
+import ContentHeader from '../../../components/general/ContentHeader'
 import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
 
-import { prisma } from '../../lib/server/prisma'
+import { prisma } from '../../../lib/server/prisma'
 
 import { NextSeo } from 'next-seo'
-import { Heading, VStack } from '@chakra-ui/react'
-import { ExtendedInstitute } from '../../types/profile-card'
-import InstituteDetails from '../../components/institutes/institute/InstituteDetails'
-import InternalProjects from '../../components/institutes/institute/InternalProjects'
-import MemoList from '../../components/dashboard/MemoList'
-import Members from '../../components/institutes/institute/Members'
+import { Heading, Spacer, VStack, Wrap, WrapItem } from '@chakra-ui/react'
+import { ExtendedInstitute } from '../../../types/profile-card'
+import InstituteDetails from '../../../components/institutes/institute/InstituteDetails'
+import InternalProjects from '../../../components/institutes/institute/InternalProjects'
+import MemoList from '../../../components/dashboard/MemoList'
+import Members from '../../../components/institutes/institute/Members'
+import IconButton from '../../../components/general/IconButton'
+import { AddIcon } from '@chakra-ui/icons'
+import { useRouter } from 'next/router'
 
 interface InstituteProps {
 
@@ -19,6 +22,7 @@ interface InstituteProps {
 
 const Institute: React.FC<InstituteProps> = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const institute: ExtendedInstitute = JSON.parse(props.institute)
+  const router = useRouter()
 
   return (
     <>
@@ -34,13 +38,28 @@ const Institute: React.FC<InstituteProps> = (props: InferGetServerSidePropsType<
           <Members institute={institute} />
           <InternalProjects institute={institute} />
           <VStack w="full" align="baseline">
-            <Heading
-              fontFamily="body"
-              fontSize="xl"
-              my="1rem"
-            >
-              Memos
-            </Heading>
+            <Wrap w="full" align="center">
+              <WrapItem>
+                <Heading
+                  fontFamily="body"
+                  fontSize="xl"
+                  my="1rem"
+                >
+                  Memos
+                </Heading>
+              </WrapItem>
+              <Spacer />
+              <WrapItem>
+                <IconButton 
+                  aria-label="Add Entry"
+                  icon={<AddIcon />}
+                  padding={0}
+                  onClick={() => {
+                    router.push(`/institutes/${institute.id}/memo`)
+                  }}
+                />
+              </WrapItem>
+            </Wrap>
             <MemoList institute={institute} />
           </VStack>
         </VStack>
@@ -73,18 +92,21 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
           profile: true
         }
       },
-      projects: {
+      bridge_projects: {
         include: {
-          bridge_profiles: {
+          project: {
             include: {
-              profile: {
+              bridge_profiles: {
                 include: {
-                  user: true
+                  profile: {
+                    include: {
+                      user: true
+                    }
+                  }
                 }
-              }
+              },
             }
-          },
-          units: true
+          }
         }
       },
       institute_news: true

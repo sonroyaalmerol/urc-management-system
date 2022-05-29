@@ -93,6 +93,23 @@ model Submission {
   comments                          Comment[]
 }
 
+model ProjectToInstituteBridge {
+  project_id   String
+  institute_id String
+
+  created_at   DateTime?  @default(now())
+  updated_at   DateTime?  @updatedAt
+
+  verified               Boolean                      @default(false)
+  verification_requests  VerificationRequest[]
+
+  institute    Institute    @relation(fields: [institute_id], references: [id], onDelete: Cascade)
+  project      Project      @relation(fields: [project_id], references: [id], onDelete: Cascade)
+
+  @@id([project_id, institute_id])
+}
+
+
 model VerificationRequest {
   id                            String                        @id @default(cuid()) 
                    
@@ -128,6 +145,13 @@ model VerificationRequest {
   research_event_id             String?
   research_event                ResearchEvent?      @relation(fields: [research_event_id], references: [id], onDelete: SetNull)
 
+  project_institute_project_id    String?
+  project_institute_institute_id  String?
+  project_institute             ProjectToInstituteBridge?   @relation(fields: [project_institute_project_id, project_institute_institute_id], references: [project_id, institute_id], onDelete: SetNull)
+
+  institute_news_id             String?
+  institute_news                InstituteNews?      @relation(fields: [institute_news_id], references: [id], onDelete: SetNull)
+
   profile_id                    String?
   profile                       Profile?                          @relation(fields: [profile_id], references: [id], onDelete: Cascade)
 }
@@ -139,6 +163,8 @@ enum VerificationTypes {
   RESEARCH_DISSEMINATION
   RESEARCH_PRESENTATION
   RESEARCH_EVENT
+  INSTITUTE_NEWS
+  PROJECT_INSTITUTE
 }
 
 enum VerificationStatus {
@@ -313,6 +339,9 @@ model InstituteNews {
   institute    Institute?   @relation(fields: [institute_id], references: [id], onDelete: SetNull)
   uploads      FileUpload[]
   profile      Profile?       @relation(fields: [profile_id], references: [id], onDelete: SetNull)
+  
+  verified     Boolean        @default(false)
+  verification_requests VerificationRequest[]
 }
 
 model Institute {
@@ -329,8 +358,8 @@ model Institute {
   created_at          DateTime?             @default(now())
   updated_at          DateTime?             @updatedAt
 
-  projects            Project[]
   institute_news      InstituteNews[]
+  bridge_projects ProjectToInstituteBridge[]
   bridge_profiles ProfileToInstituteBridge[]
 }
 
@@ -617,15 +646,13 @@ model Project {
   academic_term_id                 String?
   academic_term                    AcademicTerm?     @relation(fields: [academic_term_id], references: [id], onDelete: SetNull)
 
-  institute_id                     String?
-  institute                        Institute?     @relation(fields: [institute_id], references: [id], onDelete: SetNull)
-
   submissions                      Submission[]
   deliverables                     Deliverable[]
   research_presentations           ResearchPresentation[]
   disseminations                   ResearchDissemination[]
   journal_publications             JournalPublication[]
   bridge_profiles                  ProfileToProjectBridge[]
+  bridge_institutes                ProjectToInstituteBridge[]
   units                            Unit[]
 }
 

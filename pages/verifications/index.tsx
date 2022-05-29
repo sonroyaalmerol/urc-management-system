@@ -25,7 +25,9 @@ const Verifications: React.FC<VerificationsProps> = (props: InferGetServerSidePr
         'book_publication',
         'research_dissemination',
         'research_presentation',
-        'research_event'
+        'research_event',
+        'institute_news',
+        'project_institute'
       ]
     } else {
       return [typeFilter]
@@ -82,6 +84,8 @@ const Verifications: React.FC<VerificationsProps> = (props: InferGetServerSidePr
                       <option value="research_dissemination">Research Dissemination</option>
                       <option value="research_presentation">Research Presentation</option>
                       <option value="research_event">Research Event</option>
+                      <option value="institute_news">Institute Memo</option>
+                      <option value="project_institute">Project</option>
                     </Select>
                   </WrapItem>
                   <WrapItem>

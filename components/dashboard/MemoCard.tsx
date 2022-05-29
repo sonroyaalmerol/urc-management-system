@@ -17,6 +17,7 @@ import SmallAvatar from '../general/SmallAvatar'
 import parse from '../../lib/client/parseHTML'
 import { DownloadIcon } from '@chakra-ui/icons'
 import format from 'date-fns/format'
+import VerifiedTag from '../general/VerifiedTag'
 
 interface MemoCardProps extends CardProps {
   memo: (InstituteNews & {
@@ -77,6 +78,9 @@ const MemoCard: React.FC<MemoCardProps> = (props) => {
                 </Tag>
               )
             }
+          </WrapItem>
+          <WrapItem>
+            <VerifiedTag status={props.memo.verified} />
           </WrapItem>
         </Wrap>
         

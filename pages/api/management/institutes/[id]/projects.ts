@@ -29,8 +29,12 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
     prisma.project.count({
       where: {
         ...whereQuery,
-        institute: {
-          id: req.query.id as string
+        bridge_institutes: {
+          some: {
+            institute: {
+              id: req.query.id as string
+            }
+          }
         }
       }
     }),
@@ -42,8 +46,12 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
       } : undefined,
       where: {
         ...whereQuery,
-        institute: {
-          id: req.query.id as string
+        bridge_institutes: {
+          some: {
+            institute: {
+              id: req.query.id as string
+            }
+          }
         }
       },
       include: {
