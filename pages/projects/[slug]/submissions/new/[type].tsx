@@ -12,6 +12,7 @@ import type { Project, SubmissionTypes } from '@prisma/client'
 import BudgetProposalForm from '../../../../../components/projects/submission_forms/BudgetProposalForm'
 import CapsuleProposalForm from '../../../../../components/projects/submission_forms/CapsuleProposalForm'
 import FullBlownProposalForm from '../../../../../components/projects/submission_forms/FullBlownProposalForm'
+import DeliverableForm from '../../../../../components/projects/submission_forms/DeliverableForm'
 
 interface NewSubmissionProps {
 
@@ -43,6 +44,8 @@ const NewSubmission: React.FC<NewSubmissionProps> = (props: InferGetServerSidePr
         return <CapsuleProposalForm projectTitle={project.title} projectId={project.id} projectSlug={project.slug} />
       case 'FULL':
         return <FullBlownProposalForm projectTitle={project.title} projectId={project.id} projectSlug={project.slug} />
+      case 'DELIVERABLE':
+        return <DeliverableForm projectTitle={project.title} projectId={project.id} projectSlug={project.slug} deliverableId={props.deliverableId as string} />
     }
   }
 
@@ -89,7 +92,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     props: { 
       session,
       project: JSON.stringify(project),
-      type: type as SubmissionTypes
+      type: type as SubmissionTypes,
+      deliverableId: context.query?.deliverable_id ?? null
     }
   }
 }

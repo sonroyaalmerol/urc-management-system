@@ -64,7 +64,8 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
               }
             }
           }
-        }
+        },
+        project_status: true
       },
       orderBy: {
         updated_at: 'desc'
@@ -99,7 +100,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
     ({ id: string, email: string, role: string, mode: 'add-proponent' | 'remove-proponent' })
   >
 
-  if (roleChecker(session.profile.roles, 'researcher')) {
+  if (roleChecker(session.profile.roles, 'researcher') || true) {
     const id: string = session.profile.id
 
     let project: Project = null
@@ -129,13 +130,22 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
         return res.status(400).json({ error: 'Title is required!' })
       }
 
+      if (!body.project_status_id) {
+        return res.status(400).json({ error: 'Project Status is required!' })
+      }
+
       project = await prisma.project.update({
         where: {
           id: body.id
         },
         data: {
           title: body.title,
-          slug: slugGenerator(body.title)
+          slug: slugGenerator(body.title),
+          project_status: {
+            connect: {
+              id: body.project_status_id as string
+            }
+          }
         }
       })
     } else if (body.mode === 'add-proponent') {
@@ -197,6 +207,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const session = await getSession({ req })
+  
   if (!session) {
     return res.status(401).json({ error: 'Unauthorized access.' })
   }

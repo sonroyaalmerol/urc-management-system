@@ -38,7 +38,7 @@ const SubmissionCard: React.FC<SubmissionCardProps> = (props) => {
       case 'CAPSULE':
         return 'Capsule Proposal'
       case 'DELIVERABLE':
-        return 'Deliverable'
+        return 'Deliverable Submission'
       case 'FULL':
         return 'Full-blown Proposal'
     }

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Center, Spinner, chakra, VStack } from '@chakra-ui/react'
 
-import type { ProfileToProjectBridge, Profile, User, Project } from '@prisma/client'
+import type { ProfileToProjectBridge, Profile, User, Project, ProjectStatus } from '@prisma/client'
 
 import { useDebounce } from 'use-debounce'
 
@@ -20,6 +20,7 @@ const ProjectList: React.FC<ProjectListProps> = (props) => {
             user: User;
         };
     })[];
+    project_status: ProjectStatus;
   })[]>([])
 
   const [deferredSearch] = useDebounce(props.search, 500)

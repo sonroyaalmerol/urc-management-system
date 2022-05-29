@@ -4,7 +4,7 @@ import { getSession } from 'next-auth/react'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
 
-import type { BudgetProposalSubmission, CapsuleProposalSubmission, FileUpload, FullBlownProposalSubmission, Submission, SubmissionStatus, SubmissionTypes } from '@prisma/client'
+import type { BudgetProposalSubmission, CapsuleProposalSubmission, DeliverableSubmission, FileUpload, FullBlownProposalSubmission, Submission, SubmissionStatus, SubmissionTypes } from '@prisma/client'
 import parseBodyWithFile from '../../../../../lib/server/parseBodyWithFile'
 
 export const config = {
@@ -81,7 +81,8 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
     Partial<Submission> &
     Partial<BudgetProposalSubmission> &
     Partial<FullBlownProposalSubmission> &
-    Partial<CapsuleProposalSubmission>
+    Partial<CapsuleProposalSubmission> &
+    Partial<DeliverableSubmission>
   ) } = await parseBodyWithFile(req, { publicAccess: false })
 
   if (!body) {
@@ -111,7 +112,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
     }
   })
 
-  let specificSubmission: BudgetProposalSubmission | FullBlownProposalSubmission | CapsuleProposalSubmission
+  let specificSubmission: BudgetProposalSubmission | FullBlownProposalSubmission | CapsuleProposalSubmission | DeliverableSubmission
 
   if (body.fields.type === 'BUDGET') {
     specificSubmission = await prisma.budgetProposalSubmission.create({
@@ -146,6 +147,24 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
         objectives_of_the_study: body.fields.objectives_of_the_study,
         significance_of_the_study: body.fields.significance_of_the_study,
         methodology: body.fields.methodology,
+        submission: {
+          connect: {
+            id: submission.id
+          }
+        }
+      }
+    })
+  }
+
+  if (body.fields.type === 'DELIVERABLE') {
+    specificSubmission = await prisma.deliverableSubmission.create({
+      data: {
+        deliverable: {
+          connect: {
+            id: body.fields.deliverable_id
+          }
+        },
+        description: body.fields.description,
         submission: {
           connect: {
             id: submission.id

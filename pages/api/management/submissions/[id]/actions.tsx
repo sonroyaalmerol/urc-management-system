@@ -57,8 +57,26 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
           id: session.profile.id
         }
       }
+    },
+    include: {
+      deliverable_submission: {
+        include: {
+          deliverable: true
+        }
+      }
     }
   })
+
+  if (submission.type === 'DELIVERABLE') {
+    await prisma.deliverable.update({
+      where: {
+        id: submission.deliverable_submission.deliverable.id
+      },
+      data: {
+        done: body.approved
+      }
+    })
+  }
 
   return res.status(200).json({ success: true, data: submission })
 }

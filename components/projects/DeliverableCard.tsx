@@ -1,5 +1,5 @@
 import React from 'react'
-import { VStack, HStack, Heading, Text, BoxProps, Avatar } from '@chakra-ui/react'
+import { VStack, HStack, Heading, Text, BoxProps, Avatar, Spacer } from '@chakra-ui/react'
 
 
 import type { Deliverable } from '@prisma/client'
@@ -23,6 +23,8 @@ const DeliverableCard: React.FC<DeliverableCardProps> = (props) => {
 
   return (
     <InnerCard
+      as="a"
+      href={`/projects/${props.projectSlug}/submissions/new/deliverable?deliverable_id=${deliverable.id}`}
       transition="box-shadow 0.05s, background-color 0.1s"
       _hover={{
         backgroundColor: "brand.cardBackground",
@@ -33,10 +35,11 @@ const DeliverableCard: React.FC<DeliverableCardProps> = (props) => {
       }}
       onClick={(e) => {
         e.preventDefault()
+        router.push(`/projects/${props.projectSlug}/submissions/new/deliverable?deliverable_id=${deliverable.id}`)
       }}
       {...divProps}
     >
-      <VStack alignItems="flex-start" spacing={1}>
+      <VStack alignItems="flex-start" spacing={1} h="full">
         <Heading
           size="sm"
           fontFamily="body"
@@ -44,9 +47,10 @@ const DeliverableCard: React.FC<DeliverableCardProps> = (props) => {
         >
           {deliverable.title}
         </Heading>
-        <Text>
+        <Text overflowWrap="anywhere">
           {deliverable.description}
         </Text>
+        <Spacer />
         <Text fontSize="sm" fontStyle="italic">
           {format(new Date(deliverable.deadline), 'MMM dd, yyyy')}
         </Text>

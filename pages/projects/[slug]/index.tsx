@@ -22,6 +22,7 @@ import RemoveProponentButton from '../../../components/projects/RemoveProponentB
 import Button from '../../../components/general/Button'
 import DeliverableList from '../../../components/projects/DeliverableList'
 import NewDeliverableButton from '../../../components/projects/NewDeliverableButton'
+import ProjectStatusTag from '../../../components/general/ProjectStatusTag'
 
 interface ProjectProps {
 
@@ -69,12 +70,19 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
                     Project Details
                   </Heading>
                 </WrapItem>
+                <WrapItem>
+                  <ProjectStatusTag projectStatus={project.project_status} />
+                </WrapItem>
               </Wrap>
             </WrapItem>
             <Spacer />
             <WrapItem>
               <HStack>
-                <EditProjectTitleButton projectId={project.id} currentTitle={project.title} />
+                <EditProjectTitleButton 
+                  projectId={project.id}
+                  currentStatus={project.project_status_id}
+                  currentTitle={project.title}
+                />
                 <AddProponentButton projectId={project.id} />
                 <RemoveProponentButton projectId={project.id} />
               </HStack>
@@ -214,7 +222,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         include: {
           profile: true
         }
-      }
+      },
+      project_status: true
     }
   })
 

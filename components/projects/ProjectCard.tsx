@@ -8,10 +8,11 @@ import { format } from 'date-fns'
 
 import parse from '../../lib/client/parseHTML'
 
-import type { Project, ProfileToProjectBridge, Profile, User } from '@prisma/client'
+import type { Project, ProfileToProjectBridge, Profile, User, ProjectStatus } from '@prisma/client'
 
 import { useRouter } from 'next/router'
 import ApprovalTag from '../general/ApprovalTag'
+import ProjectStatusTag from '../general/ProjectStatusTag'
 
 interface ProjectCardProps extends BoxProps {
   project: (Project & {
@@ -20,6 +21,7 @@ interface ProjectCardProps extends BoxProps {
             user: User;
         };
     })[];
+    project_status: ProjectStatus;
   })
 }
 
@@ -83,7 +85,7 @@ const ProjectCard: React.FC<ProjectCardProps> = (props) => {
           {parse(project.abstract, { textOnly: true })}
         </Box>
         <HStack>
-          <ApprovalTag status={project.approved} />
+          <ProjectStatusTag projectStatus={project.project_status} />
         </HStack>
       </VStack>
     </Card>

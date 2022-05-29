@@ -197,6 +197,8 @@ model DeliverableSubmission {
   deliverable_id String       
   created_at     DateTime     @default(now())
   updated_at     DateTime     @updatedAt
+
+  description    String?
   
   deliverable    Deliverable @relation(fields: [deliverable_id], references: [id], onDelete: Cascade)
 

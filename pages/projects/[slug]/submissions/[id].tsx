@@ -16,6 +16,7 @@ import BudgetProposal from '../../../../components/projects/submission/BudgetPro
 import CapsuleProposal from '../../../../components/projects/submission/CapsuleProposal'
 import FullBlownProposal from '../../../../components/projects/submission/FullBlownProposal'
 import Actions from '../../../../components/projects/submission/Actions'
+import DeliverableSubmission from '../../../../components/projects/submission/DeliverableSubmission'
 
 interface SubmissionProps {
   
@@ -33,7 +34,7 @@ const Submission: React.FC<SubmissionProps> = (props: InferGetServerSidePropsTyp
       case 'CAPSULE':
         return 'Capsule Proposal'
       case 'DELIVERABLE':
-        return 'Deliverable'
+        return 'Deliverable Submission'
       case 'FULL':
         return 'Full-blown Proposal'
     }
@@ -51,6 +52,10 @@ const Submission: React.FC<SubmissionProps> = (props: InferGetServerSidePropsTyp
         />
       case 'FULL':
         return <FullBlownProposal
+          submission={submission}
+        />
+      case 'DELIVERABLE':
+        return <DeliverableSubmission
           submission={submission}
         />
     }
@@ -95,7 +100,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       id: id as string,
     },
     include: {
-      deliverable_submission: true,
+      deliverable_submission: {
+        include: {
+          deliverable: true
+        }
+      },
       budget_proposal_submission: true,
       capsule_proposal_submission: true,
       full_blown_proposal_submission: true,

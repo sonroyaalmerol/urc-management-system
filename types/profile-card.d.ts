@@ -1,6 +1,7 @@
 import type {
   BookPublication,
   Comment,
+  Deliverable,
   ExternalResearch,
   Institute,
   JournalPublication,
@@ -13,6 +14,7 @@ import type {
   ProfileToResearchDisseminationBridge,
   ProfileToResearchPresentationBridge,
   Project,
+  ProjectStatus,
   ResearchDissemination,
   ResearchEvent,
   ResearchPresentation,
@@ -24,7 +26,9 @@ import type {
 } from '@prisma/client'
 
 export interface ExtendedSubmission extends Submission {
-  deliverable_submission: DeliverableSubmission;
+  deliverable_submission: (DeliverableSubmission & {
+    deliverable: Deliverable;
+  });
   budget_proposal_submission: BudgetProposalSubmission;
   capsule_proposal_submission: CapsuleProposalSubmission;
   full_blown_proposal_submission: FullBlownProposalSubmission;
@@ -88,6 +92,7 @@ export interface ExtendedProject extends Project {
         user: User;
       };
   })[];
+  project_status: ProjectStatus;
 }
 
 export interface ExtendedJournalPublication extends JournalPublication {
