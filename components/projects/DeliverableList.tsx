@@ -1,5 +1,5 @@
 import React from 'react'
-import { Center, Spinner, chakra, VStack, SimpleGrid } from '@chakra-ui/react'
+import { Center, Spinner, chakra, VStack, SimpleGrid, Text } from '@chakra-ui/react'
 
 import type { Deliverable, Project } from '@prisma/client'
 
@@ -43,23 +43,29 @@ const DeliverableList: React.FC<DeliverableListProps> = (props) => {
   return (
     <Card w="full">
       <VStack spacing={6} align="baseline" w="full">
-        { !loading ? (
-          <SeeMorePagination
-            loadMore={loadNewEntries}
-            hasMore={entries.length < count}
-            w="full"
-          >
-            <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={2} w="full">
-              { entries.map((deliverable) => (
-                <DeliverableCard key={deliverable.id} deliverable={deliverable} projectSlug={props.project.slug} />
-              )) }
-            </SimpleGrid>
-          </SeeMorePagination>
+        { !loading? (
+          entries.length > 0 ? (
+            <SeeMorePagination
+              loadMore={loadNewEntries}
+              hasMore={entries.length < count}
+              w="full"
+            >
+              <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={2} w="full">
+                { entries.map((deliverable) => (
+                  <DeliverableCard key={deliverable.id} deliverable={deliverable} projectSlug={props.project.slug} />
+                )) }
+              </SimpleGrid>
+            </SeeMorePagination>
+          ) : (
+            <Center marginTop="2rem" w="full">
+              <Text>No entries found</Text>
+            </Center>
+          )
         ) : (
-          <Center marginTop="2rem">
+          <Center marginTop="2rem" w="full">
             <Spinner color="brand.blue" />
           </Center>
-        ) }
+        )}
       </VStack>
     </Card>
   )
