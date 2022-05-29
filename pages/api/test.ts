@@ -5,7 +5,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  await prisma.instituteNews.updateMany({
+  /* await prisma.instituteNews.updateMany({
     where: {
       institute_id: null
     },
@@ -14,7 +14,7 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
       verified: true
     }
   })
-
+  //*/
   return res.status(200).json({ success: true })
 }
 
