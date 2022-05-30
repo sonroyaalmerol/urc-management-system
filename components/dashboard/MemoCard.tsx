@@ -1,6 +1,6 @@
 import Card from '../general/Card'
 import type { CardProps } from '../../types/cardprops'
-import { InstituteNews, User, FileUpload, Institute } from '@prisma/client'
+import { InstituteNews, User, FileUpload, Institute, Profile } from '@prisma/client'
 import { 
   Text, 
   VStack,
@@ -21,7 +21,7 @@ import VerifiedTag from '../general/VerifiedTag'
 
 interface MemoCardProps extends CardProps {
   memo: (InstituteNews & {
-    user: User;
+    profile: Profile;
     uploads: FileUpload[];
     institute: Institute;
   })
@@ -87,7 +87,7 @@ const MemoCard: React.FC<MemoCardProps> = (props) => {
         <Wrap align="center" spacing="2">
           <WrapItem>
             <SmallAvatar
-              {...props.memo.user}
+              {...props.memo.institute}
             />
           </WrapItem>
           <WrapItem as="span">
