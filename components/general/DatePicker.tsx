@@ -37,7 +37,7 @@ const DatePicker: React.FC<DatePickerProps> = (props) => {
       configs={{
         dateFormat: 'MMMM dd, yyyy',
         monthNames: monthNamesShort,
-        dayNames: weekdayNamesShort
+        dayNames: weekdayNamesShort,
       }}
       onDateChange={change}
       date={props.value}

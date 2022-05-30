@@ -86,6 +86,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
     return res.status(400).json({ error: 'Role is required!' })
   }
 
+  if (!body.start_date) {
+    return res.status(400).json({ error: 'Start Date is required!' })
+  }
+
   const profile = await prisma.profile.findUnique({
     where: {
       email: body.email
@@ -96,8 +100,19 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
     return res.status(400).json({ error: 'Profile not found!' })
   }
   
-  const bridge = await prisma.profileToInstituteBridge.create({
-    data: {
+  const bridge = await prisma.profileToInstituteBridge.upsert({
+    where: {
+      profile_id_institute_id: {
+        profile_id: profile.id,
+        institute_id: req.query.id as string
+      }
+    },
+    update: {
+      role_title: body.role_title,
+      start_date: body.start_date,
+      end_date: body.end_date ?? undefined
+    },
+    create: {
       profile: {
         connect: {
           id: profile.id
@@ -108,7 +123,38 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
           id: req.query.id as string
         }
       },
-      role_title: body.role_title
+      role_title: body.role_title,
+      start_date: body.start_date,
+      end_date: body.end_date ?? undefined
+    }
+  })
+
+  return res.status(200).json({ success: true, data: bridge })
+}
+
+const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
+  const body = JSON.parse(req.body) as Partial<Profile & ProfileToInstituteBridge>
+
+  if (!cleanString(body.email)) {
+    return res.status(400).json({ error: 'Email is required!' })
+  }
+
+  const profile = await prisma.profile.findUnique({
+    where: {
+      email: body.email
+    }
+  })
+
+  if (!profile) {
+    return res.status(400).json({ error: 'Profile not found!' })
+  }
+  
+  const bridge = await prisma.profileToInstituteBridge.delete({
+    where: {
+      profile_id_institute_id: {
+        profile_id: profile.id,
+        institute_id: req.query.id as string
+      }
     }
   })
 
@@ -128,6 +174,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   
     if (req.method === 'GET') {
       return await getHandler(req, res, session)
+    }
+
+    if (req.method === 'DELETE') {
+      return await deleteHandler(req, res, session)
     }
     
     return res.status(405).json({ error: `Method '${req.method}' Not Allowed` });  

@@ -26,16 +26,14 @@ import Button from '../../general/Button'
 import AutoCompleteInput from '../../general/AutoCompleteInput'
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 import useUUID from '../../../lib/client/useUUID'
+import { Institute, ProfileToInstituteBridge } from '@prisma/client'
+import DatePicker from '../../general/DatePicker'
 
-interface FormFields { 
-  email: string,
-  role_title: string
-}
 
 const Members: React.FC<ComponentProps> = (props) => {
   const institute = props.institute
 
-  const { control, handleSubmit, reset, setValue, watch } = useForm<FormFields>();
+  const { control, handleSubmit, reset, setValue, watch } = useForm<Institute & ProfileToInstituteBridge>();
 
   const [entries, setEntries] = React.useState<ExtendedProfile[]>([])
   const [submitting, setSubmitting] = React.useState(false)
@@ -62,7 +60,7 @@ const Members: React.FC<ComponentProps> = (props) => {
     setLoading(false)
   }
 
-  const onSubmit: SubmitHandler<FormFields> = async data => {
+  const onSubmit: SubmitHandler<Institute & ProfileToInstituteBridge> = async data => {
     setSubmitting(true)
 
     const res = await fetch(`/api/management/institutes/${institute.id}/members`, {
@@ -98,6 +96,12 @@ const Members: React.FC<ComponentProps> = (props) => {
   const router = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
+  React.useEffect(() => {
+    if (!isOpen) {
+      reset()
+    }
+  }, [isOpen])
+
   return (
     <ListTemplate
       title="Members"
@@ -111,6 +115,9 @@ const Members: React.FC<ComponentProps> = (props) => {
           key={entry.id}
           profile={entry}
           role={entry.bridge_institutes?.filter((i) => i.institute_id === institute.id)[0].role_title}
+          startDate={entry.bridge_institutes?.filter((i) => i.institute_id === institute.id)[0].start_date}
+          endDate={entry.bridge_institutes?.filter((i) => i.institute_id === institute.id)[0].end_date}
+          institute={institute}
         />
       )) }
       <Modal isOpen={isOpen} onClose={onClose} blockScrollOnMount={false}>
@@ -142,6 +149,24 @@ const Members: React.FC<ComponentProps> = (props) => {
                   render={({ field }) => <Input {...field} />}
                 />
               </VStack>
+              <VStack w="full" align="baseline" spacing={1}>
+                <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Start Date</Text>
+                <Controller
+                  name="start_date"
+                  control={control}
+                  defaultValue={new Date()}
+                  render={({ field }) => <DatePicker {...field} />}
+                />
+              </VStack>
+              <VStack w="full" align="baseline" spacing={1}>
+                <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">End Date</Text>
+                <Controller
+                  name="end_date"
+                  control={control}
+                  defaultValue={null}
+                  render={({ field }) => <DatePicker {...field} />}
+                />
+              </VStack>
             </VStack>
           </ModalBody>
 
@@ -156,12 +181,13 @@ const Members: React.FC<ComponentProps> = (props) => {
                     color:'brand.red'
                   }}
                   onClick={onClose}
+                  isLoading={submitting}
                 >
                   Cancel
                 </Button>
               </WrapItem>
               <WrapItem>
-                <Button type="submit">
+                <Button type="submit" isLoading={submitting}>
                   Proceed
                 </Button>
               </WrapItem>

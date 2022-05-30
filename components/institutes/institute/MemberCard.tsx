@@ -1,19 +1,27 @@
 import React from 'react'
-import { VStack, HStack, Heading, Text, BoxProps, Avatar, Spacer } from '@chakra-ui/react'
+import { VStack, HStack, Heading, Text, BoxProps, Avatar, Spacer, useToast } from '@chakra-ui/react'
 
 
-import type { Profile, User } from '@prisma/client'
+import type { Institute, Profile, User } from '@prisma/client'
 
 import { useRouter } from 'next/router'
 import InnerCard from '../../general/InnerCard'
 import IconButton from '../../general/IconButton'
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons'
+import { format } from 'date-fns'
+import EditMemberButton from './EditMemberButton'
+import { ExtendedInstitute } from '../../../types/profile-card'
+import IconButtonWithConfirmation from '../../general/IconButtonWithConfirmation'
+import useUUID from '../../../lib/client/useUUID'
 
 interface MemberCardProps extends BoxProps {
   profile: (Profile & {
     user: User;
   })
-  role: string
+  role: string,
+  startDate: Date,
+  endDate?: Date,
+  institute: Partial<ExtendedInstitute>
 }
 
 const MemberCard: React.FC<MemberCardProps> = (props) => {
@@ -23,6 +31,30 @@ const MemberCard: React.FC<MemberCardProps> = (props) => {
   delete divProps.profile
 
   const router = useRouter()
+  const toast = useToast()
+  const key = useUUID()
+
+  const onDelete = async data => {
+    const res = await fetch(`/api/management/institutes/${props.institute.id}/members`, {
+      method: 'DELETE',
+      body: JSON.stringify(data)
+    }).then((i) => i.json())
+
+    if (res.success) {
+      router.push(`${router.asPath.split('?')[0]}?key=${key}`)
+      toast({
+        title: 'Success!',
+        description: 'Successfully deleted member!',
+        status: 'success'
+      })
+    } else {
+      toast({
+        title: 'Error!',
+        description: res.error,
+        status: 'error'
+      })
+    }
+  };
 
   return (
     <InnerCard
@@ -51,17 +83,22 @@ const MemberCard: React.FC<MemberCardProps> = (props) => {
               {profile.email}
             </Text>
             <Text fontSize="sm" fontStyle="italic">
-              {props.role}
+              {props.role} ({format(new Date(props.startDate), 'MMM dd, yyyy')} - {props.endDate ? format(new Date(props.endDate), 'MMM dd, yyyy') : 'present'})
             </Text>
           </VStack>
         </HStack>
         <Spacer />
         <VStack>
-          <IconButton 
-            aria-label='Edit Position'
-            icon={<EditIcon />}
+          <EditMemberButton
+            institute={props.institute}
+            currentValue={{
+              email: profile.email,
+              role_title: props.role,
+              start_date: props.startDate ? new Date(props.startDate) : null,
+              end_date: props.endDate ? new Date(props.endDate) : null
+            }}
           />
-          <IconButton 
+          <IconButtonWithConfirmation 
             aria-label='Remove Member'
             icon={<DeleteIcon />}
             backgroundColor="brand.red"
@@ -71,6 +108,12 @@ const MemberCard: React.FC<MemberCardProps> = (props) => {
             _hover={{
               color: "brand.red",
               backgroundColor: "brand.cardBackground"
+            }}
+            confirmationMessage={
+              `Remove ${profile.first_name}'s membership?`
+            }
+            onClick={() => {
+              onDelete({ email: profile.email })
             }}
           />
         </VStack>
