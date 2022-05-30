@@ -155,6 +155,16 @@ const VerificationCard: React.FC<VerificationCardProps> = (props) => {
             </VStack>
           )
         }
+      case 'PROJECT_INSTITUTE':
+        return {
+          humanizedType: 'Project Institute Assignment',
+          title: request.project_institute.project.title,
+          description: (
+            <VStack align="baseline" spacing={0}>
+              <Text fontSize="sm"><strong>Institute</strong>: {request.project_institute.institute.name}</Text>
+            </VStack>
+          )
+        }
     }
   }, [request.type])
 

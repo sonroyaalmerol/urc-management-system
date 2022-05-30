@@ -23,6 +23,8 @@ import Button from '../../../components/general/Button'
 import DeliverableList from '../../../components/projects/DeliverableList'
 import NewDeliverableButton from '../../../components/projects/NewDeliverableButton'
 import ProjectStatusTag from '../../../components/general/ProjectStatusTag'
+import AssignInstituteButton from '../../../components/projects/AssignInstituteButton'
+import InnerInstituteCard from '../../../components/projects/InnerInstituteCard'
 
 interface ProjectProps {
 
@@ -99,6 +101,39 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
                 { project.bridge_profiles.map(({ profile, role_title }) => (
                   <WrapItem key={profile.id}>
                     <InnerProfileCard profile={profile} role={role_title} />
+                  </WrapItem>
+                )) }
+              </Wrap>
+            </VStack>
+          </Card>
+
+          <Wrap align="center" w="full">
+            <WrapItem>
+              <Wrap spacing={4} align="center">
+                <WrapItem>
+                  <Heading
+                    fontFamily="body"
+                    fontSize="xl"
+                  >
+                    Institutes/Centers Involved
+                  </Heading>
+                </WrapItem>
+              </Wrap>
+            </WrapItem>
+            <Spacer />
+            <WrapItem>
+              <HStack>
+                <AssignInstituteButton projectId={project.id} />
+              </HStack>
+            </WrapItem>
+          </Wrap>
+
+          <Card>
+            <VStack align="baseline">
+              <Wrap spacing={4}>
+                { project.bridge_institutes.map(({ institute, verified }) => (
+                  <WrapItem key={institute.id}>
+                    <InnerInstituteCard institute={institute} verified={verified} />
                   </WrapItem>
                 )) }
               </Wrap>
@@ -221,6 +256,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       bridge_profiles: {
         include: {
           profile: true
+        }
+      },
+      bridge_institutes: {
+        include: {
+          institute: true
         }
       },
       project_status: true

@@ -2,30 +2,29 @@ import React from 'react'
 import { VStack, HStack, Heading, Text, BoxProps, Avatar } from '@chakra-ui/react'
 
 
-import type { Profile, User } from '@prisma/client'
+import type { Institute } from '@prisma/client'
 
 import { useRouter } from 'next/router'
 import InnerCard from '../general/InnerCard'
+import VerifiedTag from '../general/VerifiedTag'
 
-interface InnerProfileCardProps extends BoxProps {
-  profile: (Profile & {
-    user: User;
-  })
-  role: string
+interface InnerInstituteCardProps extends BoxProps {
+  institute: Institute
+  verified?: boolean
 }
 
-const InnerProfileCard: React.FC<InnerProfileCardProps> = (props) => {
-  const { profile } = props
+const InnerInstituteCard: React.FC<InnerInstituteCardProps> = (props) => {
+  const { institute } = props
 
   const divProps = Object.assign({}, props)
-  delete divProps.profile
+  delete divProps.institute
 
   const router = useRouter()
 
   return (
     <InnerCard
       as="a"
-      href={`/profiles/${profile.id}`}
+      href={`/institutes/${institute.id}`}
       transition="box-shadow 0.05s, background-color 0.1s"
       _hover={{
         backgroundColor: "brand.cardBackground",
@@ -36,30 +35,28 @@ const InnerProfileCard: React.FC<InnerProfileCardProps> = (props) => {
       }}
       onClick={(e) => {
         e.preventDefault()
-        router.push(`/profiles/${profile.id}`)
+        router.push(`/institutes/${institute.id}`)
       }}
       {...divProps}
     >
       <HStack spacing={4} alignItems="flex-start">
-        <Avatar src={`/api/files/get/${profile.photo_id}`} />
+        <Avatar src={`/api/files/get/${institute.photo_id}`} />
         <VStack alignItems="flex-start" spacing={1}>
           <Heading
             size="sm"
             fontFamily="body"
             textAlign="left"
           >
-            {profile.first_name} {profile.middle_initial} {profile.last_name}
+            {institute.name} {institute.short_name ? `(${institute.short_name})` : ''}
           </Heading>
           <Text>
-            {profile.email}
+            {institute.email}
           </Text>
-          <Text fontSize="sm" fontStyle="italic">
-            {props.role}
-          </Text>
+          <VerifiedTag status={props.verified} />
         </VStack>
       </HStack>
     </InnerCard>
   )
 }
 
-export default InnerProfileCard
+export default InnerInstituteCard

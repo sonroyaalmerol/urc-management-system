@@ -99,9 +99,12 @@ export interface ExtendedExternalResearch extends ExternalResearch {
 export interface ExtendedProject extends Project {
   units: Unit[];
   bridge_profiles: (ProfileToProjectBridge & {
-      profile: Profile & {
-        user: User;
-      };
+    profile: Profile & {
+      user: User;
+    };
+  })[];
+  bridge_institutes: (ProjectToInstituteBridge & {
+    institute: Institute;
   })[];
   project_status: ProjectStatus;
 }
