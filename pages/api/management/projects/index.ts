@@ -8,6 +8,7 @@ import type { Project } from '@prisma/client'
 
 import relevancy from 'relevancy'
 import roleChecker from '../../../../lib/roleChecker'
+import handleError from '../../../../lib/server/handleError'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const searchQuery = (req.query?.query as string) ?? ''
@@ -212,13 +213,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(401).json({ error: 'Unauthorized access.' })
   }
 
-  if (req.method === 'POST') {
-    return await postHandler(req, res, session);
-  }
-
-  if (req.method === 'GET') {
-    return await getHandler(req, res, session)
-  }
-
-  return res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
+  return await handleError(async () => {
+    if (req.method === 'POST') {
+      return await postHandler(req, res, session);
+    }
+  
+    if (req.method === 'GET') {
+      return await getHandler(req, res, session)
+    }
+    
+    return res.status(405).json({ error: `Method '${req.method}' Not Allowed` });  
+  }, res)
 }

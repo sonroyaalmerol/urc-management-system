@@ -16,6 +16,7 @@ interface ListTemplateProps extends BoxProps {
   loadMore: () => any
   onNew?: () => any
   profileId?: string
+  disabled?: boolean
 }
 
 const ListTemplate: React.FC<ListTemplateProps> = (props) => {
@@ -38,7 +39,7 @@ const ListTemplate: React.FC<ListTemplateProps> = (props) => {
           </Heading>
         </WrapItem>
         <Spacer />
-        { ('profileId' in props && currentProfile.id === props.profileId) && (
+        { ('profileId' in props && currentProfile.id === props.profileId || 'onNew' in props) && !props.disabled && (
           <WrapItem>
             <IconButton 
               aria-label="Add Entry"

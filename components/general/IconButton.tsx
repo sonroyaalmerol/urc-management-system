@@ -5,14 +5,14 @@ import { IconButton as StockButton, IconButtonProps } from '@chakra-ui/react'
 const IconButton: React.ForwardRefRenderFunction<HTMLButtonElement, IconButtonProps> = (props, ref) => {
   return (
     <StockButton
-      backgroundColor="brand.blue"
+      backgroundColor={!props.variant ? "brand.blue" : undefined}
       borderRadius={10}
-      color="white"
+      color={!props.variant ? "white" : "brand.blue"}
       fontWeight="bold"
-      _hover={{
+      _hover={!props.variant ? {
         color: "brand.blue",
         backgroundColor: "brand.cardBackground"
-      }}
+      }: undefined}
       ref={ref}
       {...props}
     />

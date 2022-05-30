@@ -6,6 +6,7 @@ import type { Session } from 'next-auth'
 import type { FileUpload, UserRole } from '@prisma/client'
 import parseBodyWithFile from '../../../../../lib/server/parseBodyWithFile'
 import { deleteFile } from '../../../../../lib/server/file'
+import handleError from '../../../../../lib/server/handleError'
 
 export const config = {
   api: {
@@ -51,13 +52,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(401).json({ error: 'Unauthorized access.' })
   }
 
-  if (req.method === 'POST') {
-    return await postHandler(req, res, session);
-  }
-
-  if (req.method === 'DELETE') {
-    return await deleteHandler(req, res, session)
-  }
-
-  return res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
+  return await handleError(async () => {
+    if (req.method === 'POST') {
+      return await postHandler(req, res, session);
+    }
+  
+    if (req.method === 'DELETE') {
+      return await deleteHandler(req, res, session)
+    }
+    
+    return res.status(405).json({ error: `Method '${req.method}' Not Allowed` });  
+  }, res)
 }
