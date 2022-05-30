@@ -21,7 +21,8 @@ interface MemberCardProps extends BoxProps {
   role: string,
   startDate: Date,
   endDate?: Date,
-  institute: Partial<ExtendedInstitute>
+  institute: Partial<ExtendedInstitute>,
+  isHead: boolean
 }
 
 const MemberCard: React.FC<MemberCardProps> = (props) => {
@@ -95,7 +96,8 @@ const MemberCard: React.FC<MemberCardProps> = (props) => {
               email: profile.email,
               role_title: props.role,
               start_date: props.startDate ? new Date(props.startDate) : null,
-              end_date: props.endDate ? new Date(props.endDate) : null
+              end_date: props.endDate ? new Date(props.endDate) : null,
+              is_head: props.isHead
             }}
           />
           <IconButtonWithConfirmation 

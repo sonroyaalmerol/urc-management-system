@@ -369,6 +369,8 @@ model ProfileToInstituteBridge {
   role_title   String
   duration     String?
 
+  is_head       Boolean  @default(false)
+
   start_date   DateTime?  @default(now())
   end_date     DateTime?
 

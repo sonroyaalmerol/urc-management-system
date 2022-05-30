@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useDisclosure, Text, Input, VStack, useToast } from '@chakra-ui/react'
+import { useDisclosure, Text, Input, VStack, useToast, Checkbox } from '@chakra-ui/react'
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 
 import {
@@ -51,7 +51,7 @@ const EditMemberButton: React.FC<EditMemberButtonProps> = (props) => {
       router.push(`${router.asPath.split('?')[0]}?key=${key}`)
       toast({
         title: 'Success!',
-        description: 'Successfully added member!',
+        description: 'Successfully edited membership!',
         status: 'success'
       })
     } else {
@@ -76,7 +76,7 @@ const EditMemberButton: React.FC<EditMemberButtonProps> = (props) => {
       <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
-          <ModalHeader>New Profile</ModalHeader>
+          <ModalHeader>Edit Membership</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
           <VStack spacing={4}>
@@ -105,6 +105,25 @@ const EditMemberButton: React.FC<EditMemberButtonProps> = (props) => {
                   control={control}
                   defaultValue={props.currentValue.end_date ?? null}
                   render={({ field }) => <DatePicker {...field} />}
+                />
+              </VStack>
+              <VStack w="full" align="baseline" spacing={1}>
+                <Controller
+                  name="is_head"
+                  control={control}
+                  defaultValue={props.currentValue.is_head}
+                  render={({ field }) => (
+                    <Checkbox 
+                      name={field.name} 
+                      onBlur={field.onBlur} 
+                      onChange={field.onChange}
+                      ref={field.ref}
+                      isChecked={field.value}
+                      marginLeft="1rem"
+                    >
+                      Center Head
+                    </Checkbox>
+                  )}
                 />
               </VStack>
             </VStack>

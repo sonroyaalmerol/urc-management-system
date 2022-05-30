@@ -21,6 +21,7 @@ import {
   Text,
   Input,
   useToast,
+  Checkbox,
 } from '@chakra-ui/react'
 import Button from '../../general/Button'
 import AutoCompleteInput from '../../general/AutoCompleteInput'
@@ -118,6 +119,7 @@ const Members: React.FC<ComponentProps> = (props) => {
           startDate={entry.bridge_institutes?.filter((i) => i.institute_id === institute.id)[0].start_date}
           endDate={entry.bridge_institutes?.filter((i) => i.institute_id === institute.id)[0].end_date}
           institute={institute}
+          isHead={entry.bridge_institutes?.filter((i) => i.institute_id === institute.id)[0].is_head}
         />
       )) }
       <Modal isOpen={isOpen} onClose={onClose} blockScrollOnMount={false}>
@@ -165,6 +167,25 @@ const Members: React.FC<ComponentProps> = (props) => {
                   control={control}
                   defaultValue={null}
                   render={({ field }) => <DatePicker {...field} />}
+                />
+              </VStack>
+              <VStack w="full" align="baseline" spacing={1}>
+                <Controller
+                  name="is_head"
+                  control={control}
+                  defaultValue={false}
+                  render={({ field }) => (
+                    <Checkbox 
+                      name={field.name} 
+                      onBlur={field.onBlur} 
+                      onChange={field.onChange}
+                      ref={field.ref}
+                      checked={field.value}
+                      marginLeft="1rem"
+                    >
+                      Center Head
+                    </Checkbox>
+                  )}
                 />
               </VStack>
             </VStack>

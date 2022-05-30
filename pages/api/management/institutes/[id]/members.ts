@@ -99,6 +99,8 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
   if (!profile) {
     return res.status(400).json({ error: 'Profile not found!' })
   }
+
+  console.log(body.is_head)
   
   const bridge = await prisma.profileToInstituteBridge.upsert({
     where: {
@@ -110,7 +112,8 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
     update: {
       role_title: body.role_title,
       start_date: body.start_date,
-      end_date: body.end_date ?? undefined
+      end_date: body.end_date ?? undefined,
+      is_head: body.is_head ?? false
     },
     create: {
       profile: {
@@ -125,7 +128,8 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
       },
       role_title: body.role_title,
       start_date: body.start_date,
-      end_date: body.end_date ?? undefined
+      end_date: body.end_date ?? undefined,
+      is_head: body.is_head ?? false
     }
   })
 
