@@ -91,6 +91,50 @@ const InstituteDetails: React.FC<ComponentProps> = (props) => {
                       fontFamily="body"
                       fontSize="md"
                     >
+                      Name:
+                    </Heading>
+                  </WrapItem>
+                  <WrapItem>
+                    <Controller
+                      name="name"
+                      control={control}
+                      render={({ field }) => 
+                        <EditableText 
+                          editMode={editing}
+                          {...field}
+                        />
+                      }
+                    />
+                  </WrapItem>
+                </Wrap>
+                <Wrap align="baseline" w="full">
+                  <WrapItem>
+                    <Heading
+                      fontFamily="body"
+                      fontSize="md"
+                    >
+                      Short Name:
+                    </Heading>
+                  </WrapItem>
+                  <WrapItem>
+                    <Controller
+                      name="short_name"
+                      control={control}
+                      render={({ field }) => 
+                        <EditableText 
+                          editMode={editing}
+                          {...field}
+                        />
+                      }
+                    />
+                  </WrapItem>
+                </Wrap>
+                <Wrap align="baseline" w="full">
+                  <WrapItem>
+                    <Heading
+                      fontFamily="body"
+                      fontSize="md"
+                    >
                       Email:
                     </Heading>
                   </WrapItem>

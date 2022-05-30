@@ -3,7 +3,7 @@ import { getSession } from 'next-auth/react'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
-import type { Profile } from '@prisma/client'
+import type { Institute, Profile } from '@prisma/client'
 import handleError from '../../../../lib/server/handleError'
 
 import relevancy from 'relevancy'
@@ -78,42 +78,19 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  const body = JSON.parse(req.body) as Partial<Profile>
+  const body = JSON.parse(req.body) as Partial<Institute>
 
-  if (roleChecker(session.profile.roles, 'researcher')) {
-    if (!body.email) {
-      return res.status(400).json({ error: 'Email is required!' })
-    }
-
-    if (!body.first_name) {
-      return res.status(400).json({ error: 'First Name is required!' })
-    }
-
-    if (!body.middle_initial) {
-      return res.status(400).json({ error: 'Middle Initial is required!' })
-    }
-
-    if (!body.last_name) {
-      return res.status(400).json({ error: 'Last Name is required!' })
-    }
-
-    if (!body.email.includes('@addu.edu.ph')) {
-      return res.status(400).json({ error: 'AdDU email is required!' })
-    }
-
-    const profile = await prisma.profile.create({
-      data: {
-        email: body.email,
-        first_name: body.first_name,
-        middle_initial: body.middle_initial,
-        last_name: body.last_name
-      }
-    })
-
-    return res.status(200).json({ success: true, data: profile })
+  if (!body.name) {
+    return res.status(400).json({ error: 'Institute Name is required!' })
   }
 
-  return res.status(401).json({ error: 'Unauthorized access.' })
+  const institute = await prisma.institute.create({
+    data: {
+      name: body.name,
+    }
+  })
+
+  return res.status(200).json({ success: true, data: institute })
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

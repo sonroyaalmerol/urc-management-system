@@ -7,6 +7,7 @@ import { NextSeo } from 'next-seo'
 import { HStack, VStack } from '@chakra-ui/react'
 import SearchInput from '../../components/general/SearchInput'
 import InstituteList from '../../components/institutes/InstituteList'
+import NewInstituteButton from '../../components/institutes/NewInstituteButton'
 
 interface InstitutesProps {
 
@@ -14,6 +15,12 @@ interface InstitutesProps {
 
 const Institutes: React.FC<InstitutesProps> = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [search, setSearch] = React.useState('')
+
+  const [refreshKey, setRefreshKey] = React.useState(0)
+
+  const refresh = () => {
+    setRefreshKey(prev => prev + 1)
+  }
 
   return (
     <>
@@ -32,8 +39,9 @@ const Institutes: React.FC<InstitutesProps> = (props: InferGetServerSidePropsTyp
                 setSearch(e.target.value)
               }}
             />
+            <NewInstituteButton onSuccess={refresh} /> 
           </HStack>
-          <InstituteList search={search} />
+          <InstituteList search={search} refreshKey={refreshKey} />
         </VStack>
       </VStack>
     </>
