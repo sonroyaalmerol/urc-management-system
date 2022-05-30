@@ -9,6 +9,7 @@ import type { FileUpload, Project, ResearchDissemination, VerificationRequest } 
 import relevancy from 'relevancy'
 import roleChecker from '../../../../lib/roleChecker'
 import parseBodyWithFile from '../../../../lib/server/parseBodyWithFile'
+import cleanString from '../../../../lib/cleanString'
 
 export const config = {
   api: {
@@ -94,11 +95,11 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
     ResearchDissemination & VerificationRequest
   > } = await parseBodyWithFile(req, { publicAccess: false })
 
-  if (!body.fields.title) {
+  if (!cleanString(body.fields.title)) {
     return res.status(400).json({ error: 'Title is required!' })
   }
 
-  if (!body.fields.role) {
+  if (!cleanString(body.fields.role)) {
     return res.status(400).json({ error: 'Role is required!' })
   }
 
@@ -109,15 +110,15 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
   })
 
   if (!currentEntry) {
-    if (!body.fields.organization) {
+    if (!cleanString(body.fields.organization)) {
       return res.status(400).json({ error: 'Organization is required!' })
     }
 
-    if (!body.fields.location) {
+    if (!cleanString(body.fields.location)) {
       return res.status(400).json({ error: 'Location is required!' })
     }
 
-    if (!body.fields.event_date) {
+    if (!cleanString(body.fields.event_date)) {
       return res.status(400).json({ error: 'Event Date is required!' })
     }
 

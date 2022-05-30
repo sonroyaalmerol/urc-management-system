@@ -52,10 +52,10 @@ const ProfileCard: React.FC<ProfileCardProps> = (props) => {
             fontFamily="body"
             textAlign="left"
           >
-            {profile.email}
+            {profile.last_name}, {profile.first_name} {profile.middle_initial}
           </Heading>
           <Text>
-            {profile.first_name} {profile.middle_initial} {profile.last_name}
+            {profile.email}
           </Text>
         </VStack>
       </HStack>

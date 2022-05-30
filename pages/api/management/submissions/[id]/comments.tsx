@@ -4,6 +4,7 @@ import { getSession } from 'next-auth/react'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
 import type { Comment, UserRole } from '@prisma/client'
+import cleanString from '../../../../../lib/cleanString'
 
 const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const body = JSON.parse(req.body) as Partial<Comment>
@@ -18,6 +19,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
   const body = JSON.parse(req.body) as Partial<Comment>
 
   const { id } = req.query
+
+  if (!cleanString(body.content)) {
+    return res.status(400).json({ error: 'Content is required!' })
+  }
 
   const comment = await prisma.comment.create({
     data: {

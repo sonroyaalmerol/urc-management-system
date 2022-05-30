@@ -9,6 +9,7 @@ import type { FileUpload, ResearchEvent, VerificationRequest } from '@prisma/cli
 import relevancy from 'relevancy'
 import roleChecker from '../../../../lib/roleChecker'
 import parseBodyWithFile from '../../../../lib/server/parseBodyWithFile'
+import cleanString from '../../../../lib/cleanString'
 
 export const config = {
   api: {
@@ -94,11 +95,11 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
     ResearchEvent & VerificationRequest
   > } = await parseBodyWithFile(req, { publicAccess: false })
 
-  if (!body.fields.event_name) {
+  if (!cleanString(body.fields.event_name)) {
     return res.status(400).json({ error: 'Event Name is required!' })
   }
 
-  if (!body.fields.role) {
+  if (!cleanString(body.fields.role)) {
     return res.status(400).json({ error: 'Role is required!' })
   }
 
@@ -109,15 +110,15 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
   })
 
   if (!currentEntry) {
-    if (!body.fields.start_date) {
+    if (!cleanString(body.fields.start_date)) {
       return res.status(400).json({ error: 'Start Date is required!' })
     }
 
-    if (!body.fields.end_date) {
+    if (!cleanString(body.fields.end_date)) {
       return res.status(400).json({ error: 'End Date is required!' })
     }
 
-    if (!body.fields.description) {
+    if (!cleanString(body.fields.description)) {
       return res.status(400).json({ error: 'Description is required!' })
     }
 

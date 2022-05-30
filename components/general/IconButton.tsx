@@ -9,7 +9,6 @@ const IconButton: React.ForwardRefRenderFunction<HTMLButtonElement, IconButtonPr
       borderRadius={10}
       color="white"
       fontWeight="bold"
-      padding="1.5rem"
       _hover={{
         color: "brand.blue",
         backgroundColor: "brand.cardBackground"

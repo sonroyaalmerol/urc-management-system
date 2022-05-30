@@ -9,6 +9,7 @@ import type { ExternalResearch, FileUpload, Project, VerificationRequest } from 
 import relevancy from 'relevancy'
 import roleChecker from '../../../../lib/roleChecker'
 import parseBodyWithFile from '../../../../lib/server/parseBodyWithFile'
+import cleanString from '../../../../lib/cleanString'
 
 export const config = {
   api: {
@@ -94,11 +95,11 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
     ExternalResearch & VerificationRequest
   > } = await parseBodyWithFile(req, { publicAccess: false })
 
-  if (!body.fields.title) {
+  if (!cleanString(body.fields.title)) {
     return res.status(400).json({ error: 'Title is required!' })
   }
 
-  if (!body.fields.role) {
+  if (!cleanString(body.fields.role)) {
     return res.status(400).json({ error: 'Role is required!' })
   }
 
@@ -109,15 +110,15 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
   })
 
   if (!currentEntry) {
-    if (!body.fields.organization) {
+    if (!cleanString(body.fields.organization)) {
       return res.status(400).json({ error: 'Organization is required!' })
     }
 
-    if (!body.fields.duration) {
+    if (!cleanString(body.fields.duration)) {
       return res.status(400).json({ error: 'Duration is required!' })
     }
 
-    if (!body.fields.cycle) {
+    if (!cleanString(body.fields.cycle)) {
       return res.status(400).json({ error: 'Cycle is required!' })
     }
 

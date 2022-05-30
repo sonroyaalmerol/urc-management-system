@@ -9,6 +9,7 @@ import type { BookPublication, FileUpload, InstituteNews, Project, ProjectToInst
 import relevancy from 'relevancy'
 import roleChecker from '../../../../lib/roleChecker'
 import parseBodyWithFile from '../../../../lib/server/parseBodyWithFile'
+import cleanString from '../../../../lib/cleanString'
 
 export const config = {
   api: {
@@ -28,11 +29,11 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
     ProjectToInstituteBridge & VerificationRequest
   >} = await parseBodyWithFile(req, { publicAccess: false })
 
-  if (!body.fields.project_id) {
+  if (!cleanString(body.fields.project_id)) {
     return res.status(400).json({ error: 'Project is required!' })
   }
 
-  if (!body.fields.institute_id) {
+  if (!cleanString(body.fields.institute_id)) {
     return res.status(400).json({ error: 'Institute is required!' })
   }
 

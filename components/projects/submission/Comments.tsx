@@ -20,17 +20,22 @@ const Comments: React.FC<CommentsProps> = (props) => {
   const { control, handleSubmit, reset } = useForm<Partial<Comment>>();
 
   const [comments, setComments] = React.useState(props.submission.comments)
+  const [submitting, setSubmitting] = React.useState(false)
 
   const session = useSession()
 
   const onSubmit: SubmitHandler<Partial<Comment>> = async data => {
+    setSubmitting(true)
     const res = await fetch(`/api/management/submissions/${props.submission.id}/comments`, {
       method: 'POST',
       body: JSON.stringify(data)
     }).then((i) => i.json())
 
-    setComments((curr) => [res.data, ...curr])
+    if (!res.error) {
+      setComments((curr) => [res.data, ...curr])
+    }
 
+    setSubmitting(false)
     reset()
   };
 
@@ -50,7 +55,7 @@ const Comments: React.FC<CommentsProps> = (props) => {
                 defaultValue={""}
                 render={({ field }) => <Textarea {...field} />}
               />
-              <Button type="submit">Comment</Button>
+              <Button type="submit" isLoading={submitting}>Comment</Button>
             </VStack>
           </HStack>
 

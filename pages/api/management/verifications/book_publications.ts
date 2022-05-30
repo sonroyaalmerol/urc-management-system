@@ -9,6 +9,7 @@ import type { BookPublication, FileUpload, Project, VerificationRequest } from '
 import relevancy from 'relevancy'
 import roleChecker from '../../../../lib/roleChecker'
 import parseBodyWithFile from '../../../../lib/server/parseBodyWithFile'
+import cleanString from '../../../../lib/cleanString'
 
 export const config = {
   api: {
@@ -94,11 +95,11 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
     BookPublication & VerificationRequest
   >} = await parseBodyWithFile(req, { publicAccess: false })
 
-  if (!body.fields.title) {
+  if (!cleanString(body.fields.title)) {
     return res.status(400).json({ error: 'Title is required!' })
   }
 
-  if (!body.fields.role) {
+  if (!cleanString(body.fields.role)) {
     return res.status(400).json({ error: 'Role is required!' })
   }
 
@@ -109,15 +110,15 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
   })
 
   if (!currentEntry) {
-    if (!body.fields.publisher) {
+    if (!cleanString(body.fields.publisher)) {
       return res.status(400).json({ error: 'Publisher is required!' })
     }
 
-    if (!body.fields.isbn) {
+    if (!cleanString(body.fields.isbn)) {
       return res.status(400).json({ error: 'ISBN is required!' })
     }
 
-    if (!body.fields.date_published) {
+    if (!cleanString(body.fields.date_published)) {
       return res.status(400).json({ error: 'Date Published is required!' })
     }
 

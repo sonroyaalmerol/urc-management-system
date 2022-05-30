@@ -1,5 +1,5 @@
 import React from 'react'
-import { VStack, Heading, Text, Center, Spinner, Input, useToast } from '@chakra-ui/react'
+import { VStack, Heading, Text, Center, Spinner, Input, useToast, Wrap, WrapItem } from '@chakra-ui/react'
 
 import Button from '../../general/Button'
 
@@ -45,7 +45,6 @@ const ResearchDisseminationForm: React.FC<ResearchDisseminationFormProps> = (pro
       })
     }
     setSubmitting(false)
-    reset()
   };
 
   return (
@@ -97,7 +96,14 @@ const ResearchDisseminationForm: React.FC<ResearchDisseminationFormProps> = (pro
             <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Proof Upload</Text>
             <FileUploadButton files={proof_files} {...register('proof_files')} />
           </VStack>
-          <Button type="submit" isLoading={submitting}>Submit</Button>
+          <Wrap spacing={4}>
+            <WrapItem>
+              <Button type="submit" isLoading={submitting}>Submit</Button>
+            </WrapItem>
+            <WrapItem>
+              <Button isLoading={submitting} variant="ghost" onClick={() => router.back()}>Cancel</Button>
+            </WrapItem>
+          </Wrap>
         </VStack>
       </Card>
     </VStack>

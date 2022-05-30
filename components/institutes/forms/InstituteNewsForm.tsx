@@ -1,5 +1,5 @@
 import React from 'react'
-import { VStack, Heading, Text, Input, useToast } from '@chakra-ui/react'
+import { VStack, Heading, Text, Input, useToast, Wrap, WrapItem } from '@chakra-ui/react'
 
 import Button from '../../general/Button'
 
@@ -45,7 +45,6 @@ const InstituteNewsForm: React.FC<InstituteNewsFormProps> = (props) => {
       })
     }
     setSubmitting(false)
-    reset()
   };
 
   return (
@@ -53,7 +52,7 @@ const InstituteNewsForm: React.FC<InstituteNewsFormProps> = (props) => {
       <Card>
         <VStack align="baseline" spacing={6}>
           <Heading fontFamily="body" fontSize="lg">
-            New Institution Memo
+            New {props.institute.name} Memo
           </Heading>
           <VStack w="full" align="baseline" spacing={1}>
             <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Title</Text>
@@ -74,7 +73,14 @@ const InstituteNewsForm: React.FC<InstituteNewsFormProps> = (props) => {
             <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Upload Files</Text>
             <FileUploadButton files={upload_files} {...register('upload_files')} />
           </VStack>
-          <Button type="submit" isLoading={submitting}>Submit</Button>
+          <Wrap spacing={4}>
+            <WrapItem>
+              <Button type="submit" isLoading={submitting}>Submit</Button>
+            </WrapItem>
+            <WrapItem>
+              <Button isLoading={submitting} variant="ghost" onClick={() => router.back()}>Cancel</Button>
+            </WrapItem>
+          </Wrap>
         </VStack>
       </Card>
     </VStack>
