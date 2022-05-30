@@ -8,7 +8,7 @@ import { NextSeo } from 'next-seo'
 
 import { prisma } from '../../../../../lib/server/prisma'
 
-import type { Project, SubmissionTypes } from '@prisma/client'
+import type { Deliverable, Project, SubmissionTypes } from '@prisma/client'
 import BudgetProposalForm from '../../../../../components/projects/submission_forms/BudgetProposalForm'
 import CapsuleProposalForm from '../../../../../components/projects/submission_forms/CapsuleProposalForm'
 import FullBlownProposalForm from '../../../../../components/projects/submission_forms/FullBlownProposalForm'
@@ -20,6 +20,7 @@ interface NewSubmissionProps {
 
 const NewSubmission: React.FC<NewSubmissionProps> = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const project: Project = JSON.parse(props.project)
+  const deliverable: Deliverable = JSON.parse(props.deliverable)
 
   const { type } = props
 
@@ -45,7 +46,7 @@ const NewSubmission: React.FC<NewSubmissionProps> = (props: InferGetServerSidePr
       case 'FULL':
         return <FullBlownProposalForm projectTitle={project.title} projectId={project.id} projectSlug={project.slug} />
       case 'DELIVERABLE':
-        return <DeliverableForm projectTitle={project.title} projectId={project.id} projectSlug={project.slug} deliverableId={props.deliverableId as string} />
+        return <DeliverableForm projectTitle={project.title} projectId={project.id} projectSlug={project.slug} deliverable={deliverable} />
     }
   }
 
@@ -88,12 +89,18 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     }
   })
 
+  const deliverable = await prisma.deliverable.findUnique({
+    where: {
+      id: context.query?.deliverable_id as string
+    }
+  })
+
   return {
     props: { 
       session,
       project: JSON.stringify(project),
       type: type as SubmissionTypes,
-      deliverableId: context.query?.deliverable_id ?? null
+      deliverable: JSON.stringify(deliverable)
     }
   }
 }

@@ -42,7 +42,7 @@ const DeliverableSubmission: React.FC<DeliverableSubmissionProps> = (props) => {
               </Text>
               <Spacer />
               <Text fontSize="sm" fontStyle="italic">
-                {format(new Date(props.submission.deliverable_submission.deliverable.deadline), 'MMM dd, yyyy')}
+                Deadline: {format(new Date(props.submission.deliverable_submission.deliverable.deadline), 'MMM dd, yyyy')}
               </Text>
             </VStack>
           </VStack>

@@ -49,7 +49,11 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
       },
       include: {
         files: true,
-        deliverable_submission: true,
+        deliverable_submission: {
+          include: {
+            deliverable: true
+          }
+        },
         budget_proposal_submission: true,
         full_blown_proposal_submission: true,
         capsule_proposal_submission: true,

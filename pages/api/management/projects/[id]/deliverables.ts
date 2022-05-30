@@ -14,8 +14,7 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
   const [totalCount, data] = await prisma.$transaction([
     prisma.deliverable.count({
       where: {
-        project_id: id as string,
-        done: false
+        project_id: id as string
       }
     }),
     prisma.deliverable.findMany({
@@ -25,12 +24,16 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
         id: req.query.cursor as string
       } : undefined,
       where: {
-        project_id: id as string,
-        done: false
+        project_id: id as string
       },
-      orderBy: {
-        deadline: 'asc'
-      }
+      orderBy: [
+        {
+          done: 'asc'
+        },
+        {
+          deadline: 'asc'
+        }
+      ]
     })
   ])
 

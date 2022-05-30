@@ -1,7 +1,7 @@
 import React from 'react'
 import { Center, Spinner, chakra, VStack } from '@chakra-ui/react'
 
-import type { Profile, BudgetProposalSubmission, FileUpload, CapsuleProposalSubmission, FullBlownProposalSubmission, DeliverableSubmission, Submission, User, Project } from '@prisma/client'
+import type { Profile, BudgetProposalSubmission, FileUpload, CapsuleProposalSubmission, FullBlownProposalSubmission, DeliverableSubmission, Submission, User, Project, Deliverable } from '@prisma/client'
 
 import { useDebounce } from 'use-debounce'
 
@@ -22,7 +22,9 @@ const SubmissionList: React.FC<ProjectListProps> = (props) => {
       };
       capsule_proposal_submission: CapsuleProposalSubmission;
       full_blown_proposal_submission: FullBlownProposalSubmission;
-      deliverable_submission: DeliverableSubmission;
+      deliverable_submission: DeliverableSubmission & {
+        deliverable: Deliverable;
+      };
       budget_proposal_submission: BudgetProposalSubmission;
       files: FileUpload[];
       project: Project;

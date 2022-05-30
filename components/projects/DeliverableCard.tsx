@@ -1,5 +1,5 @@
 import React from 'react'
-import { VStack, HStack, Heading, Text, BoxProps, Avatar, Spacer } from '@chakra-ui/react'
+import { VStack, HStack, Heading, Text, BoxProps, Avatar, Spacer, Wrap, WrapItem } from '@chakra-ui/react'
 
 
 import type { Deliverable } from '@prisma/client'
@@ -7,6 +7,7 @@ import type { Deliverable } from '@prisma/client'
 import { useRouter } from 'next/router'
 import InnerCard from '../general/InnerCard'
 import { format } from 'date-fns'
+import DoneTag from '../general/DoneTag'
 
 interface DeliverableCardProps extends BoxProps {
   deliverable: Deliverable,
@@ -24,34 +25,44 @@ const DeliverableCard: React.FC<DeliverableCardProps> = (props) => {
   return (
     <InnerCard
       as="a"
-      href={`/projects/${props.projectSlug}/submissions/new/deliverable?deliverable_id=${deliverable.id}`}
+      href={!deliverable.done ? `/projects/${props.projectSlug}/submissions/new/deliverable?deliverable_id=${deliverable.id}` : undefined}
       transition="box-shadow 0.05s, background-color 0.1s"
-      _hover={{
+      _hover={!deliverable.done ? {
         backgroundColor: "brand.cardBackground",
         boxShadow: "-5px 5px 30px -20px"
-      }}
-      _active={{
+      } : undefined}
+      _active={!deliverable.done ? {
         boxShadow: "-5px 5px 20px -20px"
-      }}
+      } : undefined}
       onClick={(e) => {
         e.preventDefault()
-        router.push(`/projects/${props.projectSlug}/submissions/new/deliverable?deliverable_id=${deliverable.id}`)
+        if (!deliverable.done) {
+          router.push(`/projects/${props.projectSlug}/submissions/new/deliverable?deliverable_id=${deliverable.id}`)
+        }
       }}
       {...divProps}
     >
       <VStack alignItems="flex-start" spacing={1} h="full">
-        <Heading
-          size="sm"
-          fontFamily="body"
-          textAlign="left"
-        >
-          {deliverable.title}
-        </Heading>
-        <Text overflowWrap="anywhere">
+        <Wrap spacing={2}>
+          <WrapItem>
+            <Heading
+              size="sm"
+              fontFamily="body"
+              textAlign="left"
+              textDecor={deliverable.done ? "line-through" : undefined}
+            >
+              {deliverable.title}
+            </Heading>
+          </WrapItem>
+          <WrapItem>
+            <DoneTag status={deliverable.done} />
+          </WrapItem>
+        </Wrap>
+        <Text overflowWrap="anywhere" textDecor={deliverable.done ? "line-through" : undefined}>
           {deliverable.description}
         </Text>
         <Spacer />
-        <Text fontSize="sm" fontStyle="italic">
+        <Text fontSize="sm" fontStyle="italic" textDecor={deliverable.done ? "line-through" : undefined}>
           Deadline: {format(new Date(deliverable.deadline), 'MMM dd, yyyy')}
         </Text>
       </VStack>

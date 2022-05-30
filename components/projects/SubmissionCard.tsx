@@ -3,7 +3,7 @@ import { VStack, HStack, Avatar, Text, Tag, Button, Wrap, WrapItem, Box, Center,
 
 import Card from '../general/Card'
 
-import type { Profile, Submission, BudgetProposalSubmission, CapsuleProposalSubmission, FullBlownProposalSubmission, DeliverableSubmission, FileUpload, User, SubmissionTypes, SubmissionStatus, Project } from '@prisma/client'
+import type { Profile, Submission, BudgetProposalSubmission, CapsuleProposalSubmission, FullBlownProposalSubmission, DeliverableSubmission, FileUpload, User, SubmissionTypes, SubmissionStatus, Project, Deliverable } from '@prisma/client'
 
 import { format } from 'date-fns'
 
@@ -18,7 +18,9 @@ interface SubmissionCardProps extends BoxProps {
     };
     capsule_proposal_submission: CapsuleProposalSubmission;
     full_blown_proposal_submission: FullBlownProposalSubmission;
-    deliverable_submission: DeliverableSubmission;
+    deliverable_submission: DeliverableSubmission & {
+      deliverable: Deliverable;
+    };
     budget_proposal_submission: BudgetProposalSubmission;
     files: FileUpload[];
     project: Project;
@@ -38,7 +40,7 @@ const SubmissionCard: React.FC<SubmissionCardProps> = (props) => {
       case 'CAPSULE':
         return 'Capsule Proposal'
       case 'DELIVERABLE':
-        return 'Deliverable Submission'
+        return `Deliverable Submission for ${submission.deliverable_submission.deliverable.title}`
       case 'FULL':
         return 'Full-blown Proposal'
     }

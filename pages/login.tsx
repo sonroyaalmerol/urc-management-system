@@ -19,7 +19,7 @@ const Login: React.FC<LoginProps> = (props: InferGetServerSidePropsType<typeof g
         toast({
           position: 'bottom',
           title: 'Email not whitelisted!',
-          description: 'Despite having an official AdDU email, you must request for your email to be whitelisted for now.',
+          description: 'Profile not found! Ask an administrator to add your AdDU email to the system.',
           status: 'error',
           isClosable: true
         })
