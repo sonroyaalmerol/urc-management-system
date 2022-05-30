@@ -87,7 +87,7 @@ const MemoCard: React.FC<MemoCardProps> = (props) => {
         <Wrap align="center" spacing="2">
           <WrapItem>
             <SmallAvatar
-              {...props.memo.institute}
+              {...props.memo.profile}
             />
           </WrapItem>
           <WrapItem as="span">
