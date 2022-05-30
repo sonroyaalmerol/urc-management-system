@@ -2,7 +2,7 @@ import React from 'react'
 import { Center, Spinner, chakra } from '@chakra-ui/react'
 
 import MemoCard from './MemoCard'
-import type { InstituteNews, User, FileUpload, Institute } from '@prisma/client'
+import type { InstituteNews, User, FileUpload, Institute, Profile } from '@prisma/client'
 
 import InfiniteScroll from 'react-infinite-scroller'
 
@@ -12,7 +12,7 @@ interface MemoListProps {
 
 const MemoList: React.FC<MemoListProps> = (props) => {
   const [memos, setMemos] = React.useState<(InstituteNews & {
-    user: User;
+    profile: Profile;
     uploads: FileUpload[];
     institute: Institute;
   })[]>([])
