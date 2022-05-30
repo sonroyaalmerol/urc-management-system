@@ -87,6 +87,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
   const institute = await prisma.institute.create({
     data: {
       name: body.name,
+      short_name: body.short_name
     }
   })
 
