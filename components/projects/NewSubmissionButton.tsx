@@ -36,7 +36,7 @@ const NewSubmissionButton: React.FC<NewSubmissionButtonProps> = (props) => {
           href={`${process.env.NEXT_PUBLIC_BASE_URL}${props.capsuleUrl}`}
           onClick={(e) => {
             e.preventDefault()
-            router.push(`${process.env.NEXT_PUBLIC_BASE_URL}${props.capsuleUrl}`)
+            router.push(`${props.capsuleUrl}`)
           }}
         >
           Capsule Proposal
@@ -46,7 +46,7 @@ const NewSubmissionButton: React.FC<NewSubmissionButtonProps> = (props) => {
           href={`${process.env.NEXT_PUBLIC_BASE_URL}${props.fullBlownUrl}`}
           onClick={(e) => {
             e.preventDefault()
-            router.push(`${process.env.NEXT_PUBLIC_BASE_URL}${props.fullBlownUrl}`)
+            router.push(`${props.fullBlownUrl}`)
           }}
         >
           Full-blown Proposal
@@ -56,7 +56,7 @@ const NewSubmissionButton: React.FC<NewSubmissionButtonProps> = (props) => {
           href={`${process.env.NEXT_PUBLIC_BASE_URL}${props.budgetUrl}`}
           onClick={(e) => {
             e.preventDefault()
-            router.push(`${process.env.NEXT_PUBLIC_BASE_URL}${props.budgetUrl}`)
+            router.push(`${props.budgetUrl}`)
           }}
         >
           Budget Proposal

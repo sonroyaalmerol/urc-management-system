@@ -129,7 +129,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   if (!session) {
     return {
       redirect: {
-        destination: `${process.env.NEXT_PUBLIC_BASE_URL}/login?redirect=${context.req.url}`,
+        destination: `/login?redirect=${context.req.url}`,
         permanent: false,
       },
     }

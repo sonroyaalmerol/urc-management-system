@@ -37,7 +37,7 @@ const DeliverableCard: React.FC<DeliverableCardProps> = (props) => {
       onClick={(e) => {
         e.preventDefault()
         if (!deliverable.done) {
-          router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/${props.projectSlug}/submissions/new/deliverable?deliverable_id=${deliverable.id}`)
+          router.push(`/projects/${props.projectSlug}/submissions/new/deliverable?deliverable_id=${deliverable.id}`)
         }
       }}
       {...divProps}

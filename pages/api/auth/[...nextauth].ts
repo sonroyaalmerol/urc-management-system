@@ -2,7 +2,6 @@ import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { prisma } from "../../../lib/server/prisma"
-import { profile } from "console"
 
 export default NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -26,7 +25,7 @@ export default NextAuth({
     }),
   ],
   pages: {
-    signIn: '/login'
+    signIn: `${process.env.NEXT_PUBLIC_BASE_URL}/login`
   },
   callbacks: {
     async signIn({ account, profile }) {
@@ -41,7 +40,7 @@ export default NextAuth({
           return profile.email.endsWith("@addu.edu.ph")
         }
 
-        return '/login?error=invalid_email'
+        return `${process.env.NEXT_PUBLIC_BASE_URL}/login?error=invalid_email`
       }
       
       return true // Do different verification for other providers that don't have `email_verified`

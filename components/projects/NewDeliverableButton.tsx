@@ -47,7 +47,7 @@ const NewDeliverableButton: React.FC<NewDeliverableButtonProps> = (props) => {
     }).then((i) => i.json())
 
     if (res.success) {
-      router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/${props.projectSlug}?key=${uuid}`)
+      router.push(`/projects/${props.projectSlug}?key=${uuid}`)
       toast({
         title: 'Success!',
         description: 'Successfully added deliverable!',

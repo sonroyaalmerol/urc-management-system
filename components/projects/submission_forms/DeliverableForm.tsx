@@ -31,7 +31,7 @@ const DeliverableForm: React.FC<DeliverableFormProps> = (props) => {
     const res = await fetchWithFile(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/${props.projectId}`, { ...data, type: 'DELIVERABLE', deliverable_id: props.deliverable.id })
 
     if (res.success) {
-      router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/${props.projectSlug}`)
+      router.push(`/projects/${props.projectSlug}`)
       toast({
         title: 'Success!',
         description: `Successfully created Deliverable Submission!`,
@@ -49,10 +49,6 @@ const DeliverableForm: React.FC<DeliverableFormProps> = (props) => {
   };
 
   const { file } = watch()
-
-  React.useEffect(() => {
-    console.log(file)
-  }, [file])
 
   return (
     <VStack as="form" onSubmit={handleSubmit(onSubmit)} w="full" align="baseline" spacing={8}>

@@ -55,7 +55,7 @@ const Institute: React.FC<InstituteProps> = (props: InferGetServerSidePropsType<
                   icon={<AddIcon />}
                   padding={0}
                   onClick={() => {
-                    router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/institutes/${institute.id}/memo`)
+                    router.push(`/institutes/${institute.id}/memo`)
                   }}
                 />
               </WrapItem>
@@ -76,7 +76,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   if (!session) {
     return {
       redirect: {
-        destination: `${process.env.NEXT_PUBLIC_BASE_URL}/login?redirect=${context.req.url}`,
+        destination: `/login?redirect=${context.req.url}`,
         permanent: false,
       },
     }

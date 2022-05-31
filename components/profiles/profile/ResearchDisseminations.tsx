@@ -58,7 +58,7 @@ const ResearchDisseminations: React.FC<ComponentProps> = (props) => {
       loadMore={loadNewEntries}
       profileId={profile.id}
       onNew={() => {
-        router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/verifications/research_dissemination`)
+        router.push(`/verifications/research_dissemination`)
       }}
     >
       { entries.map((entry) => (

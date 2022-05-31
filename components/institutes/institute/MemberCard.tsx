@@ -69,7 +69,7 @@ const MemberCard: React.FC<MemberCardProps> = (props) => {
             src={`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/get/${profile.photo_id}`}
             onClick={(e) => {
               e.preventDefault()
-              router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/profiles/${profile.id}`)
+              router.push(`/profiles/${profile.id}`)
             }}
           />
           <VStack alignItems="flex-start" spacing={1}>

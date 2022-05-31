@@ -59,7 +59,7 @@ const ResearchPresentations: React.FC<ComponentProps> = (props) => {
       loadMore={loadNewEntries}
       profileId={profile.id}
       onNew={() => {
-        router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/verifications/research_presentation`)
+        router.push(`/verifications/research_presentation`)
       }}
     >
       { entries.map((entry) => (

@@ -38,10 +38,8 @@ const upload = async (req: NextApiRequest, res: NextApiResponse) => {
   const bufs: Buffer[] = []
   let buf: Buffer
   form.onPart = (part) => {
-    console.log('test')
     if (part.originalFilename === '' || !part.mimetype) {
       // let formidable handle all non-file parts
-      console.log('test')
       form._handlePart(part)
       return
     }

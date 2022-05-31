@@ -5,7 +5,10 @@ const nextConfig = {
   experimental: {
     reactRoot: true
   },
-  basePath: process.env.NEXT_PUBLIC_BASE_URL
+  basePath: process.env.NEXT_PUBLIC_BASE_URL,
+  env: {
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL
+  }
 }
 
 module.exports = nextConfig

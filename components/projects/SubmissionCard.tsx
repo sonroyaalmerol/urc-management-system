@@ -108,7 +108,7 @@ const SubmissionCard: React.FC<SubmissionCardProps> = (props) => {
       }}
       onClick={(e) => {
         e.preventDefault()
-        router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/${submission.project.slug}/submissions/${submission.id}`)
+        router.push(`/projects/${submission.project.slug}/submissions/${submission.id}`)
       }}
       {...divProps}
     >

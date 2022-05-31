@@ -73,7 +73,7 @@ const DashboardContentHeader: React.FC<DashboardContentHeaderProps> = (props) =>
                     href={`${process.env.NEXT_PUBLIC_BASE_URL}${crumb.href}`}
                     onClick={(e) => {
                       e.preventDefault()
-                      router.push(`${process.env.NEXT_PUBLIC_BASE_URL}${crumb.href}`)
+                      router.push(`${crumb.href}`)
                     }}
                   >{crumb.text}</BreadcrumbLink>
                 </BreadcrumbItem>

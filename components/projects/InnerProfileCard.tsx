@@ -36,7 +36,7 @@ const InnerProfileCard: React.FC<InnerProfileCardProps> = (props) => {
       }}
       onClick={(e) => {
         e.preventDefault()
-        router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/profiles/${profile.id}`)
+        router.push(`/profiles/${profile.id}`)
       }}
       {...divProps}
     >

@@ -47,7 +47,7 @@ const ProjectCard: React.FC<ProjectCardProps> = (props) => {
       }}
       onClick={(e) => {
         e.preventDefault()
-        router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/${project.slug}`)
+        router.push(`/projects/${project.slug}`)
       }}
       {...divProps}
     >

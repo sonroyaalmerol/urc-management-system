@@ -23,7 +23,7 @@ const NavigationAvatar: React.FC<NavigationAvatarProps> = (props) => {
           href={`${process.env.NEXT_PUBLIC_BASE_URL}/profiles/${session.profile.id}`}
           onClick={(e) => {
             e.preventDefault()
-            router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/profiles/${session.profile.id}`)
+            router.push(`/profiles/${session.profile.id}`)
           }}
           zIndex={5}
           size={props.avatarSize === 'small' ? 'lg' : '2xl'}
@@ -47,7 +47,7 @@ const NavigationAvatar: React.FC<NavigationAvatarProps> = (props) => {
         href={`${process.env.NEXT_PUBLIC_BASE_URL}/profiles/${session.profile.id}`}
         onClick={(e) => {
           e.preventDefault()
-          router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/profiles/${session.profile.id}`)
+          router.push(`/profiles/${session.profile.id}`)
         }}
         zIndex={5}
         size={'2xl'}

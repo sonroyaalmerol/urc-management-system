@@ -33,7 +33,7 @@ const InstituteCard: React.FC<InstituteCardProps> = (props) => {
       }}
       onClick={(e) => {
         e.preventDefault()
-        router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/institutes/${institute.id}`)
+        router.push(`/institutes/${institute.id}`)
       }}
       {...divProps}
     >

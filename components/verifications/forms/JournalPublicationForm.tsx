@@ -36,7 +36,7 @@ const JournalPublicationForm: React.FC<JournalPublicationFormProps> = (props) =>
         description: `Successfully created verification request!`,
         status: 'success'
       })
-      router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/verifications`)
+      router.push(`/verifications`)
     } else {
       toast({
         title: 'Error!',

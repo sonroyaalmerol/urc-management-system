@@ -44,7 +44,7 @@ const EditProjectTitleButton: React.FC<EditProjectTitleButtonProps> = (props) =>
     }).then((i) => i.json())
 
     if (res.success) {
-      router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/${res.data.slug}`)
+      router.push(`/projects/${res.data.slug}`)
       toast({
         title: 'Success!',
         description: 'Successfully updated project!',

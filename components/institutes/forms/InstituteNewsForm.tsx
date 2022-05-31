@@ -36,7 +36,7 @@ const InstituteNewsForm: React.FC<InstituteNewsFormProps> = (props) => {
         description: `Successfully created memo!`,
         status: 'success'
       })
-      router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/institutes/${props.institute.id}/memo`)
+      router.push(`/institutes/${props.institute.id}/memo`)
     } else {
       toast({
         title: 'Error!',

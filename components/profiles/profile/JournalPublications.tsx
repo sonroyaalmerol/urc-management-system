@@ -58,7 +58,7 @@ const JournalPublications: React.FC<ComponentProps> = (props) => {
       loadMore={loadNewEntries}
       profileId={profile.id}
       onNew={() => {
-        router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/verifications/journal_publication`)
+        router.push(`/verifications/journal_publication`)
       }}
     >
       { entries.map((entry) => (

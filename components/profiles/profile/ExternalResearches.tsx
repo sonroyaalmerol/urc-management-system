@@ -58,7 +58,7 @@ const ExternalResearches: React.FC<ComponentProps> = (props) => {
       loadMore={loadNewEntries}
       profileId={profile.id}
       onNew={() => {
-        router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/verifications/external_research`)
+        router.push(`/verifications/external_research`)
       }}
     >
       { entries.map((entry) => (

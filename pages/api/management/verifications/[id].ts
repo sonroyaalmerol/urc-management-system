@@ -28,8 +28,6 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
     }
   })
 
-  console.log(verificationRequest)
-
   switch (verificationRequest.type) {
     case 'BOOK_PUBLICATION':
       await prisma.$transaction([

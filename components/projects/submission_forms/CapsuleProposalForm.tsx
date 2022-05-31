@@ -29,7 +29,7 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
     const res = await fetchWithFile(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/${props.projectId}`, { ...data, type: 'CAPSULE' })
 
     if (res.success) {
-      router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/${props.projectSlug}`)
+      router.push(`/projects/${props.projectSlug}`)
       toast({
         title: 'Success!',
         description: `Successfully created Capsule Proposal!`,

@@ -44,7 +44,7 @@ const InternalProjects: React.FC<ComponentProps> = (props) => {
       hasMore={entries.length < count}
       loadMore={loadNewEntries}
       onNew={() => {
-        router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/projects`)
+        router.push(`/projects`)
       }}
       profileId={profile.id}
     >

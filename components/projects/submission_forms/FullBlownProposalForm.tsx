@@ -29,7 +29,7 @@ const FullBlownProposalForm: React.FC<FullBlownProposalFormProps> = (props) => {
     const res = await fetchWithFile(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/${props.projectId}`, { ...data, type: 'FULL' })
 
     if (res.success) {
-      router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/${props.projectSlug}`)
+      router.push(`/projects/${props.projectSlug}`)
       toast({
         title: 'Success!',
         description: `Successfully created Full-blown Proposal!`,
@@ -47,10 +47,6 @@ const FullBlownProposalForm: React.FC<FullBlownProposalFormProps> = (props) => {
   };
 
   const { file } = watch()
-
-  React.useEffect(() => {
-    console.log(file)
-  }, [file])
 
   return (
     <VStack as="form" onSubmit={handleSubmit(onSubmit)} w="full" align="baseline" spacing={8}>

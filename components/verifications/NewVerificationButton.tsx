@@ -39,7 +39,7 @@ const NewVerificationButton: React.FC = (props) => {
           href={`${process.env.NEXT_PUBLIC_BASE_URL}${URLs.externalResearchUrl}`}
           onClick={(e) => {
             e.preventDefault()
-            router.push(`${process.env.NEXT_PUBLIC_BASE_URL}${URLs.externalResearchUrl}`)
+            router.push(`${URLs.externalResearchUrl}`)
           }}
         >
           External Research
@@ -49,7 +49,7 @@ const NewVerificationButton: React.FC = (props) => {
           href={`${process.env.NEXT_PUBLIC_BASE_URL}${URLs.journalPublicationUrl}`}
           onClick={(e) => {
             e.preventDefault()
-            router.push(`${process.env.NEXT_PUBLIC_BASE_URL}${URLs.journalPublicationUrl}`)
+            router.push(`${URLs.journalPublicationUrl}`)
           }}
         >
           Journal Publication
@@ -59,7 +59,7 @@ const NewVerificationButton: React.FC = (props) => {
           href={`${process.env.NEXT_PUBLIC_BASE_URL}${URLs.bookPublicationUrl}`}
           onClick={(e) => {
             e.preventDefault()
-            router.push(`${process.env.NEXT_PUBLIC_BASE_URL}${URLs.bookPublicationUrl}`)
+            router.push(`${URLs.bookPublicationUrl}`)
           }}
         >
           Book Publication
@@ -69,7 +69,7 @@ const NewVerificationButton: React.FC = (props) => {
           href={`${process.env.NEXT_PUBLIC_BASE_URL}${URLs.researchDisseminationUrl}`}
           onClick={(e) => {
             e.preventDefault()
-            router.push(`${process.env.NEXT_PUBLIC_BASE_URL}${URLs.researchDisseminationUrl}`)
+            router.push(`${URLs.researchDisseminationUrl}`)
           }}
         >
           Research Dissemination
@@ -79,7 +79,7 @@ const NewVerificationButton: React.FC = (props) => {
           href={`${process.env.NEXT_PUBLIC_BASE_URL}${URLs.researchPresentationUrl}`}
           onClick={(e) => {
             e.preventDefault()
-            router.push(`${process.env.NEXT_PUBLIC_BASE_URL}${URLs.researchPresentationUrl}`)
+            router.push(`${URLs.researchPresentationUrl}`)
           }}
         >
           Research Presentation
@@ -89,7 +89,7 @@ const NewVerificationButton: React.FC = (props) => {
           href={`${process.env.NEXT_PUBLIC_BASE_URL}${URLs.researchEventUrl}`}
           onClick={(e) => {
             e.preventDefault()
-            router.push(`${process.env.NEXT_PUBLIC_BASE_URL}${URLs.researchEventUrl}`)
+            router.push(`${URLs.researchEventUrl}`)
           }}
         >
           Research Event
