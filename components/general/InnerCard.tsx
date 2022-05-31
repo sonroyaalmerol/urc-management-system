@@ -15,7 +15,7 @@ const InnerCard: React.FC<InnerCardProps> = (props) => {
   return (
     <Box
       as={props.href ? "a" : props.onClick ? "button" : undefined}
-      href={`${process.env.NEXT_PUBLIC_BASE_URL}${props.href}`}
+      href={`${props.href}`}
       onClick={props.href ? (e) => {
         e.preventDefault()
         router.push(`${props.href}`)
