@@ -40,7 +40,7 @@ const InnerInstituteCard: React.FC<InnerInstituteCardProps> = (props) => {
       {...divProps}
     >
       <HStack spacing={4} alignItems="flex-start">
-        <Avatar src={`/api/files/get/${institute.photo_id}`} />
+        <Avatar src={`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/get/${institute.photo_id}`} />
         <VStack alignItems="flex-start" spacing={1}>
           <Heading
             size="sm"

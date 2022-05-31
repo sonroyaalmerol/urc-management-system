@@ -109,7 +109,7 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
       <Container zIndex={5} padding={0} w="300px">
         <Center padding="1.5rem" marginBottom='2rem'>
           <VStack spacing={8} color="white">
-            <chakra.img zIndex={5} src="/urc_header.png"></chakra.img>
+            <chakra.img zIndex={5} src={`${process.env.NEXT_PUBLIC_BASE_URL}/urc_header.png`}></chakra.img>
             <NavigationAvatar avatarSize="small" />
           </VStack>
         </Center>

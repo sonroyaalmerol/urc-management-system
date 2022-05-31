@@ -12,7 +12,7 @@ const Error: NextPage<ErrorProps> = ({ statusCode }) => {
   return (
     <Center marginTop="2rem">
       <VStack>
-				<Image src="/error.png" alt="Error Sign" width={200} height={200} />
+				<Image src={`${process.env.NEXT_PUBLIC_BASE_URL}/error.png`} alt="Error Sign" width={200} height={200} />
 
         <Heading
           as="span"

@@ -11,7 +11,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   if (!session) {
     return {
       redirect: {
-        destination: `/login`,
+        destination: `${process.env.NEXT_PUBLIC_BASE_URL}/login`,
         permanent: false,
       },
     }
@@ -19,7 +19,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   return {
     redirect: {
-      destination: context.query.redirect ?? '/dashboard',
+      destination: `${process.env.NEXT_PUBLIC_BASE_URL}${context.query.redirect ?? '/dashboard'}`,
       permanent: false
     }
   }

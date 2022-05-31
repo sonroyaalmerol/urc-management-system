@@ -35,7 +35,7 @@ const Login: React.FC<LoginProps> = (props: InferGetServerSidePropsType<typeof g
       <Center h="100vh">
         <VStack spacing={12}>
           <VStack spacing={0}>
-            <chakra.img src="/urc_header_blue.png" w={{ base: '80vw', md: '40vw' }} />
+            <chakra.img src={`${process.env.NEXT_PUBLIC_BASE_URL}/urc_header_blue.png`} w={{ base: '80vw', md: '40vw' }} />
             <Text fontSize="md" color="brand.blue">Management System for Council and Researchers</Text>
           </VStack>
           <VStack spacing={2}>
@@ -73,7 +73,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   if (session) {
     return {
       redirect: {
-        destination: query.redirect ?? '/dashboard',
+        destination: `${process.env.NEXT_PUBLIC_BASE_URL}${context.query.redirect ?? '/dashboard'}`,
         permanent: false
       }
     }
