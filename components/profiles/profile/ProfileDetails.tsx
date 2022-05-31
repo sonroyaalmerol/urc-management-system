@@ -15,6 +15,7 @@ import { useSession } from 'next-auth/react'
 import type { Profile } from '@prisma/client'
 import IconButton from '../../general/IconButton'
 import { CheckIcon, EditIcon } from '@chakra-ui/icons'
+import UnitsSection from './UnitsSection'
 
 const ProfileDetails: React.FC<ComponentProps> = (props) => {
   const profile = props.profile
@@ -242,6 +243,9 @@ const ProfileDetails: React.FC<ComponentProps> = (props) => {
             </WrapItem>
             <WrapItem>
               <RolesSection profile={profile} />
+            </WrapItem>
+            <WrapItem>
+              <UnitsSection profile={profile} />
             </WrapItem>
           </Wrap>
         </VStack>
