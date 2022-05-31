@@ -22,7 +22,7 @@ const MemoList: React.FC<MemoListProps> = (props) => {
 
   const loadNewEntries = async () => {
     const newMemos = await fetch(
-      `/api/management/news?${memos.length > 0 ? `&cursor=${memos[memos.length - 1].id}` : ''}${props.institute ? `&institute=${props.institute.id}` : ''}`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/management/news?${memos.length > 0 ? `&cursor=${memos[memos.length - 1].id}` : ''}${props.institute ? `&institute=${props.institute.id}` : ''}`
     ).then(res => res.json())
     setCount(newMemos?.totalCount ?? 0)
 

@@ -55,7 +55,7 @@ const Institute: React.FC<InstituteProps> = (props: InferGetServerSidePropsType<
                   icon={<AddIcon />}
                   padding={0}
                   onClick={() => {
-                    router.push(`/institutes/${institute.id}/memo`)
+                    router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/institutes/${institute.id}/memo`)
                   }}
                 />
               </WrapItem>

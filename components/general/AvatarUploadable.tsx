@@ -33,9 +33,9 @@ const AvatarUploadable: React.FC<AvatarUploadable> = (props) => {
     setSubmitting(true)
     let res = null
     if ('profileId' in props) {
-      res = await fetchWithFile(`/api/management/profiles/${props.profileId}/avatar`, { avatar: files })
+      res = await fetchWithFile(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/profiles/${props.profileId}/avatar`, { avatar: files })
     } else if ('instituteId' in props) {
-      res = await fetchWithFile(`/api/management/institutes/${props.instituteId}/avatar`, { avatar: files })
+      res = await fetchWithFile(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/institutes/${props.instituteId}/avatar`, { avatar: files })
     }
 
     if (res) {
@@ -62,7 +62,7 @@ const AvatarUploadable: React.FC<AvatarUploadable> = (props) => {
       borderRadius="full"
       overflow="hidden"
     >
-      <Avatar src={`/api/files/get/${photoId}`} {...divProps} />
+      <Avatar src={`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/get/${photoId}`} {...divProps} />
       { !props.disabled && (
         <>
           <input

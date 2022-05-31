@@ -26,7 +26,7 @@ const InstituteDetails: React.FC<ComponentProps> = (props) => {
   const onSubmit: SubmitHandler<Partial<Institute>> = async data => {
     setSubmitting(true)
 
-    const res = await fetch(`/api/management/institutes/${institute.id}`, { 
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/institutes/${institute.id}`, { 
       method: 'POST',
       body: JSON.stringify(data)
     }).then((i) => i.json())

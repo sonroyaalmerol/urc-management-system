@@ -34,7 +34,13 @@ const menus = [
     name: 'Settings',
     url: '/settings',
   }
-]
+].map((menu) => {
+  const url = process.env.NEXT_PUBLIC_BASE_URL.split('/')
+  return {
+    name: menu.name,
+    url: `${!url[url.length - 1].includes('localhost') ? url[url.length - 1] : ''}${menu.url}`
+  }
+})
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = (props) => {
   const { status } = useSession()

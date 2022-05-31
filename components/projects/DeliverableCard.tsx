@@ -25,7 +25,7 @@ const DeliverableCard: React.FC<DeliverableCardProps> = (props) => {
   return (
     <InnerCard
       as="a"
-      href={!deliverable.done ? `/projects/${props.projectSlug}/submissions/new/deliverable?deliverable_id=${deliverable.id}` : undefined}
+      href={!deliverable.done ? `${process.env.NEXT_PUBLIC_BASE_URL}/projects/${props.projectSlug}/submissions/new/deliverable?deliverable_id=${deliverable.id}` : undefined}
       transition="box-shadow 0.05s, background-color 0.1s"
       _hover={!deliverable.done ? {
         backgroundColor: "brand.cardBackground",
@@ -37,7 +37,7 @@ const DeliverableCard: React.FC<DeliverableCardProps> = (props) => {
       onClick={(e) => {
         e.preventDefault()
         if (!deliverable.done) {
-          router.push(`/projects/${props.projectSlug}/submissions/new/deliverable?deliverable_id=${deliverable.id}`)
+          router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/${props.projectSlug}/submissions/new/deliverable?deliverable_id=${deliverable.id}`)
         }
       }}
       {...divProps}

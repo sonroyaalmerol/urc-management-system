@@ -47,7 +47,7 @@ const AddProponentButton: React.FC<AddProponentButtonProps> = (props) => {
   const onSubmit: SubmitHandler<FormFields> = async data => {
     setSubmitting(true)
 
-    const res = await fetch(`/api/management/projects`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects`, {
       method: 'POST',
       body: JSON.stringify({ ...data, mode: 'add-proponent', id: props.projectId })
     }).then((i) => i.json())
@@ -89,7 +89,7 @@ const AddProponentButton: React.FC<AddProponentButtonProps> = (props) => {
               <VStack w="full" align="baseline" spacing={1}>
                 <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Proponent Email</Text>
                 <AutoCompleteInput
-                  api="/api/management/profiles"
+                  api={`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/profiles`}
                   name="email"
                   primaryDisplayName="first_name"
                   secondaryDisplayName="last_name"

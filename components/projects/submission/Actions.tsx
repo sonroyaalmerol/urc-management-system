@@ -31,7 +31,7 @@ const Actions: React.FC<ActionsProps> = (props) => {
 
   const doAction = async (approved: boolean) => {
     setSubmitting(true)
-    const res: { success: boolean, data: Submission } | { error: string } = await fetch(`/api/management/submissions/${props.submission.id}/actions`, {
+    const res: { success: boolean, data: Submission } | { error: string } = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/submissions/${props.submission.id}/actions`, {
       method: 'POST',
       body: JSON.stringify({ approved })
     }).then((i) => i.json())

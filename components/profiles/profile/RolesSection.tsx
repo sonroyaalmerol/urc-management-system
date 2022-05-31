@@ -29,13 +29,13 @@ const RolesSection: React.FC<RolesSection> = (props) => {
 
   const getRoles = async () => {
     setRolesLoading(true)
-    const res = await fetch(`/api/management/roles`).then(res => res.json())
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/roles`).then(res => res.json())
     setRoles(res.data)
   }
 
   const addRole = async (role: UserRole) => {
     setRoleAdding(true)
-    const res = await fetch(`/api/management/profiles/${profile.id}/roles`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/profiles/${profile.id}/roles`, {
       method: 'POST',
       body: JSON.stringify({ id: role.id })
     }).then(res => res.json())
@@ -47,7 +47,7 @@ const RolesSection: React.FC<RolesSection> = (props) => {
 
   const removeRole = async (role: UserRole) => {
     setRoleAdding(true)
-    const res = await fetch(`/api/management/profiles/${profile.id}/roles`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/profiles/${profile.id}/roles`, {
       method: 'DELETE',
       body: JSON.stringify({ id: role.id })
     }).then(res => res.json())

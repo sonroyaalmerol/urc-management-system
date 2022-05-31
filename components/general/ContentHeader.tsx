@@ -70,10 +70,10 @@ const DashboardContentHeader: React.FC<DashboardContentHeaderProps> = (props) =>
               {breadcrumbs.map((crumb, idx) => (
                 <BreadcrumbItem key={`crumb-${idx}`}>
                   <BreadcrumbLink
-                    href={crumb.href}
+                    href={`${process.env.NEXT_PUBLIC_BASE_URL}${crumb.href}`}
                     onClick={(e) => {
                       e.preventDefault()
-                      router.push(crumb.href)
+                      router.push(`${process.env.NEXT_PUBLIC_BASE_URL}${crumb.href}`)
                     }}
                   >{crumb.text}</BreadcrumbLink>
                 </BreadcrumbItem>

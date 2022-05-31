@@ -34,7 +34,7 @@ const FileDetails: React.ForwardRefRenderFunction<HTMLDivElement, FileDetailsPro
       _active={props.isViewable ? {
         bgColor: "brand.cardBackgroundActive"
       } : undefined}
-      href={props.isViewable && "id" in file ? `/api/files/get/${file.id}` : undefined}
+      href={props.isViewable && "id" in file ? `${process.env.NEXT_PUBLIC_BASE_URL}/api/files/get/${file.id}` : undefined}
       target={props.isViewable ? "_blank" : undefined}
       {...divProps}
     >

@@ -28,7 +28,7 @@ const InstituteNewsForm: React.FC<InstituteNewsFormProps> = (props) => {
 
   const onSubmit: SubmitHandler<Partial<ExternalResearch> & Partial<VerificationRequest> & { upload_files: FileList }> = async data => {
     setSubmitting(true)
-    const res = await fetchWithFile(`/api/management/verifications/institute_news`, {...data, institute_id: props.institute.id})
+    const res = await fetchWithFile(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/verifications/institute_news`, {...data, institute_id: props.institute.id})
 
     if (res.success) {
       toast({
@@ -36,7 +36,7 @@ const InstituteNewsForm: React.FC<InstituteNewsFormProps> = (props) => {
         description: `Successfully created memo!`,
         status: 'success'
       })
-      router.push(`/institutes/${props.institute.id}/memo`)
+      router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/institutes/${props.institute.id}/memo`)
     } else {
       toast({
         title: 'Error!',

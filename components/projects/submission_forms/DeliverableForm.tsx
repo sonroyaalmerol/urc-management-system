@@ -28,10 +28,10 @@ const DeliverableForm: React.FC<DeliverableFormProps> = (props) => {
 
   const onSubmit: SubmitHandler<Partial<Submission & DeliverableSubmission>> = async data => {
     setSubmitting(true)
-    const res = await fetchWithFile(`/api/management/projects/${props.projectId}`, { ...data, type: 'DELIVERABLE', deliverable_id: props.deliverable.id })
+    const res = await fetchWithFile(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/${props.projectId}`, { ...data, type: 'DELIVERABLE', deliverable_id: props.deliverable.id })
 
     if (res.success) {
-      router.push(`/projects/${props.projectSlug}`)
+      router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/${props.projectSlug}`)
       toast({
         title: 'Success!',
         description: `Successfully created Deliverable Submission!`,

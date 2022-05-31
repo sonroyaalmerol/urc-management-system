@@ -47,7 +47,7 @@ const AssignInstituteButton: React.FC<AssignInstituteButtonProps> = (props) => {
   const onSubmit: SubmitHandler<FormFields> = async data => {
     setSubmitting(true)
 
-    const res = await fetch(`/api/management/verifications/project_institute`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/verifications/project_institute`, {
       method: 'POST',
       body: JSON.stringify({ ...data, project_id: props.projectId })
     }).then((i) => i.json())
@@ -91,7 +91,7 @@ const AssignInstituteButton: React.FC<AssignInstituteButtonProps> = (props) => {
               <VStack w="full" align="baseline" spacing={1}>
                 <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Institute/Center</Text>
                 <AutoCompleteInput
-                  api="/api/management/institutes"
+                  api={`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/institutes`}
                   name="name"
                   primaryDisplayName="short_name"
                   formSetValue={setValue}

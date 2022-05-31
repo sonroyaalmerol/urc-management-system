@@ -36,7 +36,7 @@ const MemberCard: React.FC<MemberCardProps> = (props) => {
   const key = useUUID()
 
   const onDelete = async data => {
-    const res = await fetch(`/api/management/institutes/${props.institute.id}/members`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/institutes/${props.institute.id}/members`, {
       method: 'DELETE',
       body: JSON.stringify(data)
     }).then((i) => i.json())
@@ -65,11 +65,11 @@ const MemberCard: React.FC<MemberCardProps> = (props) => {
         <HStack spacing={4} alignItems="flex-start">
           <Avatar
             as="a"
-            href={`/profiles/${profile.id}`}
-            src={`/api/files/get/${profile.photo_id}`}
+            href={`${process.env.NEXT_PUBLIC_BASE_URL}/profiles/${profile.id}`}
+            src={`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/get/${profile.photo_id}`}
             onClick={(e) => {
               e.preventDefault()
-              router.push(`/profiles/${profile.id}`)
+              router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/profiles/${profile.id}`)
             }}
           />
           <VStack alignItems="flex-start" spacing={1}>

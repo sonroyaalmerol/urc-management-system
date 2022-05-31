@@ -24,7 +24,7 @@ const InnerInstituteCard: React.FC<InnerInstituteCardProps> = (props) => {
   return (
     <InnerCard
       as="a"
-      href={`/institutes/${institute.id}`}
+      href={`${process.env.NEXT_PUBLIC_BASE_URL}/institutes/${institute.id}`}
       transition="box-shadow 0.05s, background-color 0.1s"
       _hover={{
         backgroundColor: "brand.cardBackground",
@@ -35,7 +35,7 @@ const InnerInstituteCard: React.FC<InnerInstituteCardProps> = (props) => {
       }}
       onClick={(e) => {
         e.preventDefault()
-        router.push(`/institutes/${institute.id}`)
+        router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/institutes/${institute.id}`)
       }}
       {...divProps}
     >

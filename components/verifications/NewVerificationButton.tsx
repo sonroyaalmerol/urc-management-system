@@ -36,60 +36,60 @@ const NewVerificationButton: React.FC = (props) => {
       <MenuList>
         <MenuItem
           as="a"
-          href={URLs.externalResearchUrl}
+          href={`${process.env.NEXT_PUBLIC_BASE_URL}${URLs.externalResearchUrl}`}
           onClick={(e) => {
             e.preventDefault()
-            router.push(URLs.externalResearchUrl)
+            router.push(`${process.env.NEXT_PUBLIC_BASE_URL}${URLs.externalResearchUrl}`)
           }}
         >
           External Research
         </MenuItem>
         <MenuItem
           as="a"
-          href={URLs.journalPublicationUrl}
+          href={`${process.env.NEXT_PUBLIC_BASE_URL}${URLs.journalPublicationUrl}`}
           onClick={(e) => {
             e.preventDefault()
-            router.push(URLs.journalPublicationUrl)
+            router.push(`${process.env.NEXT_PUBLIC_BASE_URL}${URLs.journalPublicationUrl}`)
           }}
         >
           Journal Publication
         </MenuItem>
         <MenuItem
           as="a"
-          href={URLs.bookPublicationUrl}
+          href={`${process.env.NEXT_PUBLIC_BASE_URL}${URLs.bookPublicationUrl}`}
           onClick={(e) => {
             e.preventDefault()
-            router.push(URLs.bookPublicationUrl)
+            router.push(`${process.env.NEXT_PUBLIC_BASE_URL}${URLs.bookPublicationUrl}`)
           }}
         >
           Book Publication
         </MenuItem>
         <MenuItem
           as="a"
-          href={URLs.researchDisseminationUrl}
+          href={`${process.env.NEXT_PUBLIC_BASE_URL}${URLs.researchDisseminationUrl}`}
           onClick={(e) => {
             e.preventDefault()
-            router.push(URLs.researchDisseminationUrl)
+            router.push(`${process.env.NEXT_PUBLIC_BASE_URL}${URLs.researchDisseminationUrl}`)
           }}
         >
           Research Dissemination
         </MenuItem>
         <MenuItem
           as="a"
-          href={URLs.researchPresentationUrl}
+          href={`${process.env.NEXT_PUBLIC_BASE_URL}${URLs.researchPresentationUrl}`}
           onClick={(e) => {
             e.preventDefault()
-            router.push(URLs.researchPresentationUrl)
+            router.push(`${process.env.NEXT_PUBLIC_BASE_URL}${URLs.researchPresentationUrl}`)
           }}
         >
           Research Presentation
         </MenuItem>
         <MenuItem
           as="a"
-          href={URLs.researchEventUrl}
+          href={`${process.env.NEXT_PUBLIC_BASE_URL}${URLs.researchEventUrl}`}
           onClick={(e) => {
             e.preventDefault()
-            router.push(URLs.researchEventUrl)
+            router.push(`${process.env.NEXT_PUBLIC_BASE_URL}${URLs.researchEventUrl}`)
           }}
         >
           Research Event

@@ -26,10 +26,10 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
   const onSubmit: SubmitHandler<Partial<Submission & CapsuleProposalSubmission>> = async data => {
     setValue('type', 'CAPSULE')
     setSubmitting(true)
-    const res = await fetchWithFile(`/api/management/projects/${props.projectId}`, { ...data, type: 'CAPSULE' })
+    const res = await fetchWithFile(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/${props.projectId}`, { ...data, type: 'CAPSULE' })
 
     if (res.success) {
-      router.push(`/projects/${props.projectSlug}`)
+      router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/${props.projectSlug}`)
       toast({
         title: 'Success!',
         description: `Successfully created Capsule Proposal!`,

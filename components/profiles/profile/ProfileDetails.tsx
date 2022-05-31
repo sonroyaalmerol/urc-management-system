@@ -30,7 +30,7 @@ const ProfileDetails: React.FC<ComponentProps> = (props) => {
   const onSubmit: SubmitHandler<Partial<Profile>> = async data => {
     setSubmitting(true)
 
-    const res = await fetch(`/api/management/profiles/${profile.id}`, { 
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/profiles/${profile.id}`, { 
       method: 'POST',
       body: JSON.stringify(data)
     }).then((i) => i.json())

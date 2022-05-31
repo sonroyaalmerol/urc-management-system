@@ -101,7 +101,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                       <Button
                         as="a"
                         key={`top-${menu.url}`}
-                        href={menu.url}
+                        href={`${menu.url}`}
                         onClick={(e) => {
                           e.preventDefault()
                           changeMenu(menu)
@@ -134,7 +134,7 @@ const Navbar: React.FC<NavbarProps> = (props) => {
                   minW={0}>
                   <Avatar
                     size={'sm'}
-                    src={`/api/files/get/${session.profile.photo_id}`}
+                    src={`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/get/${session.profile.photo_id}`}
                   />
                 </MenuButton>
                 <MenuList alignItems={'center'}>

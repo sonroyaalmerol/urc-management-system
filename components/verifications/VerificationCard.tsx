@@ -32,7 +32,7 @@ const VerificationCard: React.FC<VerificationCardProps> = (props) => {
   const setVerified = async (verified: boolean) => {
     setLoading(true)
 
-    const res = await fetch(`/api/management/verifications/${request.id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/verifications/${request.id}`, {
       method: 'POST',
       body: JSON.stringify({ verified })
     }).then((i) => i.json())
@@ -222,12 +222,12 @@ const VerificationCard: React.FC<VerificationCardProps> = (props) => {
           ) }
         </Wrap>
         <HStack spacing={4}>
-          <Avatar src={`/api/files/get/${request.profile.photo_id}`} size="sm" />
+          <Avatar src={`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/get/${request.profile.photo_id}`} size="sm" />
           <Text 
             as='a'
             fontWeight="bold" 
             fontSize="xs"
-            href={`/profiles/${request.profile.id}`}
+            href={`${process.env.NEXT_PUBLIC_BASE_URL}/profiles/${request.profile.id}`}
             target='_blank'
           >
             {request.profile.first_name} {request.profile.last_name}

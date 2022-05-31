@@ -22,7 +22,7 @@ const DeliverableList: React.FC<DeliverableListProps> = (props) => {
 
   const loadNewEntries = async (args?: { reset: Boolean }) => {
     const newEntries = await fetch(
-      `/api/management/projects/${props.project.id}/deliverables?${entries.length > 0 && !args.reset ? `&cursor=${entries[entries.length - 1].id}` : ''}`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/${props.project.id}/deliverables?${entries.length > 0 && !args.reset ? `&cursor=${entries[entries.length - 1].id}` : ''}`
     ).then(res => res.json())
     setCount(newEntries?.totalCount ?? 0)
     

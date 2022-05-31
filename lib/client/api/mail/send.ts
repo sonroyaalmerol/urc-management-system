@@ -1,7 +1,7 @@
 import type { gmail_v1 } from "googleapis";
 
 const sendMail = async data => {
-  const response = await fetch("/api/mail/send", {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/mail/send`, {
       method: "POST",
       body: JSON.stringify(data),
   })

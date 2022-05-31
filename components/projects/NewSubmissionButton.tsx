@@ -33,30 +33,30 @@ const NewSubmissionButton: React.FC<NewSubmissionButtonProps> = (props) => {
       <MenuList>
         <MenuItem
           as="a"
-          href={props.capsuleUrl}
+          href={`${process.env.NEXT_PUBLIC_BASE_URL}${props.capsuleUrl}`}
           onClick={(e) => {
             e.preventDefault()
-            router.push(props.capsuleUrl)
+            router.push(`${process.env.NEXT_PUBLIC_BASE_URL}${props.capsuleUrl}`)
           }}
         >
           Capsule Proposal
         </MenuItem>
         <MenuItem
           as="a"
-          href={props.fullBlownUrl}
+          href={`${process.env.NEXT_PUBLIC_BASE_URL}${props.fullBlownUrl}`}
           onClick={(e) => {
             e.preventDefault()
-            router.push(props.fullBlownUrl)
+            router.push(`${process.env.NEXT_PUBLIC_BASE_URL}${props.fullBlownUrl}`)
           }}
         >
           Full-blown Proposal
         </MenuItem>
         <MenuItem
           as="a"
-          href={props.budgetUrl}
+          href={`${process.env.NEXT_PUBLIC_BASE_URL}${props.budgetUrl}`}
           onClick={(e) => {
             e.preventDefault()
-            router.push(props.budgetUrl)
+            router.push(`${process.env.NEXT_PUBLIC_BASE_URL}${props.budgetUrl}`)
           }}
         >
           Budget Proposal

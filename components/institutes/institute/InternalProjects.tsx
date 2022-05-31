@@ -16,7 +16,7 @@ const InternalProjects: React.FC<ComponentProps> = (props) => {
 
   const loadNewEntries = async (args?: { reset: Boolean }) => {
     const newEntries = await fetch(
-      `/api/management/institutes/${institute.id}/projects?${entries.length > 0 && !args?.reset ? `&cursor=${entries[entries.length - 1].id}` : ''}`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/management/institutes/${institute.id}/projects?${entries.length > 0 && !args?.reset ? `&cursor=${entries[entries.length - 1].id}` : ''}`
     ).then(res => res.json())
     setCount(newEntries?.totalCount ?? 0)
     
@@ -44,14 +44,14 @@ const InternalProjects: React.FC<ComponentProps> = (props) => {
       hasMore={entries.length < count}
       loadMore={loadNewEntries}
       onNew={() => {
-        router.push(`/projects`)
+        router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/projects`)
       }}
     >
       { entries.map((entry) => (
         <CardTemplate
           key={entry.id}
           entry={entry}
-          href={`/projects/${entry.slug}`}
+          href={`${process.env.NEXT_PUBLIC_BASE_URL}/projects/${entry.slug}`}
         />
       )) }
     </ListTemplate>

@@ -22,7 +22,7 @@ const InstituteCard: React.FC<InstituteCardProps> = (props) => {
   return (
     <Card
       as="a"
-      href={`/institutes/${institute.id}`}
+      href={`${process.env.NEXT_PUBLIC_BASE_URL}/institutes/${institute.id}`}
       transition="box-shadow 0.05s, background-color 0.1s"
       _hover={{
         backgroundColor: "brand.cardBackground",
@@ -33,12 +33,12 @@ const InstituteCard: React.FC<InstituteCardProps> = (props) => {
       }}
       onClick={(e) => {
         e.preventDefault()
-        router.push(`/institutes/${institute.id}`)
+        router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/institutes/${institute.id}`)
       }}
       {...divProps}
     >
       <HStack spacing={4} alignItems="flex-start">
-        <Avatar src={`/api/files/get/${institute.photo_id}`} />
+        <Avatar src={`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/get/${institute.photo_id}`} />
         <VStack alignItems="flex-start" spacing={1}>
           <Heading
             size="sm"

@@ -20,15 +20,15 @@ const NavigationAvatar: React.FC<NavigationAvatarProps> = (props) => {
       <HStack spacing={4} {...divProps}>
         <Avatar
           as="a"
-          href={`/profiles/${session.profile.id}`}
+          href={`${process.env.NEXT_PUBLIC_BASE_URL}/profiles/${session.profile.id}`}
           onClick={(e) => {
             e.preventDefault()
-            router.push(`/profiles/${session.profile.id}`)
+            router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/profiles/${session.profile.id}`)
           }}
           zIndex={5}
           size={props.avatarSize === 'small' ? 'lg' : '2xl'}
           name={`${session.profile.first_name} ${session.profile.middle_initial} ${session.profile.last_name}`}
-          src={`/api/files/get/${session.profile.photo_id}`}
+          src={`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/get/${session.profile.photo_id}`}
         />
         <VStack spacing={1}>
           <VStack spacing={0}>
@@ -44,15 +44,15 @@ const NavigationAvatar: React.FC<NavigationAvatarProps> = (props) => {
     <VStack spacing={4} {...divProps}>
       <Avatar
         as="a"
-        href={`/profiles/${session.profile.id}`}
+        href={`${process.env.NEXT_PUBLIC_BASE_URL}/profiles/${session.profile.id}`}
         onClick={(e) => {
           e.preventDefault()
-          router.push(`/profiles/${session.profile.id}`)
+          router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/profiles/${session.profile.id}`)
         }}
         zIndex={5}
         size={'2xl'}
         name={`${session.profile.first_name} ${session.profile.middle_initial} ${session.profile.last_name}`}
-        src={`/api/files/get/${session.profile.photo_id}`}
+        src={`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/get/${session.profile.photo_id}`}
       />
       <VStack spacing={0}>
         <Text zIndex={5} fontWeight="bold">{session.profile.first_name} {session.profile.middle_initial} {session.profile.last_name}</Text>

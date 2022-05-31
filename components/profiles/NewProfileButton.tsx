@@ -32,7 +32,7 @@ const NewProfileButton: React.FC<NewProfileButtonProps> = (props) => {
 
   const onSubmit: SubmitHandler<Partial<Profile>> = async data => {
     setSubmitting(true)
-    const res = await fetch(`/api/management/profiles`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/profiles`, {
       method: 'POST',
       body: JSON.stringify(data)
     }).then((i) => i.json())

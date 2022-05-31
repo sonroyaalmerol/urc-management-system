@@ -38,13 +38,13 @@ const EditProjectTitleButton: React.FC<EditProjectTitleButtonProps> = (props) =>
 
   const onSubmit: SubmitHandler<Partial<Project>> = async data => {
     setSubmitting(true)
-    const res = await fetch(`/api/management/projects`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects`, {
       method: 'POST',
       body: JSON.stringify({...data, mode: 'update', id: props.projectId})
     }).then((i) => i.json())
 
     if (res.success) {
-      router.push(`/projects/${res.data.slug}`)
+      router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/${res.data.slug}`)
       toast({
         title: 'Success!',
         description: 'Successfully updated project!',
@@ -62,7 +62,7 @@ const EditProjectTitleButton: React.FC<EditProjectTitleButtonProps> = (props) =>
   };
 
   React.useEffect(() => {
-    fetch(`/api/management/projects/status`).then((i) => i.json()).then((res) => setStatusList(res.data))
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/status`).then((i) => i.json()).then((res) => setStatusList(res.data))
   }, [])
 
   return (

@@ -41,13 +41,13 @@ const NewDeliverableButton: React.FC<NewDeliverableButtonProps> = (props) => {
   const onSubmit: SubmitHandler<Partial<Deliverable>> = async data => {
     setSubmitting(true)
 
-    const res = await fetch(`/api/management/projects/${props.projectSlug}/deliverables`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/${props.projectSlug}/deliverables`, {
       method: 'POST',
       body: JSON.stringify(data)
     }).then((i) => i.json())
 
     if (res.success) {
-      router.push(`/projects/${props.projectSlug}?key=${uuid}`)
+      router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/${props.projectSlug}?key=${uuid}`)
       toast({
         title: 'Success!',
         description: 'Successfully added deliverable!',

@@ -43,7 +43,7 @@ const Login: React.FC<LoginProps> = (props: InferGetServerSidePropsType<typeof g
             <Button
               leftIcon={
                 <Container padding={0.5} backgroundColor="white" borderRadius={100}>
-                  <chakra.img src="/google.png" w="16px" />
+                  <chakra.img src={`${process.env.NEXT_PUBLIC_BASE_URL}/google.png`} w="16px" />
                 </Container>
               }
               onClick={() => signIn('google')}
@@ -58,7 +58,7 @@ const Login: React.FC<LoginProps> = (props: InferGetServerSidePropsType<typeof g
           </VStack>
           <VStack spacing={0}>
             <Text color="rgb(160, 160, 160)">Powered by</Text>
-            <chakra.img src="/ARISEn_Logo.png" w={{ base: '30vw', md: '10vw' }} />
+            <chakra.img src={`${process.env.NEXT_PUBLIC_BASE_URL}/ARISEn_Logo.png`} w={{ base: '30vw', md: '10vw' }} />
           </VStack>
         </VStack>
       </Center>

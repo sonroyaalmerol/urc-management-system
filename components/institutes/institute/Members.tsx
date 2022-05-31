@@ -47,7 +47,7 @@ const Members: React.FC<ComponentProps> = (props) => {
 
   const loadNewEntries = async (args?: { reset: Boolean }) => {
     const newEntries = await fetch(
-      `/api/management/institutes/${institute.id}/members?${entries.length > 0 && !args?.reset ? `&cursor=${entries[entries.length - 1].id}` : ''}`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/management/institutes/${institute.id}/members?${entries.length > 0 && !args?.reset ? `&cursor=${entries[entries.length - 1].id}` : ''}`
     ).then(res => res.json())
     setCount(newEntries?.totalCount ?? 0)
     
@@ -64,7 +64,7 @@ const Members: React.FC<ComponentProps> = (props) => {
   const onSubmit: SubmitHandler<Institute & ProfileToInstituteBridge> = async data => {
     setSubmitting(true)
 
-    const res = await fetch(`/api/management/institutes/${institute.id}/members`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/institutes/${institute.id}/members`, {
       method: 'POST',
       body: JSON.stringify(data)
     }).then((i) => i.json())
@@ -132,7 +132,7 @@ const Members: React.FC<ComponentProps> = (props) => {
               <VStack w="full" align="baseline" spacing={1}>
                 <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Member Email</Text>
                 <AutoCompleteInput
-                  api="/api/management/profiles"
+                  api={`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/profiles`}
                   name="email"
                   primaryDisplayName="first_name"
                   secondaryDisplayName="last_name"

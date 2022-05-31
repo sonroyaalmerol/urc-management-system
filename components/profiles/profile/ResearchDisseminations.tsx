@@ -27,7 +27,7 @@ const ResearchDisseminations: React.FC<ComponentProps> = (props) => {
 
   const loadNewEntries = async (args?: { reset: Boolean }) => {
     const newEntries = await fetch(
-      `/api/management/profiles/${profile.id}/research_disseminations?${entries.length > 0 && !args?.reset ? `&cursor=${entries[entries.length - 1].id}` : ''}`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/management/profiles/${profile.id}/research_disseminations?${entries.length > 0 && !args?.reset ? `&cursor=${entries[entries.length - 1].id}` : ''}`
     ).then(res => res.json())
     setCount(newEntries?.totalCount ?? 0)
     
@@ -58,7 +58,7 @@ const ResearchDisseminations: React.FC<ComponentProps> = (props) => {
       loadMore={loadNewEntries}
       profileId={profile.id}
       onNew={() => {
-        router.push(`/verifications/research_dissemination`)
+        router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/verifications/research_dissemination`)
       }}
     >
       { entries.map((entry) => (

@@ -36,7 +36,7 @@ const ProjectCard: React.FC<ProjectCardProps> = (props) => {
   return (
     <Card
       as="a"
-      href={`/projects/${project.slug}`}
+      href={`${process.env.NEXT_PUBLIC_BASE_URL}/projects/${project.slug}`}
       transition="box-shadow 0.05s, background-color 0.1s"
       _hover={{
         backgroundColor: "brand.cardBackground",
@@ -47,7 +47,7 @@ const ProjectCard: React.FC<ProjectCardProps> = (props) => {
       }}
       onClick={(e) => {
         e.preventDefault()
-        router.push(`/projects/${project.slug}`)
+        router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/${project.slug}`)
       }}
       {...divProps}
     >

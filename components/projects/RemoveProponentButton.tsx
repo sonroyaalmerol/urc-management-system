@@ -55,7 +55,7 @@ const RemoveProponentButton: React.FC<RemoveProponentButtonProps> = (props) => {
 
   const loadNewEntries = async () => {
     const newEntries = await fetch(
-      `/api/management/profiles?proponents_only=true&project_id=${props.projectId}${search?.length > 0 ? `&query=${search}` : ''}`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/management/profiles?proponents_only=true&project_id=${props.projectId}${search?.length > 0 ? `&query=${search}` : ''}`
     ).then(res => res.json())
     
     setProfiles(newEntries?.data ?? [])
@@ -79,7 +79,7 @@ const RemoveProponentButton: React.FC<RemoveProponentButtonProps> = (props) => {
   const onSubmit: SubmitHandler<FormFields> = async data => {
     setSubmitting(true)
     
-    const res = await fetch(`/api/management/projects`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects`, {
       method: 'POST',
       body: JSON.stringify({ ...data, mode: 'remove-proponent', id: props.projectId })
     }).then((i) => i.json())

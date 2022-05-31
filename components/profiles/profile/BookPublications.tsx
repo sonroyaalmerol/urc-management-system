@@ -30,7 +30,7 @@ const BookPublications: React.FC<ComponentProps> = (props) => {
 
   const loadNewEntries = async (args?: { reset: Boolean }) => {
     const newEntries = await fetch(
-      `/api/management/profiles/${profile.id}/book_publications?${entries.length > 0 && !args?.reset ? `&cursor=${entries[entries.length - 1].id}` : ''}`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/management/profiles/${profile.id}/book_publications?${entries.length > 0 && !args?.reset ? `&cursor=${entries[entries.length - 1].id}` : ''}`
     ).then(res => res.json())
     setCount(newEntries?.totalCount ?? 0)
     
@@ -61,7 +61,7 @@ const BookPublications: React.FC<ComponentProps> = (props) => {
       loadMore={loadNewEntries}
       profileId={profile.id}
       onNew={() => {
-        router.push(`/verifications/book_publication`)
+        router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/verifications/book_publication`)
       }}
     >
       { entries.map((entry) => (

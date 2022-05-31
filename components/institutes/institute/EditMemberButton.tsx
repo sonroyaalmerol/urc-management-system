@@ -42,7 +42,7 @@ const EditMemberButton: React.FC<EditMemberButtonProps> = (props) => {
 
   const onSubmit: SubmitHandler<Partial<ExtendedInstitute> & ProfileToInstituteBridge> = async data => {
     setSubmitting(true)
-    const res = await fetch(`/api/management/institutes/${institute.id}/members`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/institutes/${institute.id}/members`, {
       method: 'POST',
       body: JSON.stringify({...data, email: props.currentValue.email})
     }).then((i) => i.json())

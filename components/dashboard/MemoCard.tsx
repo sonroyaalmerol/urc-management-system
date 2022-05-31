@@ -121,7 +121,7 @@ const MemoCard: React.FC<MemoCardProps> = (props) => {
                 as="a"
                 whiteSpace="normal"
                 wordBreak="break-word"
-                href={`/api/files/get/${upload.id}`}
+                href={`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/get/${upload.id}`}
                 target="_blank"
                 leftIcon={<DownloadIcon />}
               >

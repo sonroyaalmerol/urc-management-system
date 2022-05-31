@@ -33,7 +33,7 @@ const NewInstituteButton: React.FC<NewInstituteButtonProps> = (props) => {
 
   const onSubmit: SubmitHandler<Partial<Institute>> = async data => {
     setSubmitting(true)
-    const res = await fetch(`/api/management/institutes`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/institutes`, {
       method: 'POST',
       body: JSON.stringify(data)
     }).then((i) => i.json())

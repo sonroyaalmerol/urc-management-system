@@ -26,7 +26,7 @@ const Comments: React.FC<CommentsProps> = (props) => {
 
   const onSubmit: SubmitHandler<Partial<Comment>> = async data => {
     setSubmitting(true)
-    const res = await fetch(`/api/management/submissions/${props.submission.id}/comments`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/submissions/${props.submission.id}/comments`, {
       method: 'POST',
       body: JSON.stringify(data)
     }).then((i) => i.json())
@@ -47,7 +47,7 @@ const Comments: React.FC<CommentsProps> = (props) => {
       <Card>
         <VStack align="baseline" spacing={6}>
           <HStack as="form" onSubmit={handleSubmit(onSubmit)} spacing={4} w="full" align="flex-start">
-            <Avatar src={`/api/files/get/${session.data.profile.photo_id}`} />
+            <Avatar src={`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/get/${session.data.profile.photo_id}`} />
             <VStack align="end" spacing={1} w="full">
               <Controller
                 name="content"
@@ -62,9 +62,9 @@ const Comments: React.FC<CommentsProps> = (props) => {
           { comments?.map((comment) => (
             <HStack key={comment.id} spacing={4} w="full" align="flex-start">
               <Avatar 
-                src={`/api/files/get/${comment.profile.photo_id}`}
+                src={`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/get/${comment.profile.photo_id}`}
                 as="a"
-                href={`/profiles/${comment.profile.id}`}
+                href={`${process.env.NEXT_PUBLIC_BASE_URL}/profiles/${comment.profile.id}`}
               />
               <VStack align="baseline" spacing={1} w="full">
                 <Heading 
@@ -72,7 +72,7 @@ const Comments: React.FC<CommentsProps> = (props) => {
                   fontSize="md" 
                   color="brand.blue"
                   as="a"
-                  href={`/profiles/${comment.profile.id}`}
+                  href={`${process.env.NEXT_PUBLIC_BASE_URL}/profiles/${comment.profile.id}`}
                 >
                   {comment.profile.first_name} {comment.profile.last_name}
                 </Heading>

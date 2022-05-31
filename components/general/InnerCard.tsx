@@ -15,10 +15,10 @@ const InnerCard: React.FC<InnerCardProps> = (props) => {
   return (
     <Box
       as={props.href ? "a" : props.onClick ? "button" : undefined}
-      href={props.href}
+      href={`${process.env.NEXT_PUBLIC_BASE_URL}${props.href}`}
       onClick={props.href ? (e) => {
         e.preventDefault()
-        router.push(props.href)
+        router.push(`${process.env.NEXT_PUBLIC_BASE_URL}${props.href}`)
       } : undefined}
       bgColor="brand.cardBackground"
       padding="1rem"

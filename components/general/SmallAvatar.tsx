@@ -24,7 +24,7 @@ const SmallAvatar: React.FC<Partial<Profile & {
 }>> = (props) => {
   return (
     <HStack>
-      <Avatar size="xs" src={props.photo_id ? `/api/files/get/${props.photo_id}` : undefined} />
+      <Avatar size="xs" src={props.photo_id ? `${process.env.NEXT_PUBLIC_BASE_URL}/api/files/get/${props.photo_id}` : undefined} />
       <Text fontSize="xs" fontWeight="bold">
         {nameGenerator({ 
           first_name: props.first_name, 

@@ -25,7 +25,7 @@ const InnerProfileCard: React.FC<InnerProfileCardProps> = (props) => {
   return (
     <InnerCard
       as="a"
-      href={`/profiles/${profile.id}`}
+      href={`${process.env.NEXT_PUBLIC_BASE_URL}/profiles/${profile.id}`}
       transition="box-shadow 0.05s, background-color 0.1s"
       _hover={{
         backgroundColor: "brand.cardBackground",
@@ -36,12 +36,12 @@ const InnerProfileCard: React.FC<InnerProfileCardProps> = (props) => {
       }}
       onClick={(e) => {
         e.preventDefault()
-        router.push(`/profiles/${profile.id}`)
+        router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/profiles/${profile.id}`)
       }}
       {...divProps}
     >
       <HStack spacing={4} alignItems="flex-start">
-        <Avatar src={`/api/files/get/${profile.photo_id}`} />
+        <Avatar src={`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/get/${profile.photo_id}`} />
         <VStack alignItems="flex-start" spacing={1}>
           <Heading
             size="sm"

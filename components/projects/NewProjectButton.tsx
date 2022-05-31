@@ -33,7 +33,7 @@ const NewProjectButton: React.FC<NewProjectButtonProps> = (props) => {
 
   const onSubmit: SubmitHandler<Partial<Project>> = async data => {
     setSubmitting(true)
-    const res = await fetch(`/api/management/projects`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects`, {
       method: 'POST',
       body: JSON.stringify({...data, mode: 'create'})
     }).then((i) => i.json())

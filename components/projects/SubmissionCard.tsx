@@ -97,7 +97,7 @@ const SubmissionCard: React.FC<SubmissionCardProps> = (props) => {
   return (
     <Card
       as="a"
-      href={`/projects/${submission.project.slug}/submissions/${submission.id}`}
+      href={`${process.env.NEXT_PUBLIC_BASE_URL}/projects/${submission.project.slug}/submissions/${submission.id}`}
       transition="box-shadow 0.05s, background-color 0.1s"
       _hover={{
         backgroundColor: "brand.cardBackground",
@@ -108,13 +108,13 @@ const SubmissionCard: React.FC<SubmissionCardProps> = (props) => {
       }}
       onClick={(e) => {
         e.preventDefault()
-        router.push(`/projects/${submission.project.slug}/submissions/${submission.id}`)
+        router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/${submission.project.slug}/submissions/${submission.id}`)
       }}
       {...divProps}
     >
       <VStack w="full" alignItems="flex-start" spacing={4}>
         <HStack spacing={4} align="flex-start">
-          <Avatar src={`/api/files/get/${submission.profile.photo_id}`} size="sm" />
+          <Avatar src={`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/get/${submission.profile.photo_id}`} size="sm" />
           <VStack align="flex-start">
             <Wrap>
               <WrapItem>

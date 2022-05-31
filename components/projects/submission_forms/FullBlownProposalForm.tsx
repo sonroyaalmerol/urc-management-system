@@ -26,10 +26,10 @@ const FullBlownProposalForm: React.FC<FullBlownProposalFormProps> = (props) => {
 
   const onSubmit: SubmitHandler<Partial<Submission & FullBlownProposalSubmission>> = async data => {
     setSubmitting(true)
-    const res = await fetchWithFile(`/api/management/projects/${props.projectId}`, { ...data, type: 'FULL' })
+    const res = await fetchWithFile(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/${props.projectId}`, { ...data, type: 'FULL' })
 
     if (res.success) {
-      router.push(`/projects/${props.projectSlug}`)
+      router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/${props.projectSlug}`)
       toast({
         title: 'Success!',
         description: `Successfully created Full-blown Proposal!`,
