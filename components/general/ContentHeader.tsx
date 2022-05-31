@@ -59,7 +59,7 @@ const DashboardContentHeader: React.FC<DashboardContentHeaderProps> = (props) =>
 
   return (
     <chakra.main w="full">
-      <Box w="full" bgImg='url(/header.png)' bgPos="right" bgSize="cover" borderRadius='10px'>
+      <Box w="full" bgImg={`url(${process.env.NEXT_PUBLIC_BASE_URL}/header.png)`} bgPos="right" bgSize="cover" borderRadius='10px'>
         <Box w="full" h="full" bgColor='rgba(0,0,0,0.5)' borderRadius='10px'>
           <Box w="full" h="full" color='white' padding='2rem'>
             <Breadcrumb
