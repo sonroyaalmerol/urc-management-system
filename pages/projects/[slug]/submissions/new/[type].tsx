@@ -87,11 +87,15 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     }
   })
 
-  const deliverable = await prisma.deliverable.findUnique({
-    where: {
-      id: context.query?.deliverable_id as string
-    }
-  })
+  let deliverable: Deliverable = null
+
+  if ((type as string).toUpperCase() === 'DELIVERABLE') {
+    deliverable = await prisma.deliverable.findUnique({
+      where: {
+        id: context.query?.deliverable_id as string
+      }
+    })
+  }
 
   return {
     props: { 
