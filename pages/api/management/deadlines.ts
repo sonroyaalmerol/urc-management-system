@@ -5,16 +5,24 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
 
 import handleError from '../../../lib/server/handleError'
+import cleanString from '../../../lib/cleanString'
+import { Deadline } from '@prisma/client'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const [totalCount, data] = await prisma.$transaction([
-    prisma.deadline.count(),
+    prisma.deadline.count({
+      where: {
+        date: {
+          gte: new Date()
+        }
+      },
+    }),
     prisma.deadline.findMany({
-      skip: req.query.cursor ? 1 : undefined,
-      take: 5,
-      cursor: req.query.cursor ? {
-        id: req.query.cursor as string
-      } : undefined,
+      where: {
+        date: {
+          gte: new Date()
+        }
+      },
       orderBy: {
         date: 'asc'
       }
@@ -28,7 +36,54 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
+  const body = JSON.parse(req.body) as Partial<Deadline>
 
+  if (!cleanString(body.title)) {
+    return res.status(400).json({ error: 'Title is required!' })
+  }
+
+  if (!body.date) {
+    return res.status(400).json({ error: 'Date is required!' })
+  }
+
+  let deadline: Deadline
+
+  if (body.id) {
+    deadline = await prisma.deadline.update({
+      where: {
+        id: body.id
+      },
+      data: {
+        title: body.title,
+        date: body.date
+      }
+    })
+  } else {
+    deadline = await prisma.deadline.create({
+      data: {
+        title: body.title,
+        date: body.date
+      }
+    })
+  }
+
+  return res.status(200).json({ success: true, data: deadline })
+}
+
+const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
+  const body = JSON.parse(req.body) as Partial<Deadline>
+
+  if (!cleanString(body.id)) {
+    return res.status(400).json({ error: 'Deadline is required!' })
+  }
+
+  const unit = await prisma.deadline.delete({
+    where: {
+      id: body.id
+    }
+  })
+
+  return res.status(200).json({ success: true, data: unit })
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -44,6 +99,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   
     if (req.method === 'GET') {
       return await getHandler(req, res, session)
+    }
+
+    if (req.method === 'DELETE') {
+      return await deleteHandler(req, res, session)
     }
     
     return res.status(405).json({ error: `Method '${req.method}' Not Allowed` });  

@@ -3,7 +3,7 @@ import ContentHeader from '../components/general/ContentHeader'
 import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
 import { HStack, VStack  } from '@chakra-ui/react'
-import Deadlines from '../components/general/Deadlines'
+import Deadlines from '../components/dashboard/Deadlines'
 
 import MemoList from '../components/dashboard/MemoList'
 

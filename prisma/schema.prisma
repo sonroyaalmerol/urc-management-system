@@ -592,8 +592,8 @@ model Deadline {
   created_at            DateTime?             @default(now())
   updated_at            DateTime?             @updatedAt
 
-  academic_term_id      String
-  academic_term         AcademicTerm     @relation(fields: [academic_term_id], references: [id], onDelete: Cascade)
+  academic_term_id      String?
+  academic_term         AcademicTerm?     @relation(fields: [academic_term_id], references: [id], onDelete: Cascade)
 }
 
 model AcademicTerm {
