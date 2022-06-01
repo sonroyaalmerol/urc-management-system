@@ -21,11 +21,11 @@ const NewMemo: React.FC<NewMemoProps> = (props: InferGetServerSidePropsType<type
   return (
     <>
       <NextSeo
-        title={`New ${institute.short_name ?? institute.name} Memo | URC Management System`}
+        title={`New ${institute.short_name ?? institute.name} News | URC Management System`}
       />
       <VStack spacing={5}>
         <ContentHeader>
-          {`${institute.short_name ?? institute.name} Memo`}
+          {`${institute.short_name ?? institute.name} News`}
         </ContentHeader>
         <VStack spacing={5} w="full">
           <InstituteNewsForm institute={institute} />

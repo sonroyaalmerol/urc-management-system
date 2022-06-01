@@ -40,7 +40,7 @@ const SubmissionList: React.FC<ProjectListProps> = (props) => {
     ).then(res => res.json())
     setCount(newEntries?.totalCount ?? 0)
     
-    if (args.reset) {
+    if (args?.reset) {
       setEntries(newEntries?.data ?? [])
     } else {
       setEntries((currEntries) => {

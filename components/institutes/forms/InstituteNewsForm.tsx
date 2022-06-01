@@ -36,7 +36,7 @@ const InstituteNewsForm: React.FC<InstituteNewsFormProps> = (props) => {
         description: `Successfully created memo!`,
         status: 'success'
       })
-      router.push(`/institutes/${props.institute.id}/memo`)
+      router.push(`/institutes/${props.institute.id}/news`)
     } else {
       toast({
         title: 'Error!',
@@ -52,7 +52,7 @@ const InstituteNewsForm: React.FC<InstituteNewsFormProps> = (props) => {
       <Card>
         <VStack align="baseline" spacing={6}>
           <Heading fontFamily="body" fontSize="lg">
-            New {props.institute.name} Memo
+            New {props.institute.name} News & Updates
           </Heading>
           <VStack w="full" align="baseline" spacing={1}>
             <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Title</Text>

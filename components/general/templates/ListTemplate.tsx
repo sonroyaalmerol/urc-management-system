@@ -18,6 +18,7 @@ interface ListTemplateProps extends BoxProps {
   profileId?: string
   disabled?: boolean
   grid?: ResponsiveValue<number>
+  leftComponent?: React.ReactElement
 }
 
 const ListTemplate: React.FC<ListTemplateProps> = (props) => {
@@ -27,10 +28,11 @@ const ListTemplate: React.FC<ListTemplateProps> = (props) => {
   delete divProps.loading
   delete divProps.hasMore
   delete divProps.loadMore
+  delete divProps.leftComponent
 
   return (
     <VStack w="full">
-      <Wrap w="full" my="1rem" align="center">
+      <Wrap w="full" my="1rem" align="center" spacing={4}>
         <WrapItem>
           <Heading
             fontFamily="body"
@@ -38,6 +40,9 @@ const ListTemplate: React.FC<ListTemplateProps> = (props) => {
           >
             {props.title}
           </Heading>
+        </WrapItem>
+        <WrapItem>
+          {props.leftComponent}
         </WrapItem>
         <Spacer />
         { !props.disabled && (

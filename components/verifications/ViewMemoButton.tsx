@@ -32,7 +32,7 @@ const ViewMemoButton: React.FC<ViewMemoButtonProps> = (props) => {
         onClick={onOpen}
         size="xs"
       >
-        View Full Memo
+        View Full News
       </StockButton>
       <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />

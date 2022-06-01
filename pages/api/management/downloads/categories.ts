@@ -1,33 +1,17 @@
-import { prisma } from '../../../lib/server/prisma'
+import { prisma } from '../../../../lib/server/prisma'
 import { getSession } from 'next-auth/react'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
 
-import handleError from '../../../lib/server/handleError'
-import cleanString from '../../../lib/cleanString'
-import { Deadline } from '@prisma/client'
-import handleDate from '../../../lib/server/handleDate'
+import handleError from '../../../../lib/server/handleError'
+import { DownloadCategory } from '@prisma/client'
+import cleanString from '../../../../lib/cleanString'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  const [totalCount, data] = await prisma.$transaction([
-    prisma.deadline.count({
-      where: {
-        date: {
-          gte: new Date()
-        }
-      },
-    }),
-    prisma.deadline.findMany({
-      where: {
-        date: {
-          gte: new Date()
-        }
-      },
-      orderBy: {
-        date: 'asc'
-      }
-    })
+  let [totalCount, data] = await prisma.$transaction([
+    prisma.downloadCategory.count(),
+    prisma.downloadCategory.findMany()
   ])
 
   return res.status(200).json({
@@ -37,54 +21,49 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  const body = JSON.parse(req.body) as Partial<Deadline>
+  const body = JSON.parse(req.body) as Partial<DownloadCategory>
 
   if (!cleanString(body.title)) {
-    return res.status(400).json({ error: 'Title is required!' })
+    return res.status(400).json({ error: 'Name is required!' })
   }
 
-  if (!body.date) {
-    return res.status(400).json({ error: 'Date is required!' })
-  }
-
-  let deadline: Deadline
+  let category: DownloadCategory
 
   if (body.id) {
-    deadline = await prisma.deadline.update({
+    category = await prisma.downloadCategory.update({
       where: {
         id: body.id
       },
       data: {
         title: body.title,
-        date: handleDate(body.date)
       }
     })
   } else {
-    deadline = await prisma.deadline.create({
+    category = await prisma.downloadCategory.create({
       data: {
         title: body.title,
-        date: handleDate(body.date)
+        description: body.description
       }
     })
   }
 
-  return res.status(200).json({ success: true, data: deadline })
+  return res.status(200).json({ success: true, data: category })
 }
 
 const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  const body = JSON.parse(req.body) as Partial<Deadline>
+  const body = JSON.parse(req.body) as Partial<DownloadCategory>
 
   if (!cleanString(body.id)) {
-    return res.status(400).json({ error: 'Deadline is required!' })
+    return res.status(400).json({ error: 'DownloadCategory is required!' })
   }
 
-  const unit = await prisma.deadline.delete({
+  const category = await prisma.downloadCategory.delete({
     where: {
       id: body.id
     }
   })
 
-  return res.status(200).json({ success: true, data: unit })
+  return res.status(200).json({ success: true, data: category })
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

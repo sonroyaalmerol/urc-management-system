@@ -6,6 +6,7 @@ import type { Session } from 'next-auth'
 import type { Profile, ProfileToInstituteBridge } from '@prisma/client'
 import cleanString from '../../../../../lib/cleanString'
 import handleError from '../../../../../lib/server/handleError'
+import handleDate from '../../../../../lib/server/handleDate'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const searchQuery = (req.query?.query as string) ?? ''
@@ -109,8 +110,8 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
     },
     update: {
       role_title: body.role_title,
-      start_date: body.start_date,
-      end_date: body.end_date ?? undefined,
+      start_date: handleDate(body.start_date),
+      end_date: handleDate(body.end_date) ?? undefined,
       is_head: body.is_head ?? false
     },
     create: {
@@ -125,8 +126,8 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
         }
       },
       role_title: body.role_title,
-      start_date: body.start_date,
-      end_date: body.end_date ?? undefined,
+      start_date: handleDate(body.start_date),
+      end_date: handleDate(body.end_date) ?? undefined,
       is_head: body.is_head ?? false
     }
   })

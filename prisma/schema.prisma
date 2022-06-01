@@ -258,12 +258,26 @@ model Download {
   id           String       @id @default(cuid())
   title        String
   description  String?
-  profile_id      String
+  profile_id   String
   upload_id    String       
   created_at   DateTime     @default(now())
   updated_at   DateTime     @updatedAt
-  file_upload  FileUpload? @relation(fields: [upload_id], references: [id], onDelete: SetNull)
-  profile      Profile?        @relation(fields: [profile_id], references: [id], onDelete: SetNull)
+
+  categories   DownloadCategory[]
+
+  file_upload  FileUpload @relation(fields: [upload_id], references: [id], onDelete: SetNull)
+  profile      Profile        @relation(fields: [profile_id], references: [id], onDelete: SetNull)
+}
+
+model DownloadCategory {
+  id           String       @id @default(cuid())
+  title        String
+  description  String?
+
+  created_at   DateTime     @default(now())
+  updated_at   DateTime     @updatedAt
+
+  downloads    Download[]
 }
 
 model ExternalResearch {

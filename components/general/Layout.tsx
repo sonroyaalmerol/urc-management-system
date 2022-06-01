@@ -31,6 +31,10 @@ const menus = [
     url: '/institutes'
   },
   {
+    name: 'Downloads',
+    url: '/downloads'
+  },
+  {
     name: 'Settings',
     url: '/settings',
   }

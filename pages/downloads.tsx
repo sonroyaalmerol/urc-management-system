@@ -4,33 +4,25 @@ import { getSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
 
 import { NextSeo } from 'next-seo'
-import { HStack, VStack } from '@chakra-ui/react'
-import SearchInput from '../components/general/SearchInput'
-import Card from '../components/general/Card'
-import Units from '../components/settings/Units'
-import Deadlines from '../components/settings/Deadlines'
-import DownloadCategories from '../components/settings/DownloadCategories'
+import { VStack } from '@chakra-ui/react'
+import DownloadsList from '../components/downloads/DownloadsList'
 
-interface SettingsProps {
+interface DownloadsProps {
 
 }
 
-const Settings: React.FC<SettingsProps> = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const [search, setSearch] = React.useState('')
-
+const Downloads: React.FC<DownloadsProps> = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return (
     <>
       <NextSeo
-        title="Settings | URC Management System"
+        title="Downloads | URC Management System"
       />
       <VStack spacing={5}>
         <ContentHeader>
-          Settings
+          Downloads
         </ContentHeader>
         <VStack spacing={5} w="full">
-          <Deadlines />
-          <DownloadCategories />
-          <Units />
+          <DownloadsList />
         </VStack>
       </VStack>
     </>
@@ -54,4 +46,4 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 }
 
-export default Settings
+export default Downloads

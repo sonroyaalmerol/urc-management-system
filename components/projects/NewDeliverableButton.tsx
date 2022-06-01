@@ -41,6 +41,7 @@ const NewDeliverableButton: React.FC<NewDeliverableButtonProps> = (props) => {
   const onSubmit: SubmitHandler<Partial<Deliverable>> = async data => {
     setSubmitting(true)
 
+    console.log(data)
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/${props.projectSlug}/deliverables`, {
       method: 'POST',
       body: JSON.stringify(data)

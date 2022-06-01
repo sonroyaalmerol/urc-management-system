@@ -7,6 +7,7 @@ import type { Session } from 'next-auth'
 import type { Deliverable } from '@prisma/client'
 
 import handleError from '../../../../../lib/server/handleError'
+import handleDate from '../../../../../lib/server/handleDate'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const { id } = req.query
@@ -19,7 +20,7 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
     }),
     prisma.deliverable.findMany({
       skip: req.query.cursor ? 1 : undefined,
-      take: 5,
+      take: 6,
       cursor: req.query.cursor ? {
         id: req.query.cursor as string
       } : undefined,
@@ -63,7 +64,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
     data: {
       title: body.title,
       description: body.description,
-      deadline: body.deadline,
+      deadline: handleDate(body.deadline),
       project: {
         connect: {
           slug: id as string

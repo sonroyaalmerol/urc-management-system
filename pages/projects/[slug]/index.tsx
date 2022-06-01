@@ -25,6 +25,7 @@ import NewDeliverableButton from '../../../components/projects/NewDeliverableBut
 import ProjectStatusTag from '../../../components/general/ProjectStatusTag'
 import AssignInstituteButton from '../../../components/projects/AssignInstituteButton'
 import InnerInstituteCard from '../../../components/projects/InnerInstituteCard'
+import ProjectDetails from '../../../components/projects/ProjectDetails'
 
 interface ProjectProps {
 
@@ -61,6 +62,8 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
           {project.title}
         </ContentHeader>
         <VStack spacing={8} w="full">
+          <ProjectDetails project={project} />
+
           <Wrap align="center" w="full">
             <WrapItem>
               <Wrap spacing={4} align="center">
@@ -69,34 +72,22 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
                     fontFamily="body"
                     fontSize="xl"
                   >
-                    Project Details
+                    Proponents
                   </Heading>
-                </WrapItem>
-                <WrapItem>
-                  <ProjectStatusTag projectStatus={project.project_status} />
                 </WrapItem>
               </Wrap>
             </WrapItem>
             <Spacer />
             <WrapItem>
               <HStack>
-                <EditProjectTitleButton 
-                  projectId={project.id}
-                  currentStatus={project.project_status_id}
-                  currentTitle={project.title}
-                />
                 <AddProponentButton projectId={project.id} />
                 <RemoveProponentButton projectId={project.id} />
               </HStack>
             </WrapItem>
           </Wrap>
-
+          
           <Card>
             <VStack align="baseline">
-              <Heading
-                fontFamily="body"
-                fontSize="md"
-              >Proponents:</Heading>
               <Wrap spacing={4}>
                 { project.bridge_profiles.map(({ profile, role_title }) => (
                   <WrapItem key={profile.id}>

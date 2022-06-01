@@ -1,47 +1,34 @@
+import { Input, InputProps } from '@chakra-ui/react'
+import { format } from 'date-fns'
 import React from 'react'
 
-import { SingleDatepicker, SingleDatepickerProps } from 'chakra-dayzed-datepicker'
-
-interface DatePickerProps extends Partial<SingleDatepickerProps> {
-  onChange?: (any) => any
-  value?: Date
+interface DatePickerProps extends Omit<InputProps, 'value'> {
+  value?: Date,
+  withTime?: boolean
 }
-
-const monthNamesShort = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December'
-];
-const weekdayNamesShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
 
 const DatePicker: React.FC<DatePickerProps> = (props) => {
   const divProps = Object.assign({}, props)
-  delete divProps.onChange
+  delete divProps.value
 
-  const change = (date: Date) => {
-    props.onChange(date)
-  }
+  const value = React.useMemo(() => {
+    if (!props.value) {
+      return ''
+    }
+
+    if (props.withTime) {
+      return format(new Date(props.value), "yyyy-MM-dd'T'HH:mm")
+    }
+
+    return format(new Date(props.value), "yyyy-MM-dd")
+  }, [props.value])
 
   return (
-    <SingleDatepicker 
-      configs={{
-        dateFormat: 'MMMM dd, yyyy',
-        monthNames: monthNamesShort,
-        dayNames: weekdayNamesShort,
-      }}
-      onDateChange={change}
-      date={props.value}
+    <Input
+      type={props.withTime ? "datetime-local" : "date"}
       {...divProps}
+      pattern={props.withTime ? "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}" : "[0-9]{4}-[0-9]{2}-[0-9]{2}"}
+      value={value}
     />
   )
 }

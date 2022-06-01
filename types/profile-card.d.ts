@@ -2,6 +2,8 @@ import type {
   BookPublication,
   Comment,
   Deliverable,
+  Download,
+  DownloadCategory,
   ExternalResearch,
   FileUpload,
   Institute,
@@ -72,6 +74,10 @@ export interface ExtendedVerificationRequest extends VerificationRequest {
     institute: Institute;
   }
   profile: Profile;
+}
+
+export interface ExtendedDownload extends Download {
+  categories: DownloadCategory[];
 }
 
 export interface ExtendedBookPublication extends BookPublication {

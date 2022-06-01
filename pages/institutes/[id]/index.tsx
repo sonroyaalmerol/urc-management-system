@@ -45,7 +45,7 @@ const Institute: React.FC<InstituteProps> = (props: InferGetServerSidePropsType<
                   fontSize="xl"
                   my="1rem"
                 >
-                  Memos
+                  News & Updates
                 </Heading>
               </WrapItem>
               <Spacer />
@@ -55,7 +55,7 @@ const Institute: React.FC<InstituteProps> = (props: InferGetServerSidePropsType<
                   icon={<AddIcon />}
                   padding={0}
                   onClick={() => {
-                    router.push(`/institutes/${institute.id}/memo`)
+                    router.push(`/institutes/${institute.id}/news`)
                   }}
                 />
               </WrapItem>

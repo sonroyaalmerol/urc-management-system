@@ -2,7 +2,7 @@ import React from 'react'
 
 import { useSession } from 'next-auth/react'
 import ListTemplate from '../general/templates/ListTemplate'
-import type { Unit } from '@prisma/client'
+import type { DownloadCategory } from '@prisma/client'
 import { Box, HStack, Input, SimpleGrid, Spacer, Text, useDisclosure, useToast, VStack } from '@chakra-ui/react'
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 
@@ -17,8 +17,6 @@ import IconButton from '../general/IconButton'
 import { AddIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons'
 import Button from '../general/Button'
 import AddSubunitButton from './AddSubunitButton'
-import EditUnitButton from './EditUnitButton'
-import DeleteUnitButton from './DeleteUnitButton'
 
 import {
   Modal,
@@ -31,20 +29,22 @@ import {
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import useUUID from '../../lib/client/useUUID'
+import EditDownloadCategoryButton from './EditDownloadCategoryButton'
+import DeleteDownloadCategoryButton from './DeleteDownloadCategoryButton'
 
-interface UnitsProps {
+interface DownloadCategoriesProps {
   
 }
 
-const Units: React.FC<UnitsProps> = (props) => {
-  const [entries, setEntries] = React.useState<{ parent_name: string, parent_id: string, units: Unit[] }[]>([])
+const DownloadCategories: React.FC<DownloadCategoriesProps> = (props) => {
+  const [entries, setEntries] = React.useState<DownloadCategory[]>([])
 
   const [count, setCount] = React.useState(0)
   const [loading, setLoading] = React.useState(true)
 
   const loadNewEntries = async (args?: { reset: Boolean }) => {
     const newEntries = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/management/units`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/management/downloads/categories`
     ).then(res => res.json())
     setCount(newEntries?.totalCount ?? 0)
     
@@ -64,15 +64,15 @@ const Units: React.FC<UnitsProps> = (props) => {
 
   const [submitting, setSubmitting] = React.useState(false)
 
-  const { control, handleSubmit, reset, setValue } = useForm<Partial<Unit>>();
+  const { control, handleSubmit, reset, setValue } = useForm<Partial<DownloadCategory>>();
 
   const router = useRouter()
   const key = useUUID()
   const toast = useToast()
 
-  const onSubmit: SubmitHandler<Partial<Unit>> = async data => {
+  const onSubmit: SubmitHandler<Partial<DownloadCategory>> = async data => {
     setSubmitting(true)
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/units`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/downloads/categories`, {
       method: 'POST',
       body: JSON.stringify(data)
     }).then((i) => i.json())
@@ -98,7 +98,7 @@ const Units: React.FC<UnitsProps> = (props) => {
 
   return (
     <ListTemplate
-      title="Units"
+      title="Download Categories"
       loading={loading}
       hasMore={false}
       loadMore={() => {}}
@@ -107,41 +107,20 @@ const Units: React.FC<UnitsProps> = (props) => {
     >
       <Accordion allowToggle>
       { entries.map((entry) => (
-        <AccordionItem key={entry.parent_id}>
+        <AccordionItem key={entry.id}>
           <h2>
             <AccordionButton>
               <Box flex='1' textAlign='left'>
-                {entry.parent_name}
+                {entry.title}
               </Box>
               <AccordionIcon />
             </AccordionButton>
           </h2>
           <AccordionPanel pb={4}>
             <VStack w="full" align="baseline" spacing={4}>
-              <SimpleGrid columns={{ base: 1, xl: 3 }} spacing={2} w="full">
-                <AddSubunitButton parentUnitId={entry.parent_id} />
-                <EditUnitButton isParent unitId={entry.parent_id} unitName={entry.parent_name} />
-                <DeleteUnitButton isParent unitId={entry.parent_id} unitName={entry.parent_name} />
-              </SimpleGrid>
-              <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4} w="full">
-              { entry.units.map((unit) => (
-                <HStack 
-                  key={unit.id} 
-                  w="full" 
-                  spacing={4} 
-                  bgColor="brand.cardBackground"
-                  borderRadius={10}
-                  padding="0.5rem"
-                  paddingX="1rem"
-                >
-                  <Text>{unit.name}</Text>
-                  <Spacer />
-                  <HStack>
-                    <EditUnitButton unitId={unit.id} unitName={unit.name} />
-                    <DeleteUnitButton unitId={unit.id} unitName={unit.name} />
-                  </HStack>
-                </HStack>
-              )) }
+              <SimpleGrid columns={{ base: 1, md: 2 }} spacing={2} w="full">
+                <EditDownloadCategoryButton category={entry} />
+                <DeleteDownloadCategoryButton category={entry} />
               </SimpleGrid>
             </VStack>
           </AccordionPanel>
@@ -151,14 +130,14 @@ const Units: React.FC<UnitsProps> = (props) => {
       <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
-          <ModalHeader>Add Unit</ModalHeader>
+          <ModalHeader>Add Category</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
           <VStack spacing={4}>
               <VStack w="full" align="baseline" spacing={1}>
                 <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Name</Text>
                 <Controller
-                  name="name"
+                  name="title"
                   control={control}
                   defaultValue={''}
                   render={({ field }) => <Input {...field} />}
@@ -178,4 +157,4 @@ const Units: React.FC<UnitsProps> = (props) => {
   )
 }
 
-export default Units
+export default DownloadCategories

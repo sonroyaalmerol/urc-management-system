@@ -32,8 +32,8 @@ const NavigationAvatar: React.FC<NavigationAvatarProps> = (props) => {
         />
         <VStack spacing={1}>
           <VStack spacing={0}>
-            <Text zIndex={5} fontWeight="bold">{session.profile.first_name} {session.profile.middle_initial} {session.profile.last_name}</Text>
-            <Text zIndex={5} fontSize="xs" fontStyle="italic">{session.user.email}</Text>
+            <Text zIndex={5} fontWeight="bold" textAlign="center">{session.profile.first_name} {session.profile.middle_initial} {session.profile.last_name}</Text>
+            <Text zIndex={5} fontSize="xs" fontStyle="italic" textAlign="center">{session.user.email}</Text>
           </VStack>
           <Button color="white" variant="link" fontSize="xs" onClick={() => signOut()}>Log Out</Button>
         </VStack>
@@ -55,8 +55,8 @@ const NavigationAvatar: React.FC<NavigationAvatarProps> = (props) => {
         src={`${process.env.NEXT_PUBLIC_BASE_URL}/api/files/get/${session.profile.photo_id}`}
       />
       <VStack spacing={0}>
-        <Text zIndex={5} fontWeight="bold">{session.profile.first_name} {session.profile.middle_initial} {session.profile.last_name}</Text>
-        <Text zIndex={5} fontSize="xs" fontStyle="italic">{session.user.email}</Text>
+        <Text zIndex={5} fontWeight="bold" textAlign="center">{session.profile.first_name} {session.profile.middle_initial} {session.profile.last_name}</Text>
+        <Text zIndex={5} fontSize="xs" fontStyle="italic" textAlign="center">{session.user.email}</Text>
       </VStack>
     </VStack>
   )

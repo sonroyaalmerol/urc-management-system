@@ -142,6 +142,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
         data: {
           title: body.title,
           slug: slugGenerator(body.title),
+          abstract: body.abstract,
           project_status: {
             connect: {
               id: body.project_status_id as string

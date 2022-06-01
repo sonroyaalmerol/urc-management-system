@@ -1,4 +1,4 @@
-const fetchWithFile = async (url, data) => {
+const fetchWithFile = async (url, data, method?) => {
   const formData = new FormData();
 
   Object.keys(data).forEach((key) => {
@@ -11,7 +11,7 @@ const fetchWithFile = async (url, data) => {
     }
   })
   const response = await fetch(url, {
-    method: 'POST',
+    method: method ?? 'POST',
     body: formData
   }).then((i) => i.json())
 
