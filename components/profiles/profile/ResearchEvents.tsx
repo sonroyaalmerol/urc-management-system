@@ -17,9 +17,11 @@ import {
 } from '@chakra-ui/react'
 import Button from '../../general/Button'
 import { useRouter } from 'next/router'
+import { useSession } from 'next-auth/react'
 
 const ResearchEvent: React.FC<ComponentProps> = (props) => {
   const profile = props.profile
+  const session = useSession()
 
   const [entries, setEntries] = React.useState<ExtendedResearchEvent[]>([])
 
@@ -61,6 +63,7 @@ const ResearchEvent: React.FC<ComponentProps> = (props) => {
       onNew={() => {
         router.push(`/verifications/research_event`)
       }}
+      disabled={profile.id !== session.data.profile.id}
     >
       { entries.map((entry) => (
         <>

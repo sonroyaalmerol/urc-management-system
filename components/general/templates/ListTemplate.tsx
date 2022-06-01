@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Divider, Heading, VStack, SimpleGrid, Center, Spinner, BoxProps, Text, Wrap, WrapItem, Spacer } from '@chakra-ui/react'
+import { Divider, Heading, VStack, SimpleGrid, Center, Spinner, BoxProps, Text, Wrap, WrapItem, Spacer, ResponsiveValue } from '@chakra-ui/react'
 import SeeMorePagination from '../../general/SeeMorePagination'
 import Card from '../../general/Card'
 import { AddIcon } from '@chakra-ui/icons'
@@ -17,6 +17,7 @@ interface ListTemplateProps extends BoxProps {
   onNew?: () => any
   profileId?: string
   disabled?: boolean
+  grid?: ResponsiveValue<number>
 }
 
 const ListTemplate: React.FC<ListTemplateProps> = (props) => {
@@ -39,7 +40,7 @@ const ListTemplate: React.FC<ListTemplateProps> = (props) => {
           </Heading>
         </WrapItem>
         <Spacer />
-        { ('profileId' in props && currentProfile.id === props.profileId || 'onNew' in props) && !props.disabled && (
+        { !props.disabled && (
           <WrapItem>
             <IconButton 
               aria-label="Add Entry"
@@ -59,7 +60,7 @@ const ListTemplate: React.FC<ListTemplateProps> = (props) => {
                 loadMore={props.loadMore}
                 w="full"
               >
-                <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={2} w="full">
+                <SimpleGrid columns={props.grid ? props.grid : { base: 1, lg: 2 }} spacing={2} w="full">
                   { props.children }
                 </SimpleGrid>
               </SeeMorePagination>

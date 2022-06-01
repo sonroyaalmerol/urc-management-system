@@ -16,9 +16,11 @@ import {
 } from '@chakra-ui/react'
 import Button from '../../general/Button'
 import { useRouter } from 'next/router'
+import { useSession } from 'next-auth/react'
 
 const ResearchDisseminations: React.FC<ComponentProps> = (props) => {
   const profile = props.profile
+  const session = useSession()
 
   const [entries, setEntries] = React.useState<ExtendedResearchDissemination[]>([])
 
@@ -60,6 +62,7 @@ const ResearchDisseminations: React.FC<ComponentProps> = (props) => {
       onNew={() => {
         router.push(`/verifications/research_dissemination`)
       }}
+      disabled={profile.id !== session.data.profile.id}
     >
       { entries.map((entry) => (
         <>

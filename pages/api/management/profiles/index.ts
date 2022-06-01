@@ -10,6 +10,8 @@ import relevancy from 'relevancy'
 import roleChecker from '../../../../lib/roleChecker'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
+  const { unit } = req.query
+
   const searchQuery = (req.query?.query as string) ?? ''
 
   const queryFilter = searchQuery.split(' ').filter(s => s.trim().length > 0)
@@ -45,7 +47,12 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
   let [totalCount, data] = await prisma.$transaction([
     prisma.profile.count({
       where: {
-        ...whereQuery
+        ...whereQuery,
+        units: unit ? {
+          some: {
+            id: unit
+          }
+        } : undefined
       }
     }),
     prisma.profile.findMany({
@@ -55,7 +62,12 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
         id: req.query.cursor as string
       } : undefined,
       where: {
-        ...whereQuery
+        ...whereQuery,
+        units: unit ? {
+          some: {
+            id: unit
+          }
+        } : undefined
       },
       include: {
         user: true

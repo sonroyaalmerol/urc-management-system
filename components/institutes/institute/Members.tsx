@@ -22,6 +22,7 @@ import {
   Input,
   useToast,
   Checkbox,
+  Switch,
 } from '@chakra-ui/react'
 import Button from '../../general/Button'
 import AutoCompleteInput from '../../general/AutoCompleteInput'
@@ -175,7 +176,7 @@ const Members: React.FC<ComponentProps> = (props) => {
                   control={control}
                   defaultValue={false}
                   render={({ field }) => (
-                    <Checkbox 
+                    <Switch 
                       name={field.name} 
                       onBlur={field.onBlur} 
                       onChange={field.onChange}
@@ -184,7 +185,7 @@ const Members: React.FC<ComponentProps> = (props) => {
                       marginLeft="1rem"
                     >
                       Center Head
-                    </Checkbox>
+                    </Switch>
                   )}
                 />
               </VStack>

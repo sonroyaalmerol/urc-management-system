@@ -11,6 +11,7 @@ import ProfileCard from './ProfileCard'
 interface ProfileListProps {
   search?: string,
   refreshKey?: number
+  unitFilter?: string
 }
 
 const ProfileList: React.FC<ProfileListProps> = (props) => {
@@ -24,7 +25,7 @@ const ProfileList: React.FC<ProfileListProps> = (props) => {
 
   const loadNewEntries = async (args?: { reset: Boolean }) => {
     const newEntries = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/management/profiles?${props.search.length > 0 ? `&query=${props.search}` : ''}${entries.length > 0 && !args.reset ? `&cursor=${entries[entries.length - 1].id}` : ''}`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/management/profiles?${props.unitFilter ? `&unit=${props.unitFilter}` : ''}${props.search.length > 0 ? `&query=${props.search}` : ''}${entries.length > 0 && !args.reset ? `&cursor=${entries[entries.length - 1].id}` : ''}`
     ).then(res => res.json())
     setCount(newEntries?.totalCount ?? 0)
     
@@ -46,8 +47,9 @@ const ProfileList: React.FC<ProfileListProps> = (props) => {
   }, [props.search])
 
   React.useEffect(() => {
+    setLoading(true)
     loadNewEntries({ reset: true })
-  }, [deferredSearch, props.refreshKey])
+  }, [deferredSearch, props.refreshKey, props.unitFilter])
 
   React.useEffect(() => {
     setLoading(true)
@@ -74,7 +76,7 @@ const ProfileList: React.FC<ProfileListProps> = (props) => {
           </SimpleGrid>
         </InfiniteScroll>
       ) : (
-        <Center marginTop="2rem">
+        <Center marginTop="2rem" w="full" h="full">
           <Spinner color="brand.blue" />
         </Center>
       ) }

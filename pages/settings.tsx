@@ -6,6 +6,9 @@ import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "nex
 import { NextSeo } from 'next-seo'
 import { HStack, VStack } from '@chakra-ui/react'
 import SearchInput from '../components/general/SearchInput'
+import Card from '../components/general/Card'
+import Units from '../components/settings/Units'
+import Deadlines from '../components/settings/Deadlines'
 
 interface SettingsProps {
 
@@ -24,14 +27,8 @@ const Settings: React.FC<SettingsProps> = (props: InferGetServerSidePropsType<ty
           Settings
         </ContentHeader>
         <VStack spacing={5} w="full">
-          <HStack w="full" spacing={8}>
-            <SearchInput
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value)
-              }}
-            />
-          </HStack>
+          <Deadlines />
+          <Units />
         </VStack>
       </VStack>
     </>

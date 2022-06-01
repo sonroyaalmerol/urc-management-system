@@ -17,10 +17,12 @@ import {
 } from '@chakra-ui/react'
 import Button from '../../general/Button'
 import { useRouter } from 'next/router'
+import { useSession } from 'next-auth/react'
 
 const JournalPublications: React.FC<ComponentProps> = (props) => {
   const profile = props.profile
   const [entries, setEntries] = React.useState<ExtendedJournalPublication[]>([])
+  const session = useSession()
 
   const [count, setCount] = React.useState(0)
   const [loading, setLoading] = React.useState(true)
@@ -60,6 +62,7 @@ const JournalPublications: React.FC<ComponentProps> = (props) => {
       onNew={() => {
         router.push(`/verifications/journal_publication`)
       }}
+      disabled={profile.id !== session.data.profile.id}
     >
       { entries.map((entry) => (
         <>

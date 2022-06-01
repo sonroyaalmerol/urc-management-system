@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useDisclosure, Text, Input, VStack, useToast, Checkbox } from '@chakra-ui/react'
+import { useDisclosure, Text, Input, VStack, useToast, Checkbox, Switch } from '@chakra-ui/react'
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 
 import {
@@ -113,7 +113,7 @@ const EditMemberButton: React.FC<EditMemberButtonProps> = (props) => {
                   control={control}
                   defaultValue={props.currentValue.is_head}
                   render={({ field }) => (
-                    <Checkbox 
+                    <Switch 
                       name={field.name} 
                       onBlur={field.onBlur} 
                       onChange={field.onChange}
@@ -122,7 +122,7 @@ const EditMemberButton: React.FC<EditMemberButtonProps> = (props) => {
                       marginLeft="1rem"
                     >
                       Center Head
-                    </Checkbox>
+                    </Switch>
                   )}
                 />
               </VStack>
