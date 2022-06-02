@@ -81,7 +81,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = (props) => {
         </WrapItem>
         <Spacer />
         
-        {(!roleChecker(session.data.profile, CHANGE_PROJECT_STATUS) && !memberChecker(session.data.profile, props.project.bridge_profiles)) && (
+        {(roleChecker(session.data.profile, CHANGE_PROJECT_STATUS) || memberChecker(session.data.profile, props.project.bridge_profiles)) && (
           <WrapItem>
             <HStack>
               <IconButton 
