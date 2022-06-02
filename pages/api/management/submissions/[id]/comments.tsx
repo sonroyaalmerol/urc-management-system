@@ -34,7 +34,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
     }
   })
 
-  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary', 'urc_board_members']) && submission.project?.bridge_profiles?.filter((bridge) => bridge.profile_id === session.profile.id).length === 0) {
+  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary', 'urc_board_member']) && submission.project?.bridge_profiles?.filter((bridge) => bridge.profile_id === session.profile.id).length === 0) {
     return res.status(401).json({ error: 'Unauthorized access.' })
   }
   

@@ -12,7 +12,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
 
   const { id } = req.query
 
-  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_board_members']) && session.profile.id !== id) {
+  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_board_member']) && session.profile.id !== id) {
     return res.status(401).json({ error: 'Unauthorized access.' })
   }
 

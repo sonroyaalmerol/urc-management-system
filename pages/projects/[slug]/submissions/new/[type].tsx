@@ -101,7 +101,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   if (
     project.bridge_profiles.filter((bridge) => bridge.profile_id === session.profile.id).length < 1 &&
-    !roleChecker(session.profile, ['urc_chairperson', 'urc_board_members', 'urc_staff'])
+    !roleChecker(session.profile, ['urc_chairperson', 'urc_board_member', 'urc_staff'])
   ) {
     return {
       props: {

@@ -8,7 +8,7 @@ import handleError from '../../../../../lib/server/handleError'
 import { roleChecker } from '../../../../../lib/roleChecker'
 
 const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_board_members'])) {
+  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_board_member'])) {
     return res.status(401).json({ error: 'Unauthorized access.' })
   }
 
@@ -33,7 +33,7 @@ const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session:
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_board_members'])) {
+  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_board_member'])) {
     return res.status(401).json({ error: 'Unauthorized access.' })
   }
 

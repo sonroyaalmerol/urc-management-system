@@ -18,7 +18,7 @@ const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session:
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_board_members'])) {
+  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_board_member'])) {
     return res.status(401).json({ error: 'Unauthorized access.' })
   }
 

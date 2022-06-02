@@ -20,7 +20,7 @@ const Actions: React.FC<ActionsProps> = (props) => {
 
   const session = useSession()
   const isAllowed = React.useMemo(() => {
-    return roleChecker(session.data.profile, ['urc_chairperson', 'urc_board_members'])
+    return roleChecker(session.data.profile, ['urc_chairperson', 'urc_board_member'])
   }, [session.data])
 
   const humanizeType = (type: SubmissionTypes) => {
