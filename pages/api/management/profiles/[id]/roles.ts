@@ -41,6 +41,19 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
 
   const { id } = req.query
 
+  const profile = await prisma.profile.findUnique({
+    where: {
+      id: id as string
+    },
+    include: {
+      roles: true
+    }
+  })
+
+  if (body.id !== 'researcher' && profile.roles.filter((role) => role.id !== 'researcher').length > 0) {
+    return res.status(400).json({ error: `A role conflict has been detected!` })
+  }
+
   await prisma.profile.update({
     where: {
       id: id as string
@@ -53,7 +66,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
       }
     }
   })
-
+  
   return res.status(200).json({ success: true })
 }
 

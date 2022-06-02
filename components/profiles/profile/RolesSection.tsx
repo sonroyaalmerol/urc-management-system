@@ -25,8 +25,20 @@ const RolesSection: React.FC<RolesSection> = (props) => {
 
   const [roleAdding, setRoleAdding] = React.useState(false)
   const [rolesLoading, setRolesLoading] = React.useState(true)
-  const [roles, setRoles] = React.useState<UserRole[]>([])
+  const [tmpRoles, setRoles] = React.useState<UserRole[]>([])
   const [profileRoles, setProfileRoles] = React.useState(profile.roles)
+
+  const roles = React.useMemo(() => {
+    if (profileRoles.length === 0) {
+      return tmpRoles
+    }
+
+    if (profileRoles.filter(role => role.id === 'researcher').length < 1) {
+      return tmpRoles.filter((role) => role.id === 'researcher')
+    }
+
+    return tmpRoles.filter(({ id }) => profileRoles.filter(role => role.id === id).length < 1)
+  }, [tmpRoles, profileRoles])
 
   const getRoles = async () => {
     setRolesLoading(true)
