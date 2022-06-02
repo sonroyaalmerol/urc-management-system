@@ -1,19 +1,19 @@
-import { prisma } from '../../../../lib/server/prisma'
+import { prisma } from '../../../../utils/server/prisma'
 import { getSession } from 'next-auth/react'
-import slugGenerator from '../../../../lib/slugGenerator'
+import slugGenerator from '../../../../utils/slugGenerator'
 
-import handleError from '../../../../lib/server/handleError'
+import handleError from '../../../../utils/server/handleError'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
 import type { BookPublication, FileUpload, Project, VerificationRequest } from '@prisma/client'
 
 import relevancy from 'relevancy'
-import { roleChecker } from '../../../../lib/roleChecker'
-import parseBodyWithFile from '../../../../lib/server/parseBodyWithFile'
-import cleanString from '../../../../lib/cleanString'
-import { deleteFile } from '../../../../lib/server/file'
-import verifyRequest from '../../../../lib/server/verifyRequest'
+import { roleChecker } from '../../../../utils/roleChecker'
+import parseBodyWithFile from '../../../../utils/server/parseBodyWithFile'
+import cleanString from '../../../../utils/cleanString'
+import { deleteFile } from '../../../../utils/server/file'
+import verifyRequest from '../../../../utils/server/verifyRequest'
 
 export const config = {
   api: {

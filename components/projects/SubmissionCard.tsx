@@ -8,7 +8,7 @@ import type { Profile, Submission, BudgetProposalSubmission, CapsuleProposalSubm
 import { format } from 'date-fns'
 
 import { useRouter } from 'next/router'
-import parseHTML from '../../lib/client/parseHTML'
+import parseHTML from '../../utils/client/parseHTML'
 import FileDetails from '../general/FileDetails'
 
 interface SubmissionCardProps extends BoxProps {

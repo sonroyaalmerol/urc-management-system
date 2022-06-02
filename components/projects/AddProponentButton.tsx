@@ -21,9 +21,9 @@ import IconButton from '../general/IconButton'
 
 import { useDebounce } from 'use-debounce'
 import { useRouter } from 'next/router'
-import useUUID from '../../lib/client/useUUID'
+import useUUID from '../../utils/client/useUUID'
 import AutoCompleteInput from '../general/AutoCompleteInput'
-import { roleChecker } from '../../lib/roleChecker'
+import { roleChecker } from '../../utils/roleChecker'
 import { useSession } from 'next-auth/react'
 
 interface AddProponentButtonProps {

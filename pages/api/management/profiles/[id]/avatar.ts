@@ -1,12 +1,12 @@
-import { prisma } from '../../../../../lib/server/prisma'
+import { prisma } from '../../../../../utils/server/prisma'
 import { getSession } from 'next-auth/react'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
 import type { FileUpload, UserRole } from '@prisma/client'
-import parseBodyWithFile from '../../../../../lib/server/parseBodyWithFile'
-import { deleteFile } from '../../../../../lib/server/file'
-import handleError from '../../../../../lib/server/handleError'
+import parseBodyWithFile from '../../../../../utils/server/parseBodyWithFile'
+import { deleteFile } from '../../../../../utils/server/file'
+import handleError from '../../../../../utils/server/handleError'
 
 export const config = {
   api: {

@@ -3,7 +3,7 @@ import ContentHeader from '../../../components/general/ContentHeader'
 import { getSession, useSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
 
-import { prisma } from '../../../lib/server/prisma'
+import { prisma } from '../../../utils/server/prisma'
 
 import { NextSeo } from 'next-seo'
 import { Heading, Spacer, VStack, Wrap, WrapItem } from '@chakra-ui/react'
@@ -15,7 +15,7 @@ import Members from '../../../components/institutes/institute/Members'
 import IconButton from '../../../components/general/IconButton'
 import { AddIcon } from '@chakra-ui/icons'
 import { useRouter } from 'next/router'
-import { instituteHeadChecker } from '../../../lib/roleChecker'
+import { instituteHeadChecker } from '../../../utils/roleChecker'
 
 interface InstituteProps {
 

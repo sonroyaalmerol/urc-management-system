@@ -8,8 +8,7 @@ import { AddIcon } from '@chakra-ui/icons'
 import type { UserRole } from '@prisma/client'
 
 import { useSession } from 'next-auth/react'
-import { MODIFY_ROLES } from '../../../lib/permissions'
-import { roleChecker } from '../../../lib/roleChecker'
+import { roleChecker } from '../../../utils/roleChecker'
 
 interface RolesSection {
   profile: Partial<ExtendedProfile>

@@ -18,7 +18,7 @@ import {
 import { AddIcon } from '@chakra-ui/icons'
 import type { Profile } from '@prisma/client'
 import { useSession } from 'next-auth/react'
-import { roleChecker } from '../../lib/roleChecker'
+import { roleChecker } from '../../utils/roleChecker'
 
 interface NewProfileButtonProps {
   onSuccess: () => any

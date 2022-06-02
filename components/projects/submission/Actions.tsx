@@ -6,7 +6,7 @@ import Card from '../../general/Card'
 import ButtonWithConfirmation from '../../general/ButtonWithConfirmation'
 import { CheckIcon, DeleteIcon } from '@chakra-ui/icons'
 import { useSession } from 'next-auth/react'
-import { roleChecker } from '../../../lib/roleChecker'
+import { roleChecker } from '../../../utils/roleChecker'
 
 interface ActionsProps {
   submission: Submission

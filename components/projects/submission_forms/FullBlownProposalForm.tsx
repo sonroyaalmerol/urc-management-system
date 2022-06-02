@@ -9,7 +9,7 @@ import RichTextarea from '../../general/RichTextarea'
 
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 import FileUploadButton from '../../general/FileUploadButton'
-import fetchWithFile from '../../../lib/client/fetchWithFile'
+import fetchWithFile from '../../../utils/client/fetchWithFile'
 import { useRouter } from 'next/router'
 
 interface FullBlownProposalFormProps {

@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/react'
-import { prisma } from '../../../lib/server/prisma'
+import { prisma } from '../../../utils/server/prisma'
 import checkDiskSpace from 'check-disk-space'
 import path from 'path'
-import formatBytes from '../../../lib/formatBytes'
+import formatBytes from '../../../utils/formatBytes'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {

@@ -18,12 +18,12 @@ import type { Institute, ProfileToInstituteBridge } from '@prisma/client'
 import IconButton from '../../general/IconButton'
 import Button from '../../general/Button'
 import { useRouter } from 'next/router'
-import useUUID from '../../../lib/client/useUUID'
+import useUUID from '../../../utils/client/useUUID'
 import DatePicker from '../../general/DatePicker'
 import AutoCompleteInput from '../../general/AutoCompleteInput'
 import { ExtendedInstitute } from '../../../types/profile-card'
 import { useSession } from 'next-auth/react'
-import { roleChecker } from '../../../lib/roleChecker'
+import { roleChecker } from '../../../utils/roleChecker'
 
 interface EditMemberButtonProps {
   institute: Partial<ExtendedInstitute>

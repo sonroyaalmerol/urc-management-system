@@ -1,6 +1,6 @@
 import { Input, InputProps, Box, BoxProps } from '@chakra-ui/react'
 import React from 'react'
-import parseHTML from '../../lib/client/parseHTML'
+import parseHTML from '../../utils/client/parseHTML'
 
 interface EditableTextProps extends InputProps {
   editMode?: boolean

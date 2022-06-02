@@ -11,10 +11,10 @@ import type { ExtendedVerificationRequest } from '../../types/profile-card'
 import FileDetails from '../general/FileDetails'
 import { CheckIcon, DeleteIcon } from '@chakra-ui/icons'
 import ButtonWithConfirmation from '../general/ButtonWithConfirmation'
-import parseHTML from '../../lib/client/parseHTML'
+import parseHTML from '../../utils/client/parseHTML'
 import ViewMemoButton from './ViewMemoButton'
 import { useSession } from 'next-auth/react'
-import { roleChecker } from '../../lib/roleChecker'
+import { roleChecker } from '../../utils/roleChecker'
 
 interface VerificationCardProps extends BoxProps {
   request: ExtendedVerificationRequest,

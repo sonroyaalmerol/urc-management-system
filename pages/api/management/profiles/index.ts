@@ -1,13 +1,13 @@
-import { prisma } from '../../../../lib/server/prisma'
+import { prisma } from '../../../../utils/server/prisma'
 import { getSession } from 'next-auth/react'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
 import type { Profile } from '@prisma/client'
-import handleError from '../../../../lib/server/handleError'
+import handleError from '../../../../utils/server/handleError'
 
 import relevancy from 'relevancy'
-import { roleChecker } from '../../../../lib/roleChecker'
+import { roleChecker } from '../../../../utils/roleChecker'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const { unit } = req.query

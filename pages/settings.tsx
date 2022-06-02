@@ -10,7 +10,7 @@ import Card from '../components/general/Card'
 import Units from '../components/settings/Units'
 import Deadlines from '../components/settings/Deadlines'
 import DownloadCategories from '../components/settings/DownloadCategories'
-import { roleChecker } from '../lib/roleChecker'
+import { roleChecker } from '../utils/roleChecker'
 
 interface SettingsProps {
 

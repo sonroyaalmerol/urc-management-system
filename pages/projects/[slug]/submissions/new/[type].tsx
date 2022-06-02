@@ -6,14 +6,14 @@ import { VStack } from '@chakra-ui/react'
 
 import { NextSeo } from 'next-seo'
 
-import { prisma } from '../../../../../lib/server/prisma'
+import { prisma } from '../../../../../utils/server/prisma'
 
 import type { Deliverable, Project, SubmissionTypes } from '@prisma/client'
 import BudgetProposalForm from '../../../../../components/projects/submission_forms/BudgetProposalForm'
 import CapsuleProposalForm from '../../../../../components/projects/submission_forms/CapsuleProposalForm'
 import FullBlownProposalForm from '../../../../../components/projects/submission_forms/FullBlownProposalForm'
 import DeliverableForm from '../../../../../components/projects/submission_forms/DeliverableForm'
-import { roleChecker } from '../../../../../lib/roleChecker'
+import { roleChecker } from '../../../../../utils/roleChecker'
 
 interface NewSubmissionProps {
 

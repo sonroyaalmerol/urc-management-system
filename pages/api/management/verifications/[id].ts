@@ -1,12 +1,12 @@
-import { prisma } from '../../../../lib/server/prisma'
+import { prisma } from '../../../../utils/server/prisma'
 import { getSession } from 'next-auth/react'
 
-import handleError from '../../../../lib/server/handleError'
+import handleError from '../../../../utils/server/handleError'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
-import { roleChecker } from '../../../../lib/roleChecker'
-import verifyRequest from '../../../../lib/server/verifyRequest'
+import { roleChecker } from '../../../../utils/roleChecker'
+import verifyRequest from '../../../../utils/server/verifyRequest'
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff'])) {

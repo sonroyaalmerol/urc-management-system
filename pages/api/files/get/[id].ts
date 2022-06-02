@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/react'
-import { prisma } from '../../../../lib/server/prisma'
+import { prisma } from '../../../../utils/server/prisma'
 
 import path from 'path'
 import fs from 'fs/promises'

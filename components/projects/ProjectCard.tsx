@@ -6,7 +6,7 @@ import SmallAvatar from '../../components/general/SmallAvatar'
 
 import { format } from 'date-fns'
 
-import parse from '../../lib/client/parseHTML'
+import parse from '../../utils/client/parseHTML'
 
 import type { Project, ProfileToProjectBridge, Profile, User, ProjectStatus } from '@prisma/client'
 

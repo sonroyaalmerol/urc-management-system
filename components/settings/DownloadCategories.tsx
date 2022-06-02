@@ -28,7 +28,7 @@ import {
   ModalCloseButton,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
-import useUUID from '../../lib/client/useUUID'
+import useUUID from '../../utils/client/useUUID'
 import EditDownloadCategoryButton from './EditDownloadCategoryButton'
 import DeleteDownloadCategoryButton from './DeleteDownloadCategoryButton'
 

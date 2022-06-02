@@ -1,5 +1,5 @@
-import { prisma } from "../../../../lib/server/prisma"
-import injector from "../../../../lib/client/injectors/collection_api"
+import { prisma } from "../../../../utils/server/prisma"
+import injector from "../../../../utils/client/injectors/collection_api"
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 

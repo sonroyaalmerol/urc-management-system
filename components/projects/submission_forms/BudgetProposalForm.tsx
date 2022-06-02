@@ -8,7 +8,7 @@ import Card from '../../general/Card'
 
 import { useForm, SubmitHandler } from "react-hook-form"
 import FileUploadButton from '../../general/FileUploadButton'
-import fetchWithFile from '../../../lib/client/fetchWithFile'
+import fetchWithFile from '../../../utils/client/fetchWithFile'
 import { useRouter } from 'next/router'
 
 

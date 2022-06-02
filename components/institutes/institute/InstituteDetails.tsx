@@ -13,7 +13,7 @@ import EditableTextarea from '../../general/EditableTextarea'
 import { useForm, SubmitHandler, Controller } from "react-hook-form"
 import type { Institute } from '@prisma/client'
 import { useSession } from 'next-auth/react'
-import { roleChecker } from '../../../lib/roleChecker'
+import { roleChecker } from '../../../utils/roleChecker'
 
 const InstituteDetails: React.FC<ComponentProps> = (props) => {
   const institute = props.institute

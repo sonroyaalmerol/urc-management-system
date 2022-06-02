@@ -8,7 +8,7 @@ import Card from '../../general/Card'
 
 import { useForm, SubmitHandler } from "react-hook-form"
 import AutoCompleteInput from '../../general/AutoCompleteInput'
-import fetchWithFile from '../../../lib/client/fetchWithFile'
+import fetchWithFile from '../../../utils/client/fetchWithFile'
 import FileUploadButton from '../../general/FileUploadButton'
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'

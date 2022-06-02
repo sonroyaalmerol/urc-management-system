@@ -19,7 +19,7 @@ import { EditIcon } from '@chakra-ui/icons'
 import type { Project, ProjectStatus } from '@prisma/client'
 import IconButton from '../general/IconButton'
 import { useRouter } from 'next/router'
-import { roleChecker } from '../../lib/roleChecker'
+import { roleChecker } from '../../utils/roleChecker'
 import { useSession } from 'next-auth/react'
 
 interface EditProjectTitleButtonProps {

@@ -12,7 +12,7 @@ import { AddIcon, ChevronDownIcon } from '@chakra-ui/icons'
 
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
-import { roleChecker } from '../../lib/roleChecker'
+import { roleChecker } from '../../utils/roleChecker'
 
 interface NewSubmissionButtonProps {
   capsuleUrl: string,

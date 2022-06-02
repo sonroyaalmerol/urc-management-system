@@ -4,7 +4,7 @@ import { VStack, Heading, Wrap, WrapItem, Text, Box, BoxProps } from '@chakra-ui
 
 import { AttachmentIcon } from '@chakra-ui/icons'
 
-import formatBytes from '../../lib/formatBytes'
+import formatBytes from '../../utils/formatBytes'
 import type { FileUpload } from '@prisma/client'
 
 interface FileDetailsProps extends BoxProps {

@@ -1,13 +1,13 @@
-import { prisma } from '../../../../../lib/server/prisma'
+import { prisma } from '../../../../../utils/server/prisma'
 import { getSession } from 'next-auth/react'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
 
 import type { BudgetProposalSubmission, CapsuleProposalSubmission, DeliverableSubmission, FileUpload, FullBlownProposalSubmission, Submission, SubmissionStatus, SubmissionTypes } from '@prisma/client'
-import parseBodyWithFile from '../../../../../lib/server/parseBodyWithFile'
-import handleError from '../../../../../lib/server/handleError'
-import { roleChecker } from '../../../../../lib/roleChecker'
+import parseBodyWithFile from '../../../../../utils/server/parseBodyWithFile'
+import handleError from '../../../../../utils/server/handleError'
+import { roleChecker } from '../../../../../utils/roleChecker'
 
 export const config = {
   api: {

@@ -6,7 +6,7 @@ import type { ComponentProps, ExtendedProject } from '../../../types/profile-car
 import CardTemplate from '../../general/templates/CardTemplate'
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
-import { roleChecker } from '../../../lib/roleChecker'
+import { roleChecker } from '../../../utils/roleChecker'
 
 const InternalProjects: React.FC<ComponentProps> = (props) => {
   const institute = props.institute

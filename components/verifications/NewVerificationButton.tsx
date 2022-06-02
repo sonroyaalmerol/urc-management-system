@@ -11,7 +11,7 @@ import Button from '../general/Button'
 import { AddIcon, ChevronDownIcon } from '@chakra-ui/icons'
 
 import { useRouter } from 'next/router'
-import { roleChecker } from '../../lib/roleChecker'
+import { roleChecker } from '../../utils/roleChecker'
 import { useSession } from 'next-auth/react'
 
 const NewVerificationButton: React.FC = (props) => {

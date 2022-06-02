@@ -1,16 +1,16 @@
-import { prisma } from '../../../lib/server/prisma'
+import { prisma } from '../../../utils/server/prisma'
 import { getSession } from 'next-auth/react'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
 
-import handleError from '../../../lib/server/handleError'
+import handleError from '../../../utils/server/handleError'
 import { InstituteNews } from '@prisma/client'
-import cleanString from '../../../lib/cleanString'
-import handleDate from '../../../lib/server/handleDate'
-import slugGenerator from '../../../lib/slugGenerator'
-import { deleteFile } from '../../../lib/server/file'
-import { roleChecker } from '../../../lib/roleChecker'
+import cleanString from '../../../utils/cleanString'
+import handleDate from '../../../utils/server/handleDate'
+import slugGenerator from '../../../utils/slugGenerator'
+import { deleteFile } from '../../../utils/server/file'
+import { roleChecker } from '../../../utils/roleChecker'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   let instituteChecker

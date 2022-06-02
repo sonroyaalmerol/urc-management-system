@@ -6,11 +6,11 @@ import { VStack } from '@chakra-ui/react'
 
 import { NextSeo } from 'next-seo'
 
-import { prisma } from '../../../lib/server/prisma'
+import { prisma } from '../../../utils/server/prisma'
 
 import type { Institute } from '@prisma/client'
 import InstituteNewsForm from '../../../components/institutes/forms/InstituteNewsForm'
-import { instituteHeadChecker } from '../../../lib/roleChecker'
+import { instituteHeadChecker } from '../../../utils/roleChecker'
 
 interface NewMemoProps {
 

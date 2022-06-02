@@ -1,0 +1,62 @@
+const CHAIRPERSON = 'urc_chairperson'
+const STAFF = 'urc_staff'
+const BOARD_MEMBER = 'urc_board_member'
+const EXECUTIVE_SECRETARY = 'urc_executive_secretary'
+const RESEARCHER = 'researcher'
+
+export const CONFIRMATION_RESEARCHER_INFORMATION = [
+  CHAIRPERSON,
+  STAFF
+]
+
+export const SETTING_DEADLINES = [
+  CHAIRPERSON,
+  EXECUTIVE_SECRETARY,
+  STAFF
+]
+
+export const REVIEW_PROPOSALS = [
+  CHAIRPERSON,
+  EXECUTIVE_SECRETARY
+]
+
+export const SETTING_DELIVERABLES = [
+  CHAIRPERSON,
+  EXECUTIVE_SECRETARY,
+  STAFF
+]
+
+export const CHANGE_PROJECT_STATUS = [
+  CHAIRPERSON,
+  EXECUTIVE_SECRETARY,
+  STAFF
+]
+
+export const ASSIGN_CENTER_HEAD = [
+  CHAIRPERSON,
+  STAFF
+]
+
+export const UPDATE_CENTER_INFO = [
+  CHAIRPERSON,
+  STAFF,
+  EXECUTIVE_SECRETARY
+]
+
+export const VERIFY_CENTER_NEWS = [
+  CHAIRPERSON,
+  EXECUTIVE_SECRETARY,
+  STAFF
+]
+
+export const VERIFY_CENTER_PROJECTS = [
+  CHAIRPERSON,
+  STAFF
+]
+
+export const MODIFY_RESEARCHER_PROFILE = [
+  CHAIRPERSON,
+  BOARD_MEMBER,
+  STAFF
+]
+

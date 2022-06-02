@@ -27,10 +27,10 @@ import {
 import Button from '../../general/Button'
 import AutoCompleteInput from '../../general/AutoCompleteInput'
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
-import useUUID from '../../../lib/client/useUUID'
+import useUUID from '../../../utils/client/useUUID'
 import { Institute, ProfileToInstituteBridge } from '@prisma/client'
 import DatePicker from '../../general/DatePicker'
-import { roleChecker } from '../../../lib/roleChecker'
+import { roleChecker } from '../../../utils/roleChecker'
 import { useSession } from 'next-auth/react'
 
 

@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSession } from 'next-auth/react'
-import { prisma } from '../../../lib/server/prisma'
-import { deleteFile } from '../../../lib/server/file'
+import { prisma } from '../../../utils/server/prisma'
+import { deleteFile } from '../../../utils/server/file'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {

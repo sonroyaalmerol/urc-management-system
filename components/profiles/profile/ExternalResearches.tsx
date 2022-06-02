@@ -17,7 +17,7 @@ import {
 import Button from '../../general/Button'
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
-import { roleChecker } from '../../../lib/roleChecker'
+import { roleChecker } from '../../../utils/roleChecker'
 
 const ExternalResearches: React.FC<ComponentProps> = (props) => {
   const profile = props.profile

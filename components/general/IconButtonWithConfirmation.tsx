@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react'
 
 import IconButton from './IconButton'
-import parseHTML from '../../lib/client/parseHTML'
+import parseHTML from '../../utils/client/parseHTML'
 import Button from './Button'
 
 interface IconButtonWithConfirmationProps extends IconButtonProps {

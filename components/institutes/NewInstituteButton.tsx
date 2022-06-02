@@ -19,7 +19,7 @@ import { AddIcon } from '@chakra-ui/icons'
 import type { Institute } from '@prisma/client'
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
-import { roleChecker } from '../../lib/roleChecker'
+import { roleChecker } from '../../utils/roleChecker'
 
 interface NewInstituteButtonProps {
   onSuccess: () => any

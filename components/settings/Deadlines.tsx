@@ -6,7 +6,7 @@ import { Box, Heading, HStack, Input, Spacer, Text, useDisclosure, useToast, VSt
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { Deadline } from '@prisma/client'
 import { useRouter } from 'next/router'
-import useUUID from '../../lib/client/useUUID'
+import useUUID from '../../utils/client/useUUID'
 
 import {
   Modal,

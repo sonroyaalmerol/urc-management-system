@@ -16,7 +16,7 @@ import type { Profile } from '@prisma/client'
 import IconButton from '../../general/IconButton'
 import { CheckIcon, EditIcon } from '@chakra-ui/icons'
 import UnitsSection from './UnitsSection'
-import { roleChecker } from '../../../lib/roleChecker'
+import { roleChecker } from '../../../utils/roleChecker'
 
 const ProfileDetails: React.FC<ComponentProps> = (props) => {
   const profile = props.profile

@@ -19,7 +19,7 @@ import SmallAvatar from '../general/SmallAvatar'
 
 import { useForm, SubmitHandler, Controller } from "react-hook-form"
 
-import parse from '../../lib/client/parseHTML'
+import parse from '../../utils/client/parseHTML'
 import { CheckIcon, DeleteIcon, DownloadIcon, EditIcon } from '@chakra-ui/icons'
 import format from 'date-fns/format'
 import VerifiedTag from '../general/VerifiedTag'
@@ -29,8 +29,8 @@ import React from 'react'
 import RichTextarea from '../general/RichTextarea'
 import DatePicker from '../general/DatePicker'
 import { useRouter } from 'next/router'
-import useUUID from '../../lib/client/useUUID'
-import { roleChecker } from '../../lib/roleChecker'
+import useUUID from '../../utils/client/useUUID'
+import { roleChecker } from '../../utils/roleChecker'
 import { useSession } from 'next-auth/react'
 
 interface MemoCardProps extends CardProps {

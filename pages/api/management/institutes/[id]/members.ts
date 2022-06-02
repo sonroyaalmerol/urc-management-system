@@ -1,13 +1,13 @@
-import { prisma } from '../../../../../lib/server/prisma'
+import { prisma } from '../../../../../utils/server/prisma'
 import { getSession } from 'next-auth/react'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
 import type { Profile, ProfileToInstituteBridge } from '@prisma/client'
-import cleanString from '../../../../../lib/cleanString'
-import handleError from '../../../../../lib/server/handleError'
-import handleDate from '../../../../../lib/server/handleDate'
-import { roleChecker } from '../../../../../lib/roleChecker'
+import cleanString from '../../../../../utils/cleanString'
+import handleError from '../../../../../utils/server/handleError'
+import handleDate from '../../../../../utils/server/handleDate'
+import { roleChecker } from '../../../../../utils/roleChecker'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const searchQuery = (req.query?.query as string) ?? ''

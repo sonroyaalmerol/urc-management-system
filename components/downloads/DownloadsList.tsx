@@ -6,7 +6,7 @@ import { Box, Heading, HStack, Input, Select, Spacer, Text, Textarea, useDisclos
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { Deadline, Download, DownloadCategory } from '@prisma/client'
 import { useRouter } from 'next/router'
-import useUUID from '../../lib/client/useUUID'
+import useUUID from '../../utils/client/useUUID'
 
 import {
   Modal,
@@ -23,7 +23,7 @@ import { format } from 'date-fns'
 import IconButton from '../general/IconButton'
 import { DeleteIcon, EditIcon, ViewIcon } from '@chakra-ui/icons'
 import IconButtonWithConfirmation from '../general/IconButtonWithConfirmation'
-import fetchWithFile from '../../lib/client/fetchWithFile'
+import fetchWithFile from '../../utils/client/fetchWithFile'
 import FileUploadButton from '../general/FileUploadButton'
 import { ExtendedDownload } from '../../types/profile-card'
 

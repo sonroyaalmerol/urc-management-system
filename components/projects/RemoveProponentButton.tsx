@@ -27,8 +27,8 @@ import {
 } from "@choc-ui/chakra-autocomplete"
 import { useDebounce } from 'use-debounce'
 import { useRouter } from 'next/router'
-import useUUID from '../../lib/client/useUUID'
-import { roleChecker } from '../../lib/roleChecker'
+import useUUID from '../../utils/client/useUUID'
+import { roleChecker } from '../../utils/roleChecker'
 import { useSession } from 'next-auth/react'
 
 interface RemoveProponentButtonProps {

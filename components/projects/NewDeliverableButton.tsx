@@ -21,9 +21,9 @@ import { useRouter } from 'next/router'
 import DatePicker from '../general/DatePicker'
 
 import ResizeTextarea from "react-textarea-autosize"
-import useUUID from '../../lib/client/useUUID'
+import useUUID from '../../utils/client/useUUID'
 import { useSession } from 'next-auth/react'
-import { roleChecker } from '../../lib/roleChecker'
+import { roleChecker } from '../../utils/roleChecker'
 
 interface NewDeliverableButtonProps {
   projectSlug: string

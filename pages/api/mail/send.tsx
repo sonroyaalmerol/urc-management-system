@@ -1,4 +1,4 @@
-import { sendMail as send } from '../../../lib/server/mail'
+import { sendMail as send } from '../../../utils/server/mail'
 import { getSession } from 'next-auth/react'
 
 import type { NextApiRequest, NextApiResponse } from 'next'

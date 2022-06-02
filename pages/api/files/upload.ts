@@ -1,4 +1,4 @@
-import { uploadFile } from '../../../lib/server/file'
+import { uploadFile } from '../../../utils/server/file'
 import { getSession } from 'next-auth/react'
 import { IncomingForm } from 'formidable'
 

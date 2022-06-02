@@ -1,11 +1,11 @@
-import { prisma } from '../../../../../lib/server/prisma'
+import { prisma } from '../../../../../utils/server/prisma'
 import { getSession } from 'next-auth/react'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
 import type { Profile } from '@prisma/client'
-import handleError from '../../../../../lib/server/handleError'
-import { roleChecker } from '../../../../../lib/roleChecker'
+import handleError from '../../../../../utils/server/handleError'
+import { roleChecker } from '../../../../../utils/roleChecker'
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const body = JSON.parse(req.body) as Partial<Profile>

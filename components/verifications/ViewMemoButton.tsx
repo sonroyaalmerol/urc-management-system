@@ -17,7 +17,7 @@ import {
 
 import { AddIcon } from '@chakra-ui/icons'
 import type { InstituteNews } from '@prisma/client'
-import parseHTML from '../../lib/client/parseHTML'
+import parseHTML from '../../utils/client/parseHTML'
 
 interface ViewMemoButtonProps {
   instituteNews: InstituteNews

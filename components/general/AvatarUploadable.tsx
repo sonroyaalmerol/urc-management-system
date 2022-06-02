@@ -5,7 +5,7 @@ import {
   Avatar, AvatarProps, Box, Center, Spinner,
 } from '@chakra-ui/react'
 import { useForm } from "react-hook-form"
-import fetchWithFile from '../../lib/client/fetchWithFile'
+import fetchWithFile from '../../utils/client/fetchWithFile'
 import { useSession } from 'next-auth/react'
 
 interface AvatarUploadable extends AvatarProps {

@@ -1,7 +1,7 @@
 import { Box, BoxProps, Textarea, TextareaProps, TextProps } from '@chakra-ui/react'
 import React from 'react'
 import ResizeTextarea from "react-textarea-autosize"
-import parseHTML from '../../lib/client/parseHTML'
+import parseHTML from '../../utils/client/parseHTML'
 import RichTextarea from './RichTextarea'
 
 interface EditableTextareaProps extends TextareaProps {

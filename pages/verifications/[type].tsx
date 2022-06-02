@@ -6,7 +6,7 @@ import { VStack } from '@chakra-ui/react'
 
 import { NextSeo } from 'next-seo'
 
-import { prisma } from '../../lib/server/prisma'
+import { prisma } from '../../utils/server/prisma'
 
 import type { Project, SubmissionTypes } from '@prisma/client'
 import ExternalResearchForm from '../../components/verifications/forms/ExternalResearchForm'

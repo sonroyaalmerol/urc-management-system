@@ -1,4 +1,4 @@
-import type { prisma } from '../lib/server/prisma'
+import type { prisma } from '../utils/server/prisma'
 
 type PrismaAction = (
   'aggregate' |

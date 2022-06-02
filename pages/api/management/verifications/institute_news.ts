@@ -1,18 +1,18 @@
-import { prisma } from '../../../../lib/server/prisma'
+import { prisma } from '../../../../utils/server/prisma'
 import { getSession } from 'next-auth/react'
-import slugGenerator from '../../../../lib/slugGenerator'
+import slugGenerator from '../../../../utils/slugGenerator'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
 import type { BookPublication, FileUpload, InstituteNews, Project, VerificationRequest } from '@prisma/client'
 
 import relevancy from 'relevancy'
-import { instituteHeadChecker, roleChecker } from '../../../../lib/roleChecker'
-import parseBodyWithFile from '../../../../lib/server/parseBodyWithFile'
-import cleanString from '../../../../lib/cleanString'
+import { instituteHeadChecker, roleChecker } from '../../../../utils/roleChecker'
+import parseBodyWithFile from '../../../../utils/server/parseBodyWithFile'
+import cleanString from '../../../../utils/cleanString'
 
-import handleError from '../../../../lib/server/handleError'
-import { deleteFile } from '../../../../lib/server/file'
+import handleError from '../../../../utils/server/handleError'
+import { deleteFile } from '../../../../utils/server/file'
 
 export const config = {
   api: {

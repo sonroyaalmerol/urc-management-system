@@ -8,7 +8,7 @@ import { AddIcon } from '@chakra-ui/icons'
 
 import { NextSeo } from 'next-seo'
 
-import { prisma } from '../../../lib/server/prisma'
+import { prisma } from '../../../utils/server/prisma'
 
 import type { Project } from '@prisma/client'
 import SubmissionList from '../../../components/projects/SubmissionList'
@@ -26,7 +26,7 @@ import ProjectStatusTag from '../../../components/general/ProjectStatusTag'
 import AssignInstituteButton from '../../../components/projects/AssignInstituteButton'
 import InnerInstituteCard from '../../../components/projects/InnerInstituteCard'
 import ProjectDetails from '../../../components/projects/ProjectDetails'
-import { roleChecker } from '../../../lib/roleChecker'
+import { roleChecker } from '../../../utils/roleChecker'
 
 interface ProjectProps {
 

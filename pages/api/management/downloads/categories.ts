@@ -1,13 +1,13 @@
-import { prisma } from '../../../../lib/server/prisma'
+import { prisma } from '../../../../utils/server/prisma'
 import { getSession } from 'next-auth/react'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
 
-import handleError from '../../../../lib/server/handleError'
+import handleError from '../../../../utils/server/handleError'
 import { DownloadCategory } from '@prisma/client'
-import cleanString from '../../../../lib/cleanString'
-import { roleChecker } from '../../../../lib/roleChecker'
+import cleanString from '../../../../utils/cleanString'
+import { roleChecker } from '../../../../utils/roleChecker'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   let [totalCount, data] = await prisma.$transaction([

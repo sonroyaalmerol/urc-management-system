@@ -12,7 +12,7 @@ import { CheckIcon, EditIcon } from '@chakra-ui/icons'
 import EditableText from '../general/EditableText'
 import EditableTextarea from '../general/EditableTextarea'
 import { ProjectStatus } from '@prisma/client'
-import { roleChecker } from '../../lib/roleChecker'
+import { roleChecker } from '../../utils/roleChecker'
 
 interface ProjectDetailsProps {
   project: ExtendedProject

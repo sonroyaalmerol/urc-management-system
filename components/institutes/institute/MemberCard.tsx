@@ -12,8 +12,8 @@ import { format } from 'date-fns'
 import EditMemberButton from './EditMemberButton'
 import { ExtendedInstitute } from '../../../types/profile-card'
 import IconButtonWithConfirmation from '../../general/IconButtonWithConfirmation'
-import useUUID from '../../../lib/client/useUUID'
-import { roleChecker } from '../../../lib/roleChecker'
+import useUUID from '../../../utils/client/useUUID'
+import { roleChecker } from '../../../utils/roleChecker'
 import { useSession } from 'next-auth/react'
 
 interface MemberCardProps extends BoxProps {

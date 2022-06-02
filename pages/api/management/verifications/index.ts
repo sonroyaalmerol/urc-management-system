@@ -1,14 +1,14 @@
-import { prisma } from '../../../../lib/server/prisma'
+import { prisma } from '../../../../utils/server/prisma'
 import { getSession } from 'next-auth/react'
-import slugGenerator from '../../../../lib/slugGenerator'
+import slugGenerator from '../../../../utils/slugGenerator'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
 import type { VerificationStatus, VerificationTypes } from '@prisma/client'
 
-import handleError from '../../../../lib/server/handleError'
+import handleError from '../../../../utils/server/handleError'
 
-import { roleChecker } from '../../../../lib/roleChecker'
+import { roleChecker } from '../../../../utils/roleChecker'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_board_member'])) {

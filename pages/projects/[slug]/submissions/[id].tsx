@@ -6,7 +6,7 @@ import { VStack, Heading, useToast, SimpleGrid } from '@chakra-ui/react'
 
 import { NextSeo } from 'next-seo'
 
-import { prisma } from '../../../../lib/server/prisma'
+import { prisma } from '../../../../utils/server/prisma'
 
 import type {  Submission, SubmissionTypes } from '@prisma/client'
 
@@ -17,7 +17,7 @@ import CapsuleProposal from '../../../../components/projects/submission/CapsuleP
 import FullBlownProposal from '../../../../components/projects/submission/FullBlownProposal'
 import Actions from '../../../../components/projects/submission/Actions'
 import DeliverableSubmission from '../../../../components/projects/submission/DeliverableSubmission'
-import { roleChecker } from '../../../../lib/roleChecker'
+import { roleChecker } from '../../../../utils/roleChecker'
 
 interface SubmissionProps {
   
