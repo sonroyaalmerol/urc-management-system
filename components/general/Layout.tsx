@@ -64,9 +64,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = (props) => {
       url: '/downloads',
       allowedRoles: [
         'urc_chairperson',
-        'urc_executive_secretary',
         'urc_staff',
-        'urc_board_member',
+        'urc_executive_secretary'
       ],
     },
     {
