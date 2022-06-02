@@ -51,7 +51,7 @@ const InternalProjects: React.FC<ComponentProps> = (props) => {
         router.push(`/projects`)
       }}
       profileId={profile.id}
-      disabled={profile.id !== session.data.profile.id && !(roleChecker(session.data.profile, CREATE_PROJECT))}
+      disabled={profile.id !== session.data.profile.id || !(roleChecker(session.data.profile, CREATE_PROJECT))}
     >
       { entries.map((entry) => (
         <CardTemplate
