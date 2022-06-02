@@ -7,6 +7,7 @@ import type { Comment, UserRole } from '@prisma/client'
 import cleanString from '../../../../../lib/cleanString'
 
 import handleError from '../../../../../lib/server/handleError'
+import { roleChecker } from '../../../../../lib/roleChecker'
 
 const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const body = JSON.parse(req.body) as Partial<Comment>
@@ -18,9 +19,26 @@ const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session:
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  const body = JSON.parse(req.body) as Partial<Comment>
-
   const { id } = req.query
+
+  const submission = await prisma.submission.findUnique({
+    where: {
+      id: id as string
+    },
+    include: {
+      project: {
+        include: {
+          bridge_profiles: true
+        }
+      }
+    }
+  })
+
+  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary', 'urc_board_members']) && submission.project?.bridge_profiles?.filter((bridge) => bridge.profile_id === session.profile.id).length === 0) {
+    return res.status(401).json({ error: 'Unauthorized access.' })
+  }
+  
+  const body = JSON.parse(req.body) as Partial<Comment>
 
   if (!cleanString(body.content)) {
     return res.status(400).json({ error: 'Content is required!' })

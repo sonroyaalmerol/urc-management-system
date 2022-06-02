@@ -10,6 +10,7 @@ import cleanString from '../../../lib/cleanString'
 import handleDate from '../../../lib/server/handleDate'
 import slugGenerator from '../../../lib/slugGenerator'
 import { deleteFile } from '../../../lib/server/file'
+import { roleChecker } from '../../../lib/roleChecker'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   let instituteChecker
@@ -76,6 +77,10 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
+  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff'])) {
+    return res.status(401).json({ error: 'Unauthorized access.' })
+  }
+
   const body = JSON.parse(req.body) as Partial<InstituteNews>
 
   if (!body.id) {
@@ -119,6 +124,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
 }
 
 const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
+  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff'])) {
+    return res.status(401).json({ error: 'Unauthorized access.' })
+  }
+
   const body = JSON.parse(req.body) as Partial<InstituteNews>
 
   if (!cleanString(body.id)) {

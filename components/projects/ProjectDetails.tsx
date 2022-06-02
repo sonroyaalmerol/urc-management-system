@@ -12,6 +12,7 @@ import { CheckIcon, EditIcon } from '@chakra-ui/icons'
 import EditableText from '../general/EditableText'
 import EditableTextarea from '../general/EditableTextarea'
 import { ProjectStatus } from '@prisma/client'
+import { roleChecker } from '../../lib/roleChecker'
 
 interface ProjectDetailsProps {
   project: ExtendedProject
@@ -78,17 +79,19 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = (props) => {
           </Wrap>
         </WrapItem>
         <Spacer />
-        <WrapItem>
-          <HStack>
-            <IconButton 
-              aria-label="Edit Project Details"
-              icon={!editing ? <EditIcon /> : <CheckIcon />}
-              onClick={() => setEditing((prev) => !prev)}
-              type={!editing ? "submit" : "button"}
-              isLoading={submitting}
-            />
-          </HStack>
-        </WrapItem>
+        {(roleChecker(session.data.profile, ['researcher'])) && (
+          <WrapItem>
+            <HStack>
+              <IconButton 
+                aria-label="Edit Project Details"
+                icon={!editing ? <EditIcon /> : <CheckIcon />}
+                onClick={() => setEditing((prev) => !prev)}
+                type={!editing ? "submit" : "button"}
+                isLoading={submitting}
+              />
+            </HStack>
+          </WrapItem>
+        )}
       </Wrap>
 
       <Card>

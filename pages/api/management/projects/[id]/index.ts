@@ -7,6 +7,7 @@ import type { Session } from 'next-auth'
 import type { BudgetProposalSubmission, CapsuleProposalSubmission, DeliverableSubmission, FileUpload, FullBlownProposalSubmission, Submission, SubmissionStatus, SubmissionTypes } from '@prisma/client'
 import parseBodyWithFile from '../../../../../lib/server/parseBodyWithFile'
 import handleError from '../../../../../lib/server/handleError'
+import { roleChecker } from '../../../../../lib/roleChecker'
 
 export const config = {
   api: {
@@ -77,6 +78,10 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
+  if (!roleChecker(session.profile, ['researcher'])) {
+    return res.status(401).json({ error: 'Unauthorized access.' })
+  }
+
   const { id } = req.query
 
   const body: { files: {

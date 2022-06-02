@@ -19,6 +19,8 @@ import { EditIcon } from '@chakra-ui/icons'
 import type { Project, ProjectStatus } from '@prisma/client'
 import IconButton from '../general/IconButton'
 import { useRouter } from 'next/router'
+import { roleChecker } from '../../lib/roleChecker'
+import { useSession } from 'next-auth/react'
 
 interface EditProjectTitleButtonProps {
   projectId: string,
@@ -64,6 +66,12 @@ const EditProjectTitleButton: React.FC<EditProjectTitleButtonProps> = (props) =>
   React.useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/status`).then((i) => i.json()).then((res) => setStatusList(res.data))
   }, [])
+
+  const session = useSession()
+
+  if (!(roleChecker(session.data.profile, ['researcher']))) {
+    return <></>
+  }
 
   return (
     <>

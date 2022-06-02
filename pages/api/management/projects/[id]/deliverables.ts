@@ -8,6 +8,7 @@ import type { Deliverable } from '@prisma/client'
 
 import handleError from '../../../../../lib/server/handleError'
 import handleDate from '../../../../../lib/server/handleDate'
+import { roleChecker } from '../../../../../lib/roleChecker'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const { id } = req.query
@@ -45,6 +46,10 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
+  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary'])) {
+    return res.status(401).json({ error: 'Unauthorized access.' })
+  }
+
   const { id } = req.query
   const body = JSON.parse(req.body) as Deliverable
 

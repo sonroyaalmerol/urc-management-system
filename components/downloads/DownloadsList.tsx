@@ -118,7 +118,6 @@ const DownloadsList: React.FC<DownloadsListProps> = (props) => {
   const [currentDownload, setCurrentDownload] = React.useState<ExtendedDownload>(null)
 
   const getCategories = async () => {
-    console.log(categoryFilter)
     const tmp = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/downloads/categories`).then(res => res.json())
     setCategories(tmp?.data ?? [])
   }

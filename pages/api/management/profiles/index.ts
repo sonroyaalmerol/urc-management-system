@@ -7,7 +7,7 @@ import type { Profile } from '@prisma/client'
 import handleError from '../../../../lib/server/handleError'
 
 import relevancy from 'relevancy'
-import roleChecker from '../../../../lib/roleChecker'
+import { roleChecker } from '../../../../lib/roleChecker'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const { unit } = req.query
@@ -105,42 +105,42 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  const body = JSON.parse(req.body) as Partial<Profile>
-
-  if (roleChecker(session.profile.roles, 'researcher')) {
-    if (!body.email) {
-      return res.status(400).json({ error: 'Email is required!' })
-    }
-
-    if (!body.first_name) {
-      return res.status(400).json({ error: 'First Name is required!' })
-    }
-
-    if (!body.middle_initial) {
-      return res.status(400).json({ error: 'Middle Initial is required!' })
-    }
-
-    if (!body.last_name) {
-      return res.status(400).json({ error: 'Last Name is required!' })
-    }
-
-    if (!body.email.includes('@addu.edu.ph')) {
-      return res.status(400).json({ error: 'AdDU email is required!' })
-    }
-
-    const profile = await prisma.profile.create({
-      data: {
-        email: body.email,
-        first_name: body.first_name,
-        middle_initial: body.middle_initial,
-        last_name: body.last_name
-      }
-    })
-
-    return res.status(200).json({ success: true, data: profile })
+  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff'])) {
+    return res.status(401).json({ error: 'Unauthorized access.' })
   }
 
-  return res.status(401).json({ error: 'Unauthorized access.' })
+  const body = JSON.parse(req.body) as Partial<Profile>
+
+  if (!body.email) {
+    return res.status(400).json({ error: 'Email is required!' })
+  }
+
+  if (!body.first_name) {
+    return res.status(400).json({ error: 'First Name is required!' })
+  }
+
+  if (!body.middle_initial) {
+    return res.status(400).json({ error: 'Middle Initial is required!' })
+  }
+
+  if (!body.last_name) {
+    return res.status(400).json({ error: 'Last Name is required!' })
+  }
+
+  if (!body.email.includes('@addu.edu.ph')) {
+    return res.status(400).json({ error: 'AdDU email is required!' })
+  }
+
+  const profile = await prisma.profile.create({
+    data: {
+      email: body.email,
+      first_name: body.first_name,
+      middle_initial: body.middle_initial,
+      last_name: body.last_name
+    }
+  })
+
+  return res.status(200).json({ success: true, data: profile })
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

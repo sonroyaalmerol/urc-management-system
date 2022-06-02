@@ -5,6 +5,8 @@ import type { Submission, SubmissionTypes } from '@prisma/client'
 import Card from '../../general/Card'
 import ButtonWithConfirmation from '../../general/ButtonWithConfirmation'
 import { CheckIcon, DeleteIcon } from '@chakra-ui/icons'
+import { useSession } from 'next-auth/react'
+import { roleChecker } from '../../../lib/roleChecker'
 
 interface ActionsProps {
   submission: Submission
@@ -15,6 +17,11 @@ const Actions: React.FC<ActionsProps> = (props) => {
 
   const [status, setStatus] = React.useState(props.submission.status)
   const [submitting, setSubmitting] = React.useState(false)
+
+  const session = useSession()
+  const isAllowed = React.useMemo(() => {
+    return roleChecker(session.data.profile, ['urc_chairperson', 'urc_board_members'])
+  }, [session.data])
 
   const humanizeType = (type: SubmissionTypes) => {
     switch(type) {
@@ -51,6 +58,10 @@ const Actions: React.FC<ActionsProps> = (props) => {
       })
     }
     setSubmitting(false)
+  }
+
+  if (!isAllowed) {
+    return <></>
   }
 
   return (

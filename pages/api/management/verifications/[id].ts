@@ -5,8 +5,13 @@ import handleError from '../../../../lib/server/handleError'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
+import { roleChecker } from '../../../../lib/roleChecker'
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
+  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff'])) {
+    return res.status(401).json({ error: 'Unauthorized access.' })
+  }
+
   const body = JSON.parse(req.body) as { verified: boolean }
   const { id } = req.query
   

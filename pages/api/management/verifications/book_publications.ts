@@ -9,9 +9,10 @@ import type { Session } from 'next-auth'
 import type { BookPublication, FileUpload, Project, VerificationRequest } from '@prisma/client'
 
 import relevancy from 'relevancy'
-import roleChecker from '../../../../lib/roleChecker'
+import { roleChecker } from '../../../../lib/roleChecker'
 import parseBodyWithFile from '../../../../lib/server/parseBodyWithFile'
 import cleanString from '../../../../lib/cleanString'
+import { deleteFile } from '../../../../lib/server/file'
 
 export const config = {
   api: {
@@ -90,6 +91,10 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
+  if (!roleChecker(session.profile, ['researcher'])) {
+    return res.status(401).json({ error: 'Unauthorized access.' })
+  }
+
   const body: { files: {
     fieldName: string,
     value: FileUpload
@@ -98,10 +103,18 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
   >} = await parseBodyWithFile(req, { publicAccess: false })
 
   if (!cleanString(body.fields.title)) {
+    for await (const file of body.files) {
+      await deleteFile(file.value.id)
+    }
+
     return res.status(400).json({ error: 'Title is required!' })
   }
 
   if (!cleanString(body.fields.role)) {
+    for await (const file of body.files) {
+      await deleteFile(file.value.id)
+    }
+
     return res.status(400).json({ error: 'Role is required!' })
   }
 
@@ -113,14 +126,26 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
 
   if (!currentEntry) {
     if (!cleanString(body.fields.publisher)) {
+      for await (const file of body.files) {
+        await deleteFile(file.value.id)
+      }
+
       return res.status(400).json({ error: 'Publisher is required!' })
     }
 
     if (!cleanString(body.fields.isbn)) {
+      for await (const file of body.files) {
+        await deleteFile(file.value.id)
+      }
+
       return res.status(400).json({ error: 'ISBN is required!' })
     }
 
     if (!cleanString(body.fields.date_published)) {
+      for await (const file of body.files) {
+        await deleteFile(file.value.id)
+      }
+
       return res.status(400).json({ error: 'Date Published is required!' })
     }
 

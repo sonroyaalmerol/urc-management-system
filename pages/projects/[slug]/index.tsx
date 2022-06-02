@@ -26,6 +26,7 @@ import ProjectStatusTag from '../../../components/general/ProjectStatusTag'
 import AssignInstituteButton from '../../../components/projects/AssignInstituteButton'
 import InnerInstituteCard from '../../../components/projects/InnerInstituteCard'
 import ProjectDetails from '../../../components/projects/ProjectDetails'
+import { roleChecker } from '../../../lib/roleChecker'
 
 interface ProjectProps {
 
@@ -265,6 +266,18 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       }
     }
   }
+
+  if (
+    project.bridge_profiles.filter((bridge) => bridge.profile_id === session.profile.id).length < 1 &&
+    !roleChecker(session.profile, ['urc_chairperson', 'urc_board_members', 'urc_staff'])
+  ) {
+    return {
+      props: {
+        statusCode: 401
+      }
+    }
+  }
+
 
   return {
     props: { 

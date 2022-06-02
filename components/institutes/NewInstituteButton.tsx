@@ -18,6 +18,8 @@ import {
 import { AddIcon } from '@chakra-ui/icons'
 import type { Institute } from '@prisma/client'
 import { useRouter } from 'next/router'
+import { useSession } from 'next-auth/react'
+import { roleChecker } from '../../lib/roleChecker'
 
 interface NewInstituteButtonProps {
   onSuccess: () => any
@@ -56,6 +58,12 @@ const NewInstituteButton: React.FC<NewInstituteButtonProps> = (props) => {
     reset()
     onClose()
   };
+
+  const session = useSession()
+
+  if (!(roleChecker(session.data.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary']))) {
+    return <></>
+  }
 
   return (
     <>

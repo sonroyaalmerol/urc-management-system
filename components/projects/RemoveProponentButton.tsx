@@ -28,6 +28,8 @@ import {
 import { useDebounce } from 'use-debounce'
 import { useRouter } from 'next/router'
 import useUUID from '../../lib/client/useUUID'
+import { roleChecker } from '../../lib/roleChecker'
+import { useSession } from 'next-auth/react'
 
 interface RemoveProponentButtonProps {
   projectId: string
@@ -103,6 +105,12 @@ const RemoveProponentButton: React.FC<RemoveProponentButtonProps> = (props) => {
     reset()
     onClose()
   };
+
+  const session = useSession()
+
+  if (!(roleChecker(session.data.profile, ['researcher']))) {
+    return <></>
+  }
 
   return (
     <>

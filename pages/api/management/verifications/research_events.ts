@@ -7,10 +7,11 @@ import type { Session } from 'next-auth'
 import type { FileUpload, ResearchEvent, VerificationRequest } from '@prisma/client'
 
 import relevancy from 'relevancy'
-import roleChecker from '../../../../lib/roleChecker'
+import { roleChecker } from '../../../../lib/roleChecker'
 import parseBodyWithFile from '../../../../lib/server/parseBodyWithFile'
 import cleanString from '../../../../lib/cleanString'
 import handleError from '../../../../lib/server/handleError'
+import { deleteFile } from '../../../../lib/server/file'
 
 export const config = {
   api: {
@@ -97,10 +98,18 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
   > } = await parseBodyWithFile(req, { publicAccess: false })
 
   if (!cleanString(body.fields.event_name)) {
+    for await (const file of body.files) {
+      await deleteFile(file.value.id)
+    }
+
     return res.status(400).json({ error: 'Event Name is required!' })
   }
 
   if (!cleanString(body.fields.role)) {
+    for await (const file of body.files) {
+      await deleteFile(file.value.id)
+    }
+
     return res.status(400).json({ error: 'Role is required!' })
   }
 
@@ -112,14 +121,26 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
 
   if (!currentEntry) {
     if (!cleanString(body.fields.start_date)) {
+      for await (const file of body.files) {
+        await deleteFile(file.value.id)
+      }
+
       return res.status(400).json({ error: 'Start Date is required!' })
     }
 
     if (!cleanString(body.fields.end_date)) {
+      for await (const file of body.files) {
+        await deleteFile(file.value.id)
+      }
+
       return res.status(400).json({ error: 'End Date is required!' })
     }
 
     if (!cleanString(body.fields.description)) {
+      for await (const file of body.files) {
+        await deleteFile(file.value.id)
+      }
+
       return res.status(400).json({ error: 'Description is required!' })
     }
 

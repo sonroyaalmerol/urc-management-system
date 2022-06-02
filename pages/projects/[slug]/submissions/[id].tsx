@@ -17,6 +17,7 @@ import CapsuleProposal from '../../../../components/projects/submission/CapsuleP
 import FullBlownProposal from '../../../../components/projects/submission/FullBlownProposal'
 import Actions from '../../../../components/projects/submission/Actions'
 import DeliverableSubmission from '../../../../components/projects/submission/DeliverableSubmission'
+import { roleChecker } from '../../../../lib/roleChecker'
 
 interface SubmissionProps {
   
@@ -109,7 +110,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       capsule_proposal_submission: true,
       full_blown_proposal_submission: true,
       profile: true,
-      project: true,
+      project: {
+        include: {
+          bridge_profiles: true
+        }
+      },
       files: true,
       comments: {
         include: {
@@ -118,6 +123,17 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       }
     }
   })
+
+  if (
+    submission.project.bridge_profiles.filter((bridge) => bridge.profile_id === session.profile.id).length < 1 &&
+    !roleChecker(session.profile, ['urc_chairperson', 'urc_board_members', 'urc_staff'])
+  ) {
+    return {
+      props: {
+        statusCode: 401
+      }
+    }
+  }
 
   if (!submission) {
     return {

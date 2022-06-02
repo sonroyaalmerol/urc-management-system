@@ -22,6 +22,8 @@ import DatePicker from '../general/DatePicker'
 
 import ResizeTextarea from "react-textarea-autosize"
 import useUUID from '../../lib/client/useUUID'
+import { useSession } from 'next-auth/react'
+import { roleChecker } from '../../lib/roleChecker'
 
 interface NewDeliverableButtonProps {
   projectSlug: string
@@ -64,6 +66,12 @@ const NewDeliverableButton: React.FC<NewDeliverableButtonProps> = (props) => {
     setSubmitting(false)
     onClose()
   };
+
+  const session = useSession()
+
+  if (!(roleChecker(session.data.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary']))) {
+    return <></>
+  }
 
   return (
     <>

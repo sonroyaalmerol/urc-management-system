@@ -8,6 +8,7 @@ import handleError from '../../../lib/server/handleError'
 import cleanString from '../../../lib/cleanString'
 import { Deadline } from '@prisma/client'
 import handleDate from '../../../lib/server/handleDate'
+import { roleChecker } from '../../../lib/roleChecker'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const [totalCount, data] = await prisma.$transaction([
@@ -37,6 +38,10 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
+  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary'])) {
+    return res.status(401).json({ error: 'Unauthorized access.' })
+  }
+
   const body = JSON.parse(req.body) as Partial<Deadline>
 
   if (!cleanString(body.title)) {
@@ -72,6 +77,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
 }
 
 const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
+  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary'])) {
+    return res.status(401).json({ error: 'Unauthorized access.' })
+  }
+
   const body = JSON.parse(req.body) as Partial<Deadline>
 
   if (!cleanString(body.id)) {

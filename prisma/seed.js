@@ -373,14 +373,6 @@ async function main() {
         }
       }),
       prisma.userRole.upsert({
-        where: { id: 'default' },
-        update: {},
-        create: {
-          id: 'default',
-          comment: 'Default Role'
-        }
-      }),
-      prisma.userRole.upsert({
         where: { id: 'urc_chairperson' },
         update: {},
         create: {

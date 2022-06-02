@@ -7,6 +7,7 @@ import type { Session } from 'next-auth'
 import handleError from '../../../../lib/server/handleError'
 import { DownloadCategory } from '@prisma/client'
 import cleanString from '../../../../lib/cleanString'
+import { roleChecker } from '../../../../lib/roleChecker'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   let [totalCount, data] = await prisma.$transaction([
@@ -21,6 +22,10 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
+  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary'])) {
+    return res.status(401).json({ error: 'Unauthorized access.' })
+  }
+  
   const body = JSON.parse(req.body) as Partial<DownloadCategory>
 
   if (!cleanString(body.title)) {
@@ -51,6 +56,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
 }
 
 const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
+  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary'])) {
+    return res.status(401).json({ error: 'Unauthorized access.' })
+  }
+  
   const body = JSON.parse(req.body) as Partial<DownloadCategory>
 
   if (!cleanString(body.id)) {

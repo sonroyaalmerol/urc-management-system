@@ -7,11 +7,12 @@ import type { Session } from 'next-auth'
 import type { FileUpload, JournalPublication, Project, VerificationRequest } from '@prisma/client'
 
 import relevancy from 'relevancy'
-import roleChecker from '../../../../lib/roleChecker'
+import { roleChecker } from '../../../../lib/roleChecker'
 import parseBodyWithFile from '../../../../lib/server/parseBodyWithFile'
 import cleanString from '../../../../lib/cleanString'
 
 import handleError from '../../../../lib/server/handleError'
+import { deleteFile } from '../../../../lib/server/file'
 
 export const config = {
   api: {
@@ -90,6 +91,10 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
+  if (!roleChecker(session.profile, ['researcher'])) {
+    return res.status(401).json({ error: 'Unauthorized access.' })
+  }
+
   const body: { files: {
     fieldName: string,
     value: FileUpload
@@ -98,10 +103,18 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
   > } = await parseBodyWithFile(req, { publicAccess: false })
 
   if (!cleanString(body.fields.title)) {
+    for await (const file of body.files) {
+      await deleteFile(file.value.id)
+    }
+
     return res.status(400).json({ error: 'Title is required!' })
   }
 
   if (!cleanString(body.fields.role)) {
+    for await (const file of body.files) {
+      await deleteFile(file.value.id)
+    }
+
     return res.status(400).json({ error: 'Role is required!' })
   }
 
@@ -113,10 +126,18 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
 
   if (!currentEntry) {
     if (!cleanString(body.fields.journal)) {
+      for await (const file of body.files) {
+        await deleteFile(file.value.id)
+      }
+
       return res.status(400).json({ error: 'Journal is required!' })
     }
 
     if (!cleanString(body.fields.issn)) {
+      for await (const file of body.files) {
+        await deleteFile(file.value.id)
+      }
+
       return res.status(400).json({ error: 'ISSN is required!' })
     }
 

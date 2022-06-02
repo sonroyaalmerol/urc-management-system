@@ -16,6 +16,7 @@ import type { Profile } from '@prisma/client'
 import IconButton from '../../general/IconButton'
 import { CheckIcon, EditIcon } from '@chakra-ui/icons'
 import UnitsSection from './UnitsSection'
+import { roleChecker } from '../../../lib/roleChecker'
 
 const ProfileDetails: React.FC<ComponentProps> = (props) => {
   const profile = props.profile
@@ -83,16 +84,18 @@ const ProfileDetails: React.FC<ComponentProps> = (props) => {
           </WrapItem>
         ) }
         <Spacer />
-        <WrapItem>
-          <IconButton
-            padding={0} 
-            aria-label='Edit'
-            icon={!editing ? <EditIcon /> : <CheckIcon />}
-            onClick={() => setEditing((prev) => !prev)}
-            type={!editing ? "submit" : "button"}
-            isLoading={submitting}
-          />
-        </WrapItem>
+        { session.data.profile.id === profile.id && (
+          <WrapItem>
+            <IconButton
+              padding={0} 
+              aria-label='Edit'
+              icon={!editing ? <EditIcon /> : <CheckIcon />}
+              onClick={() => setEditing((prev) => !prev)}
+              type={!editing ? "submit" : "button"}
+              isLoading={submitting}
+            />
+          </WrapItem>
+        ) }
       </Wrap>
       <Card>
         <VStack spacing={6} align="baseline">

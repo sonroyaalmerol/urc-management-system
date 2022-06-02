@@ -11,6 +11,8 @@ import Button from '../general/Button'
 import { AddIcon, ChevronDownIcon } from '@chakra-ui/icons'
 
 import { useRouter } from 'next/router'
+import { useSession } from 'next-auth/react'
+import { roleChecker } from '../../lib/roleChecker'
 
 interface NewSubmissionButtonProps {
   capsuleUrl: string,
@@ -20,6 +22,12 @@ interface NewSubmissionButtonProps {
 
 const NewSubmissionButton: React.FC<NewSubmissionButtonProps> = (props) => {
   const router = useRouter()
+  
+  const session = useSession()
+
+  if (!(roleChecker(session.data.profile, ['researcher']))) {
+    return <></>
+  }
 
   return (
     <Menu>

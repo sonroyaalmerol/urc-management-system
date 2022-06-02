@@ -30,6 +30,8 @@ import RichTextarea from '../general/RichTextarea'
 import DatePicker from '../general/DatePicker'
 import { useRouter } from 'next/router'
 import useUUID from '../../lib/client/useUUID'
+import { roleChecker } from '../../lib/roleChecker'
+import { useSession } from 'next-auth/react'
 
 interface MemoCardProps extends CardProps {
   memo: (InstituteNews & {
@@ -106,6 +108,8 @@ const MemoCard: React.FC<MemoCardProps> = (props) => {
     setSubmitting(false)
   };
 
+  const session = useSession()
+
   return (
     <Card
       as="form"
@@ -160,35 +164,39 @@ const MemoCard: React.FC<MemoCardProps> = (props) => {
             <VerifiedTag status={memo.verified} />
           </WrapItem>
           <Spacer />
-          <WrapItem>
-            <IconButtonWithConfirmation 
-              aria-label='Remove News'
-              color="white"
-              bgColor="brand.red"
-              _hover={{
-                color: 'brand.red',
-                bgColor: 'brand.cardBackground'
-              }}
-              confirmationMessage={`
-                You are about to delete ${memo.title}. Do you want to proceed?
-              `}
-              isLoading={submitting}
-              icon={<DeleteIcon />}
-              onClick={() => {
-                onDelete()
-              }}
-            />
-          </WrapItem>
-          <WrapItem>
-            <IconButton
-              padding={0} 
-              aria-label='Edit News'
-              icon={!editing ? <EditIcon /> : <CheckIcon />}
-              onClick={() => setEditing((prev) => !prev)}
-              type={!editing ? "submit" : "button"}
-              isLoading={submitting}
-            />
-          </WrapItem>
+          { (roleChecker(session.data.profile, ['urc_chairperson', 'urc_staff'])) && (
+            <>
+              <WrapItem>
+                <IconButtonWithConfirmation 
+                  aria-label='Remove News'
+                  color="white"
+                  bgColor="brand.red"
+                  _hover={{
+                    color: 'brand.red',
+                    bgColor: 'brand.cardBackground'
+                  }}
+                  confirmationMessage={`
+                    You are about to delete ${memo.title}. Do you want to proceed?
+                  `}
+                  isLoading={submitting}
+                  icon={<DeleteIcon />}
+                  onClick={() => {
+                    onDelete()
+                  }}
+                />
+              </WrapItem>
+              <WrapItem>
+                <IconButton
+                  padding={0} 
+                  aria-label='Edit News'
+                  icon={!editing ? <EditIcon /> : <CheckIcon />}
+                  onClick={() => setEditing((prev) => !prev)}
+                  type={!editing ? "submit" : "button"}
+                  isLoading={submitting}
+                />
+              </WrapItem>
+            </>
+          ) }
         </Wrap>
         
         <Wrap align="center" spacing="2">

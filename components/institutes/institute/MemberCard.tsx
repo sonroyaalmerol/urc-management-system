@@ -13,6 +13,8 @@ import EditMemberButton from './EditMemberButton'
 import { ExtendedInstitute } from '../../../types/profile-card'
 import IconButtonWithConfirmation from '../../general/IconButtonWithConfirmation'
 import useUUID from '../../../lib/client/useUUID'
+import { roleChecker } from '../../../lib/roleChecker'
+import { useSession } from 'next-auth/react'
 
 interface MemberCardProps extends BoxProps {
   profile: (Profile & {
@@ -57,6 +59,8 @@ const MemberCard: React.FC<MemberCardProps> = (props) => {
     }
   };
 
+  const session = useSession()
+
   return (
     <InnerCard
       {...divProps}
@@ -89,36 +93,38 @@ const MemberCard: React.FC<MemberCardProps> = (props) => {
           </VStack>
         </HStack>
         <Spacer />
-        <VStack>
-          <EditMemberButton
-            institute={props.institute}
-            currentValue={{
-              email: profile.email,
-              role_title: props.role,
-              start_date: props.startDate ? new Date(props.startDate) : null,
-              end_date: props.endDate ? new Date(props.endDate) : null,
-              is_head: props.isHead
-            }}
-          />
-          <IconButtonWithConfirmation 
-            aria-label='Remove Member'
-            icon={<DeleteIcon />}
-            backgroundColor="brand.red"
-            borderRadius={10}
-            color="white"
-            fontWeight="bold"
-            _hover={{
-              color: "brand.red",
-              backgroundColor: "brand.cardBackground"
-            }}
-            confirmationMessage={
-              `Remove ${profile.first_name}'s membership?`
-            }
-            onClick={() => {
-              onDelete({ email: profile.email })
-            }}
-          />
-        </VStack>
+        { (roleChecker(session.data.profile, ['urc_chairperson', 'urc_staff'])) && (
+          <VStack>
+            <EditMemberButton
+              institute={props.institute}
+              currentValue={{
+                email: profile.email,
+                role_title: props.role,
+                start_date: props.startDate ? new Date(props.startDate) : null,
+                end_date: props.endDate ? new Date(props.endDate) : null,
+                is_head: props.isHead
+              }}
+            />
+            <IconButtonWithConfirmation 
+              aria-label='Remove Member'
+              icon={<DeleteIcon />}
+              backgroundColor="brand.red"
+              borderRadius={10}
+              color="white"
+              fontWeight="bold"
+              _hover={{
+                color: "brand.red",
+                backgroundColor: "brand.cardBackground"
+              }}
+              confirmationMessage={
+                `Remove ${profile.first_name}'s membership?`
+              }
+              onClick={() => {
+                onDelete({ email: profile.email })
+              }}
+            />
+          </VStack>
+        ) }
       </HStack>
     </InnerCard>
   )

@@ -6,6 +6,7 @@ import type { Session } from 'next-auth'
 import type { UserRole } from '@prisma/client'
 
 import handleError from '../../../../../lib/server/handleError'
+import { roleChecker } from '../../../../../lib/roleChecker'
 
 const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const body = JSON.parse(req.body) as Partial<UserRole>
@@ -17,36 +18,12 @@ const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session:
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
+  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_board_members'])) {
+    return res.status(401).json({ error: 'Unauthorized access.' })
+  }
+
   const body = JSON.parse(req.body) as { approved: boolean }
   const { id } = req.query
-
-  /* 
-  const submission = await prisma.submission.findUnique({
-    where: {
-      id: id as string
-    },
-    include: {
-      project: true,
-      budget_proposal_submission: true,
-      capsule_proposal_submission: true,
-      deliverable_submission: true,
-      full_blown_proposal_submission: true
-    }
-  })
-  switch (submission.type) {
-    case 'BUDGET':
-      break
-    case 'CAPSULE':
-
-      break
-    case 'DELIVERABLE':
-
-      break
-    case 'FULL':
-
-      break
-  }
-  */
 
   const submission = await prisma.submission.update({
     where: {

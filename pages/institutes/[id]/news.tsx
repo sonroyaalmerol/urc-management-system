@@ -10,6 +10,7 @@ import { prisma } from '../../../lib/server/prisma'
 
 import type { Institute } from '@prisma/client'
 import InstituteNewsForm from '../../../components/institutes/forms/InstituteNewsForm'
+import { instituteHeadChecker } from '../../../lib/roleChecker'
 
 interface NewMemoProps {
 
@@ -39,6 +40,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getSession(context)
 
   const { id } = context.params
+
+  if (!instituteHeadChecker(session.profile, id as string)) {
+    return {
+      props: {
+        statusCode: 401
+      }
+    }
+  }
 
   const institute = await prisma.institute.findUnique({
     where: {

@@ -23,6 +23,8 @@ import { useDebounce } from 'use-debounce'
 import { useRouter } from 'next/router'
 import useUUID from '../../lib/client/useUUID'
 import AutoCompleteInput from '../general/AutoCompleteInput'
+import { useSession } from 'next-auth/react'
+import { roleChecker } from '../../lib/roleChecker'
 
 interface AssignInstituteButtonProps {
   projectId: string
@@ -71,6 +73,12 @@ const AssignInstituteButton: React.FC<AssignInstituteButtonProps> = (props) => {
     reset()
     onClose()
   };
+
+  const session = useSession()
+
+  if (!(roleChecker(session.data.profile, ['researcher']))) {
+    return <></>
+  }
 
   return (
     <>

@@ -32,6 +32,7 @@ interface CardTemplateProps {
   href?: string
   role?: string
   onClick?: () => void
+  disabled?: boolean
 }
 
 const CardTemplate: React.FC<CardTemplateProps> = (props) => {

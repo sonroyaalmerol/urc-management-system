@@ -10,6 +10,7 @@ import Card from '../components/general/Card'
 import Units from '../components/settings/Units'
 import Deadlines from '../components/settings/Deadlines'
 import DownloadCategories from '../components/settings/DownloadCategories'
+import { roleChecker } from '../lib/roleChecker'
 
 interface SettingsProps {
 
@@ -46,6 +47,16 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         destination: `/login?redirect=${context.req.url}`,
         permanent: false,
       },
+    }
+  }
+
+  if (
+    !roleChecker(session.profile, ['urc_chairperson', 'urc_staff'])
+  ) {
+    return {
+      props: {
+        statusCode: 401
+      }
     }
   }
 

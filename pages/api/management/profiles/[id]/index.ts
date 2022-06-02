@@ -5,11 +5,16 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
 import type { Profile } from '@prisma/client'
 import handleError from '../../../../../lib/server/handleError'
+import { roleChecker } from '../../../../../lib/roleChecker'
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const body = JSON.parse(req.body) as Partial<Profile>
 
   const { id } = req.query
+
+  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_board_members']) && session.profile.id !== id) {
+    return res.status(401).json({ error: 'Unauthorized access.' })
+  }
 
   const profile = await prisma.profile.update({
     where: {

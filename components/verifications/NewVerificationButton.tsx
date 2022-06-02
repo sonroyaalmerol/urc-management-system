@@ -11,6 +11,8 @@ import Button from '../general/Button'
 import { AddIcon, ChevronDownIcon } from '@chakra-ui/icons'
 
 import { useRouter } from 'next/router'
+import { roleChecker } from '../../lib/roleChecker'
+import { useSession } from 'next-auth/react'
 
 const NewVerificationButton: React.FC = (props) => {
   const router = useRouter()
@@ -22,6 +24,12 @@ const NewVerificationButton: React.FC = (props) => {
     researchDisseminationUrl: '/verifications/research_dissemination',
     researchPresentationUrl: '/verifications/research_presentation',
     researchEventUrl: '/verifications/research_event'
+  }
+
+  const session = useSession()
+
+  if (!(roleChecker(session.data.profile, ['researcher']))) {
+    return <></>
   }
 
   return (

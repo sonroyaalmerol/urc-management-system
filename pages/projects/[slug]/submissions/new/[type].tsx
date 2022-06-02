@@ -13,6 +13,7 @@ import BudgetProposalForm from '../../../../../components/projects/submission_fo
 import CapsuleProposalForm from '../../../../../components/projects/submission_forms/CapsuleProposalForm'
 import FullBlownProposalForm from '../../../../../components/projects/submission_forms/FullBlownProposalForm'
 import DeliverableForm from '../../../../../components/projects/submission_forms/DeliverableForm'
+import { roleChecker } from '../../../../../lib/roleChecker'
 
 interface NewSubmissionProps {
 
@@ -70,6 +71,14 @@ const NewSubmission: React.FC<NewSubmissionProps> = (props: InferGetServerSidePr
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getSession(context)
 
+  if (!(roleChecker(session.profile, ['researcher']))) {
+    return {
+      props: {
+        statusCode: 401
+      }
+    }
+  }
+
   const { params: { slug, type } } = context
 
   if (!session) {
@@ -84,8 +93,22 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const project = await prisma.project.findUnique({
     where: {
       slug: slug as string
+    },
+    include: {
+      bridge_profiles: true
     }
   })
+
+  if (
+    project.bridge_profiles.filter((bridge) => bridge.profile_id === session.profile.id).length < 1 &&
+    !roleChecker(session.profile, ['urc_chairperson', 'urc_board_members', 'urc_staff'])
+  ) {
+    return {
+      props: {
+        statusCode: 401
+      }
+    }
+  }
 
   let deliverable: Deliverable = null
 

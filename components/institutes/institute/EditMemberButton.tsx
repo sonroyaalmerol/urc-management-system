@@ -22,6 +22,8 @@ import useUUID from '../../../lib/client/useUUID'
 import DatePicker from '../../general/DatePicker'
 import AutoCompleteInput from '../../general/AutoCompleteInput'
 import { ExtendedInstitute } from '../../../types/profile-card'
+import { useSession } from 'next-auth/react'
+import { roleChecker } from '../../../lib/roleChecker'
 
 interface EditMemberButtonProps {
   institute: Partial<ExtendedInstitute>
@@ -66,6 +68,12 @@ const EditMemberButton: React.FC<EditMemberButtonProps> = (props) => {
     onClose()
   };
 
+  const session = useSession()
+
+  if (!roleChecker(session.data.profile, ['urc_chairperson', 'urc_staff'])) {
+    return <></>
+  }
+  
   return (
     <>
       <IconButton

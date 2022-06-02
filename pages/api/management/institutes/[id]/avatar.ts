@@ -7,6 +7,7 @@ import type { FileUpload, UserRole } from '@prisma/client'
 import parseBodyWithFile from '../../../../../lib/server/parseBodyWithFile'
 import { deleteFile } from '../../../../../lib/server/file'
 import handleError from '../../../../../lib/server/handleError'
+import { roleChecker } from '../../../../../lib/roleChecker'
 
 export const config = {
   api: {
@@ -19,6 +20,9 @@ const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session:
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
+  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary'])) {
+    return res.status(401).json({ error: 'Unauthorized access.' })
+  }
   const { id } = req.query
 
   const body: { files: {

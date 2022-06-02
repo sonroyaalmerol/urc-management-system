@@ -1,7 +1,9 @@
-import type { UserRole } from "@prisma/client";
+import { ExtendedProfile } from "../types/profile-card";
 
-const roleChecker = (roles: UserRole[], idOfRoleToCheck: string) => {
-  return roles.filter((role) => role.id === idOfRoleToCheck).length > 0
+export const roleChecker = (profile: Partial<ExtendedProfile>, idsOfRoleToCheck: string[], options?: { exact?: boolean }) => {
+  return profile.roles.filter((role) => idsOfRoleToCheck.includes(role.id)).length > 0 && (options?.exact ? idsOfRoleToCheck.length === profile.roles.length : true)
 }
 
-export default roleChecker
+export const instituteHeadChecker = (profile: Partial<ExtendedProfile>, idOfInstitute: string) => {
+  return profile.bridge_institutes.filter((bridge) => bridge.institute_id === idOfInstitute && bridge.is_head).length > 0
+}

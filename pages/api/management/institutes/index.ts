@@ -7,7 +7,7 @@ import type { Institute, Profile } from '@prisma/client'
 import handleError from '../../../../lib/server/handleError'
 
 import relevancy from 'relevancy'
-import roleChecker from '../../../../lib/roleChecker'
+import { roleChecker } from '../../../../lib/roleChecker'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const searchQuery = (req.query?.query as string) ?? ''
@@ -78,6 +78,10 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
+  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary'])) {
+    return res.status(401).json({ error: 'Unauthorized access.' })
+  }
+  
   const body = JSON.parse(req.body) as Partial<Institute>
 
   if (!body.name) {

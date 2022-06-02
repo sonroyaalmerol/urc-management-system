@@ -7,7 +7,7 @@ import type { Session } from 'next-auth'
 import type { Project } from '@prisma/client'
 
 import relevancy from 'relevancy'
-import roleChecker from '../../../../lib/roleChecker'
+import { roleChecker } from '../../../../lib/roleChecker'
 import handleError from '../../../../lib/server/handleError'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
@@ -34,7 +34,7 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
   let [totalCount, data] = await prisma.$transaction([
     prisma.project.count({
       where: {
-        bridge_profiles: roleChecker(session.profile.roles, 'researcher') ? {
+        bridge_profiles: roleChecker(session.profile, ['researcher'], { exact: true }) ? {
           some: {
             profile_id: session.profile.id
           }
@@ -49,7 +49,7 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
         id: req.query.cursor as string
       } : undefined,
       where: {
-        bridge_profiles: roleChecker(session.profile.roles, 'researcher') ? {
+        bridge_profiles: roleChecker(session.profile, ['researcher'], { exact: true }) ? {
           some: {
             profile_id: session.profile.id
           }
@@ -96,12 +96,16 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
+  if (!roleChecker(session.profile, ['researcher'])) {
+    return res.status(401).json({ error: 'Unauthorized access.' })
+  }
+
   const body = JSON.parse(req.body) as Partial<
     (Project & { mode: 'create' | 'update' }) |
     ({ id: string, email: string, role: string, mode: 'add-proponent' | 'remove-proponent' })
   >
 
-  if (roleChecker(session.profile.roles, 'researcher') || true) {
+  if (roleChecker(session.profile, ['researcher']) || true) {
     const id: string = session.profile.id
 
     let project: Project = null

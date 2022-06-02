@@ -30,6 +30,8 @@ import { useForm, Controller, SubmitHandler } from "react-hook-form"
 import useUUID from '../../../lib/client/useUUID'
 import { Institute, ProfileToInstituteBridge } from '@prisma/client'
 import DatePicker from '../../general/DatePicker'
+import { roleChecker } from '../../../lib/roleChecker'
+import { useSession } from 'next-auth/react'
 
 
 const Members: React.FC<ComponentProps> = (props) => {
@@ -104,6 +106,8 @@ const Members: React.FC<ComponentProps> = (props) => {
     }
   }, [isOpen])
 
+  const session = useSession()
+
   return (
     <ListTemplate
       title="Members"
@@ -111,6 +115,7 @@ const Members: React.FC<ComponentProps> = (props) => {
       hasMore={entries.length < count}
       loadMore={loadNewEntries}
       onNew={onOpen}
+      disabled={!(roleChecker(session.data.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary']))}
     >
       { entries.map((entry) => (
         <MemberCard

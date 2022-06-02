@@ -13,6 +13,8 @@ import { CheckIcon, DeleteIcon } from '@chakra-ui/icons'
 import ButtonWithConfirmation from '../general/ButtonWithConfirmation'
 import parseHTML from '../../lib/client/parseHTML'
 import ViewMemoButton from './ViewMemoButton'
+import { useSession } from 'next-auth/react'
+import { roleChecker } from '../../lib/roleChecker'
 
 interface VerificationCardProps extends BoxProps {
   request: ExtendedVerificationRequest,
@@ -168,6 +170,8 @@ const VerificationCard: React.FC<VerificationCardProps> = (props) => {
     }
   }, [request.type])
 
+  const session = useSession()
+
   return (
     <Card
       transition="box-shadow 0.05s, background-color 0.1s"
@@ -251,51 +255,53 @@ const VerificationCard: React.FC<VerificationCardProps> = (props) => {
         </Wrap>
       </VStack>
       <Spacer />
-      <SimpleGrid columns={request.status === 'NOT_VERIFIED' ? 2 : 1} mt="1rem" spacing={2}>
-        { (request.status === 'INVALID' || request.status === 'NOT_VERIFIED') && (
-          <ButtonWithConfirmation
-            color="white"
-            bgColor="brand.blue"
-            borderRadius={10}
-            leftIcon={<CheckIcon />}
-            _hover={{
-              color: 'brand.blue',
-              bgColor: 'brand.cardBackground'
-            }}
-            confirmationMessage={
-              `
-                Press confirm to mark the request, <u>${entry.title}</u>, as <b>VERIFIED</b>
-              `
-            }
-            onClick={() => { setVerified(true) }}
-            isLoading={loading}
-          >
-            Mark as Verified
-          </ButtonWithConfirmation>
-        ) }
+      {(roleChecker(session.data.profile, ['urc_chairperson', 'urc_staff', 'urc_board_member'])) && (
+        <SimpleGrid columns={request.status === 'NOT_VERIFIED' ? 2 : 1} mt="1rem" spacing={2}>
+          { (request.status === 'INVALID' || request.status === 'NOT_VERIFIED') && (
+            <ButtonWithConfirmation
+              color="white"
+              bgColor="brand.blue"
+              borderRadius={10}
+              leftIcon={<CheckIcon />}
+              _hover={{
+                color: 'brand.blue',
+                bgColor: 'brand.cardBackground'
+              }}
+              confirmationMessage={
+                `
+                  Press confirm to mark the request, <u>${entry.title}</u>, as <b>VERIFIED</b>
+                `
+              }
+              onClick={() => { setVerified(true) }}
+              isLoading={loading}
+            >
+              Mark as Verified
+            </ButtonWithConfirmation>
+          ) }
 
-        { (request.status === 'VERIFIED' || request.status === 'NOT_VERIFIED') && (
-          <ButtonWithConfirmation
-            color="white"
-            bgColor="brand.red"
-            borderRadius={10}
-            leftIcon={<DeleteIcon />}
-            _hover={{
-              color: 'brand.red',
-              bgColor: 'brand.cardBackground'
-            }}
-            confirmationMessage={
-              `
-                Press confirm to mark the request, <u>${entry.title}</u>, as <b>INVALID</b>
-              `
-            }
-            onClick={() => { setVerified(false) }}
-            isLoading={loading}
-          >
-            Mark as Invalid
-          </ButtonWithConfirmation>
-        ) }
-      </SimpleGrid>
+          { (request.status === 'VERIFIED' || request.status === 'NOT_VERIFIED') && (
+            <ButtonWithConfirmation
+              color="white"
+              bgColor="brand.red"
+              borderRadius={10}
+              leftIcon={<DeleteIcon />}
+              _hover={{
+                color: 'brand.red',
+                bgColor: 'brand.cardBackground'
+              }}
+              confirmationMessage={
+                `
+                  Press confirm to mark the request, <u>${entry.title}</u>, as <b>INVALID</b>
+                `
+              }
+              onClick={() => { setVerified(false) }}
+              isLoading={loading}
+            >
+              Mark as Invalid
+            </ButtonWithConfirmation>
+          ) }
+        </SimpleGrid>
+      )}
     </Card>
   )
 }

@@ -1,6 +1,6 @@
 import React from 'react'
 import ContentHeader from '../../../components/general/ContentHeader'
-import { getSession } from 'next-auth/react'
+import { getSession, useSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
 
 import { prisma } from '../../../lib/server/prisma'
@@ -15,6 +15,7 @@ import Members from '../../../components/institutes/institute/Members'
 import IconButton from '../../../components/general/IconButton'
 import { AddIcon } from '@chakra-ui/icons'
 import { useRouter } from 'next/router'
+import { instituteHeadChecker } from '../../../lib/roleChecker'
 
 interface InstituteProps {
 
@@ -23,6 +24,8 @@ interface InstituteProps {
 const Institute: React.FC<InstituteProps> = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const institute: ExtendedInstitute = JSON.parse(props.institute)
   const router = useRouter()
+
+  const session = useSession()
 
   return (
     <>
@@ -49,16 +52,18 @@ const Institute: React.FC<InstituteProps> = (props: InferGetServerSidePropsType<
                 </Heading>
               </WrapItem>
               <Spacer />
-              <WrapItem>
-                <IconButton 
-                  aria-label="Add Entry"
-                  icon={<AddIcon />}
-                  padding={0}
-                  onClick={() => {
-                    router.push(`/institutes/${institute.id}/news`)
-                  }}
-                />
-              </WrapItem>
+              { instituteHeadChecker(session.data.profile, institute.id) && (
+                <WrapItem>
+                  <IconButton 
+                    aria-label="Add Entry"
+                    icon={<AddIcon />}
+                    padding={0}
+                    onClick={() => {
+                      router.push(`/institutes/${institute.id}/news`)
+                    }}
+                  />
+                </WrapItem>
+              ) }
             </Wrap>
             <MemoList institute={institute} />
           </VStack>

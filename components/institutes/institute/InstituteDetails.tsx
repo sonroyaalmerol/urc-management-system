@@ -12,6 +12,8 @@ import EditableTextarea from '../../general/EditableTextarea'
 
 import { useForm, SubmitHandler, Controller } from "react-hook-form"
 import type { Institute } from '@prisma/client'
+import { useSession } from 'next-auth/react'
+import { roleChecker } from '../../../lib/roleChecker'
 
 const InstituteDetails: React.FC<ComponentProps> = (props) => {
   const institute = props.institute
@@ -48,6 +50,7 @@ const InstituteDetails: React.FC<ComponentProps> = (props) => {
     setSubmitting(false)
   };
 
+  const session = useSession()
   const [editing, setEditing] = React.useState(false)
 
   return (
@@ -63,14 +66,16 @@ const InstituteDetails: React.FC<ComponentProps> = (props) => {
         </WrapItem>
         <Spacer />
         <WrapItem>
-          <IconButton
-            padding={0} 
-            aria-label='Edit'
-            icon={!editing ? <EditIcon /> : <CheckIcon />}
-            onClick={() => setEditing((prev) => !prev)}
-            type={!editing ? "submit" : "button"}
-            isLoading={submitting}
-          />
+          { (roleChecker(session.data.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary'])) && (
+            <IconButton
+              padding={0} 
+              aria-label='Edit'
+              icon={!editing ? <EditIcon /> : <CheckIcon />}
+              onClick={() => setEditing((prev) => !prev)}
+              type={!editing ? "submit" : "button"}
+              isLoading={submitting}
+            />
+          ) }
         </WrapItem>
       </Wrap>
       <Card>

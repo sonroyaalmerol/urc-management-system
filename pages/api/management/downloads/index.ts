@@ -11,6 +11,7 @@ import parseBodyWithFile from '../../../../lib/server/parseBodyWithFile'
 import { deleteFile } from '../../../../lib/server/file'
 
 import relevancy from 'relevancy'
+import { roleChecker } from '../../../../lib/roleChecker'
 
 export const config = {
   api: {
@@ -97,14 +98,16 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
+  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary'])) {
+    return res.status(401).json({ error: 'Unauthorized access.' })
+  }
+
   const body: { files: {
     fieldName: string,
     value: FileUpload
   }[], fields: Partial<
     Download & { category_id: string }
   > } = await parseBodyWithFile(req, { publicAccess: true })
-
-  console.log(body.fields)
 
   if (!cleanString(body.fields.title)) {
     return res.status(400).json({ error: 'Title is required!' })
@@ -161,6 +164,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
 }
 
 const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
+  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary'])) {
+    return res.status(401).json({ error: 'Unauthorized access.' })
+  }
+  
   const body: { files: {
     fieldName: string,
     value: FileUpload

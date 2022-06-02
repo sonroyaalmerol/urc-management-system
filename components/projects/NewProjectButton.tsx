@@ -18,6 +18,8 @@ import {
 import { AddIcon } from '@chakra-ui/icons'
 import type { Project } from '@prisma/client'
 import { useRouter } from 'next/router'
+import { useSession } from 'next-auth/react'
+import { roleChecker } from '../../lib/roleChecker'
 
 interface NewProjectButtonProps {
   onSuccess: () => any
@@ -56,6 +58,12 @@ const NewProjectButton: React.FC<NewProjectButtonProps> = (props) => {
     reset()
     onClose()
   };
+
+  const session = useSession()
+
+  if (!(roleChecker(session.data.profile, ['researcher']))) {
+    return <></>
+  }
 
   return (
     <>

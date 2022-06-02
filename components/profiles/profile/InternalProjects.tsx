@@ -55,7 +55,7 @@ const InternalProjects: React.FC<ComponentProps> = (props) => {
         <CardTemplate
           key={entry.id}
           entry={entry}
-          href={`${process.env.NEXT_PUBLIC_BASE_URL}/projects/${entry.slug}`}
+          href={session.data.profile.id === profile.id ? `${process.env.NEXT_PUBLIC_BASE_URL}/projects/${entry.slug}` : undefined}
           role={entry.bridge_profiles.filter((bridge) => bridge.profile_id === profile.id)[0].role_title}
         />
       )) }

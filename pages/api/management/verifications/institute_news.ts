@@ -7,11 +7,12 @@ import type { Session } from 'next-auth'
 import type { BookPublication, FileUpload, InstituteNews, Project, VerificationRequest } from '@prisma/client'
 
 import relevancy from 'relevancy'
-import roleChecker from '../../../../lib/roleChecker'
+import { instituteHeadChecker, roleChecker } from '../../../../lib/roleChecker'
 import parseBodyWithFile from '../../../../lib/server/parseBodyWithFile'
 import cleanString from '../../../../lib/cleanString'
 
 import handleError from '../../../../lib/server/handleError'
+import { deleteFile } from '../../../../lib/server/file'
 
 export const config = {
   api: {
@@ -31,15 +32,35 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
     InstituteNews & VerificationRequest
   >} = await parseBodyWithFile(req, { publicAccess: false })
 
+  if (!instituteHeadChecker(session.profile, body.fields.institute_id)) {
+    for await (const file of body.files) {
+      await deleteFile(file.value.id)
+    }
+
+    return res.status(401).json({ error: 'Unauthorized access.' })
+  }
+
   if (!cleanString(body.fields.title)) {
+    for await (const file of body.files) {
+      await deleteFile(file.value.id)
+    }
+
     return res.status(400).json({ error: 'Title is required!' })
   }
 
   if (!cleanString(body.fields.content)) {
+    for await (const file of body.files) {
+      await deleteFile(file.value.id)
+    }
+
     return res.status(400).json({ error: 'Content is required!' })
   }
 
   if (!cleanString(body.fields.institute_id)) {
+    for await (const file of body.files) {
+      await deleteFile(file.value.id)
+    }
+
     return res.status(400).json({ error: 'Institute is required!' })
   }
 
