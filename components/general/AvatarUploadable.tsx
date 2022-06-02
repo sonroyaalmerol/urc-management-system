@@ -29,6 +29,11 @@ const AvatarUploadable: React.FC<AvatarUploadable> = (props) => {
 
   const { files } = watch()
 
+  const reloadSession = () => {
+    const event = new Event("visibilitychange")
+    document.dispatchEvent(event)
+  }
+
   const uploadAvatar = async () => {
     setSubmitting(true)
     let res = null
@@ -39,6 +44,7 @@ const AvatarUploadable: React.FC<AvatarUploadable> = (props) => {
     }
 
     if (res) {
+      reloadSession()
       setPhotoId(res.data)
     }
 

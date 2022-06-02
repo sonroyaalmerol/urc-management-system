@@ -29,6 +29,11 @@ const ProfileDetails: React.FC<ComponentProps> = (props) => {
 
   const toast = useToast()
 
+  const reloadSession = () => {
+    const event = new Event("visibilitychange")
+    document.dispatchEvent(event)
+  }
+
   const onSubmit: SubmitHandler<Partial<Profile>> = async data => {
     setSubmitting(true)
 
@@ -38,6 +43,7 @@ const ProfileDetails: React.FC<ComponentProps> = (props) => {
     }).then((i) => i.json())
 
     if (res.success) {
+      reloadSession()
       toast({
         title: 'Success!',
         description: `Successfully modified details!`,

@@ -28,6 +28,11 @@ const RolesSection: React.FC<RolesSection> = (props) => {
   const [tmpRoles, setRoles] = React.useState<UserRole[]>([])
   const [profileRoles, setProfileRoles] = React.useState(profile.roles)
 
+  const reloadSession = () => {
+    const event = new Event("visibilitychange")
+    document.dispatchEvent(event)
+  }
+
   const roles = React.useMemo(() => {
     if (profileRoles.length === 0) {
       return tmpRoles
@@ -55,6 +60,7 @@ const RolesSection: React.FC<RolesSection> = (props) => {
 
     if (res.success) {
       setProfileRoles((prev) => [...prev.filter((x) => x.id !== role.id), role])
+      reloadSession()
     }
   }
 
@@ -67,6 +73,7 @@ const RolesSection: React.FC<RolesSection> = (props) => {
 
     if (res.success) {
       setProfileRoles((prev) => prev.filter((x) => x.id !== role.id))
+      reloadSession()
     }
   }
 

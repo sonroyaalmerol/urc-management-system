@@ -28,6 +28,11 @@ const UnitsSection: React.FC<UnitsSection> = (props) => {
   const [units, setUnits] = React.useState<{ parent_name: string, parent_id: string, units: Unit[] }[]>([])
   const [profileUnits, setProfileUnits] = React.useState(profile.units)
 
+  const reloadSession = () => {
+    const event = new Event("visibilitychange")
+    document.dispatchEvent(event)
+  }
+
   const getUnits = async () => {
     setUnitsLoading(true)
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/units`).then(res => res.json())
@@ -43,6 +48,7 @@ const UnitsSection: React.FC<UnitsSection> = (props) => {
 
     if (res.success) {
       setProfileUnits((prev) => [...prev.filter((x) => x.id !== unit.id), unit])
+      reloadSession()
     }
   }
 
@@ -55,6 +61,7 @@ const UnitsSection: React.FC<UnitsSection> = (props) => {
 
     if (res.success) {
       setProfileUnits((prev) => prev.filter((x) => x.id !== unit.id))
+      reloadSession()
     }
   }
 
