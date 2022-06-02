@@ -20,7 +20,7 @@ interface ProjectDetailsProps {
 }
 
 const ProjectDetails: React.FC<ProjectDetailsProps> = (props) => {
-  const project: ExtendedProject = props.project
+  const [project, setProject] = React.useState(props.project)
 
   const [submitting, setSubmitting] = React.useState(false)
   const [statusList, setStatusList] = React.useState<ProjectStatus[]>([])
@@ -40,6 +40,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = (props) => {
     }).then((i) => i.json())
 
     if (res.success) {
+      setProject(res.data)
       toast({
         title: 'Success!',
         description: `Successfully modified details!`,

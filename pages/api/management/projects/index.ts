@@ -169,6 +169,18 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
             id: body.project_status_id as string
           }
         } : undefined
+      },
+      include: {
+        bridge_profiles: {
+          include: {
+            profile: {
+              include: {
+                user: true
+              }
+            }
+          }
+        },
+        project_status: true
       }
     })
   } else if (body.mode === 'add-proponent') {
