@@ -15,6 +15,7 @@ import IconButtonWithConfirmation from '../../general/IconButtonWithConfirmation
 import useUUID from '../../../utils/client/useUUID'
 import { roleChecker } from '../../../utils/roleChecker'
 import { useSession } from 'next-auth/react'
+import { ASSIGN_CENTER_HEAD } from '../../../utils/permissions'
 
 interface MemberCardProps extends BoxProps {
   profile: (Profile & {
@@ -93,7 +94,7 @@ const MemberCard: React.FC<MemberCardProps> = (props) => {
           </VStack>
         </HStack>
         <Spacer />
-        { (roleChecker(session.data.profile, ['urc_chairperson', 'urc_staff'])) && (
+        { (roleChecker(session.data.profile, ASSIGN_CENTER_HEAD)) && (
           <VStack>
             <EditMemberButton
               institute={props.institute}

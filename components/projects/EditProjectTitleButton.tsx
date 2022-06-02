@@ -19,11 +19,13 @@ import { EditIcon } from '@chakra-ui/icons'
 import type { Project, ProjectStatus } from '@prisma/client'
 import IconButton from '../general/IconButton'
 import { useRouter } from 'next/router'
-import { roleChecker } from '../../utils/roleChecker'
+import { memberChecker, roleChecker } from '../../utils/roleChecker'
 import { useSession } from 'next-auth/react'
+import { ExtendedProject } from '../../types/profile-card'
+import { CHANGE_PROJECT_STATUS } from '../../utils/permissions'
 
 interface EditProjectTitleButtonProps {
-  projectId: string,
+  project: Partial<ExtendedProject>,
   currentTitle: string,
   currentStatus: string
 }
@@ -42,7 +44,7 @@ const EditProjectTitleButton: React.FC<EditProjectTitleButtonProps> = (props) =>
     setSubmitting(true)
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects`, {
       method: 'POST',
-      body: JSON.stringify({...data, mode: 'update', id: props.projectId})
+      body: JSON.stringify({...data, mode: 'update', id: props.project.id})
     }).then((i) => i.json())
 
     if (res.success) {
@@ -69,7 +71,7 @@ const EditProjectTitleButton: React.FC<EditProjectTitleButtonProps> = (props) =>
 
   const session = useSession()
 
-  if (!(roleChecker(session.data.profile, ['researcher']))) {
+  if (!roleChecker(session.data.profile, CHANGE_PROJECT_STATUS) && !memberChecker(session.data.profile, props.project.bridge_profiles)) {
     return <></>
   }
 

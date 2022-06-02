@@ -7,6 +7,7 @@ import type { UserRole } from '@prisma/client'
 
 import handleError from '../../../../../utils/server/handleError'
 import { roleChecker } from '../../../../../utils/roleChecker'
+import { MANAGING_DELIVERABLES, REVIEW_PROPOSALS } from '../../../../../utils/permissions'
 
 const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const body = JSON.parse(req.body) as Partial<UserRole>
@@ -18,12 +19,24 @@ const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session:
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_board_member'])) {
-    return res.status(401).json({ error: 'Unauthorized access.' })
-  }
-
   const body = JSON.parse(req.body) as { approved: boolean }
   const { id } = req.query
+
+  const tmpSubmission = await prisma.submission.findUnique({
+    where: {
+      id: id as string
+    }
+  })
+
+  if (tmpSubmission.type === 'DELIVERABLE') {
+    if (!roleChecker(session.profile, MANAGING_DELIVERABLES)) {
+      return res.status(401).json({ error: 'Unauthorized access.' })
+    }
+  } else {
+    if (!roleChecker(session.profile, REVIEW_PROPOSALS)) {
+      return res.status(401).json({ error: 'Unauthorized access.' })
+    }
+  }
 
   const submission = await prisma.submission.update({
     where: {

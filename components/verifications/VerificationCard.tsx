@@ -15,6 +15,7 @@ import parseHTML from '../../utils/client/parseHTML'
 import ViewMemoButton from './ViewMemoButton'
 import { useSession } from 'next-auth/react'
 import { roleChecker } from '../../utils/roleChecker'
+import { CONFIRMATION_RESEARCHER_INFORMATION, VERIFY_CENTER_NEWS, VERIFY_CENTER_PROJECTS } from '../../utils/permissions'
 
 interface VerificationCardProps extends BoxProps {
   request: ExtendedVerificationRequest,
@@ -172,6 +173,72 @@ const VerificationCard: React.FC<VerificationCardProps> = (props) => {
 
   const session = useSession()
 
+  const VerificationTools = () => {
+    if (request.type === 'INSTITUTE_NEWS') {
+      if (!roleChecker(session.data.profile, VERIFY_CENTER_NEWS)) {
+        return <></>
+      }
+    }
+
+    if (request.type === 'PROJECT_INSTITUTE') {
+      if (!roleChecker(session.data.profile, VERIFY_CENTER_PROJECTS)) {
+        return <></>
+      }
+    }
+
+    if (!roleChecker(session.data.profile, CONFIRMATION_RESEARCHER_INFORMATION)) {
+      return <></>
+    }
+
+    return (
+      <SimpleGrid columns={request.status === 'NOT_VERIFIED' ? 2 : 1} mt="1rem" spacing={2}>
+        { (request.status === 'INVALID' || request.status === 'NOT_VERIFIED') && (
+          <ButtonWithConfirmation
+            color="white"
+            bgColor="brand.blue"
+            borderRadius={10}
+            leftIcon={<CheckIcon />}
+            _hover={{
+              color: 'brand.blue',
+              bgColor: 'brand.cardBackground'
+            }}
+            confirmationMessage={
+              `
+                Press confirm to mark the request, <u>${entry.title}</u>, as <b>VERIFIED</b>
+              `
+            }
+            onClick={() => { setVerified(true) }}
+            isLoading={loading}
+          >
+            Mark as Verified
+          </ButtonWithConfirmation>
+        ) }
+
+        { (request.status === 'VERIFIED' || request.status === 'NOT_VERIFIED') && (
+          <ButtonWithConfirmation
+            color="white"
+            bgColor="brand.red"
+            borderRadius={10}
+            leftIcon={<DeleteIcon />}
+            _hover={{
+              color: 'brand.red',
+              bgColor: 'brand.cardBackground'
+            }}
+            confirmationMessage={
+              `
+                Press confirm to mark the request, <u>${entry.title}</u>, as <b>INVALID</b>
+              `
+            }
+            onClick={() => { setVerified(false) }}
+            isLoading={loading}
+          >
+            Mark as Invalid
+          </ButtonWithConfirmation>
+        ) }
+      </SimpleGrid>
+    )
+  }
+
   return (
     <Card
       transition="box-shadow 0.05s, background-color 0.1s"
@@ -255,53 +322,7 @@ const VerificationCard: React.FC<VerificationCardProps> = (props) => {
         </Wrap>
       </VStack>
       <Spacer />
-      {(roleChecker(session.data.profile, ['urc_chairperson', 'urc_staff', 'urc_board_member'])) && (
-        <SimpleGrid columns={request.status === 'NOT_VERIFIED' ? 2 : 1} mt="1rem" spacing={2}>
-          { (request.status === 'INVALID' || request.status === 'NOT_VERIFIED') && (
-            <ButtonWithConfirmation
-              color="white"
-              bgColor="brand.blue"
-              borderRadius={10}
-              leftIcon={<CheckIcon />}
-              _hover={{
-                color: 'brand.blue',
-                bgColor: 'brand.cardBackground'
-              }}
-              confirmationMessage={
-                `
-                  Press confirm to mark the request, <u>${entry.title}</u>, as <b>VERIFIED</b>
-                `
-              }
-              onClick={() => { setVerified(true) }}
-              isLoading={loading}
-            >
-              Mark as Verified
-            </ButtonWithConfirmation>
-          ) }
-
-          { (request.status === 'VERIFIED' || request.status === 'NOT_VERIFIED') && (
-            <ButtonWithConfirmation
-              color="white"
-              bgColor="brand.red"
-              borderRadius={10}
-              leftIcon={<DeleteIcon />}
-              _hover={{
-                color: 'brand.red',
-                bgColor: 'brand.cardBackground'
-              }}
-              confirmationMessage={
-                `
-                  Press confirm to mark the request, <u>${entry.title}</u>, as <b>INVALID</b>
-                `
-              }
-              onClick={() => { setVerified(false) }}
-              isLoading={loading}
-            >
-              Mark as Invalid
-            </ButtonWithConfirmation>
-          ) }
-        </SimpleGrid>
-      )}
+      <VerificationTools />
     </Card>
   )
 }

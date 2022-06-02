@@ -28,11 +28,13 @@ import {
 import { useDebounce } from 'use-debounce'
 import { useRouter } from 'next/router'
 import useUUID from '../../utils/client/useUUID'
-import { roleChecker } from '../../utils/roleChecker'
+import { memberChecker, roleChecker } from '../../utils/roleChecker'
 import { useSession } from 'next-auth/react'
+import { ExtendedProject } from '../../types/profile-card'
+import { CHANGE_PROJECT_STATUS } from '../../utils/permissions'
 
 interface RemoveProponentButtonProps {
-  projectId: string
+  project: Partial<ExtendedProject>
 }
 
 interface FormFields { 
@@ -57,7 +59,7 @@ const RemoveProponentButton: React.FC<RemoveProponentButtonProps> = (props) => {
 
   const loadNewEntries = async () => {
     const newEntries = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/management/profiles?proponents_only=true&project_id=${props.projectId}${search?.length > 0 ? `&query=${search}` : ''}`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/management/profiles?proponents_only=true&project_id=${props.project.id}${search?.length > 0 ? `&query=${search}` : ''}`
     ).then(res => res.json())
     
     setProfiles(newEntries?.data ?? [])
@@ -83,7 +85,7 @@ const RemoveProponentButton: React.FC<RemoveProponentButtonProps> = (props) => {
     
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects`, {
       method: 'POST',
-      body: JSON.stringify({ ...data, mode: 'remove-proponent', id: props.projectId })
+      body: JSON.stringify({ ...data, mode: 'remove-proponent', id: props.project.id })
     }).then((i) => i.json())
 
     if (res.success) {
@@ -108,10 +110,10 @@ const RemoveProponentButton: React.FC<RemoveProponentButtonProps> = (props) => {
 
   const session = useSession()
 
-  if (!(roleChecker(session.data.profile, ['researcher']))) {
+  if (!roleChecker(session.data.profile, CHANGE_PROJECT_STATUS) && !memberChecker(session.data.profile, props.project.bridge_profiles)) {
     return <></>
   }
-
+  
   return (
     <>
       <IconButton

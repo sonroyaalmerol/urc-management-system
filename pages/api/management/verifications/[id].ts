@@ -7,9 +7,10 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
 import { roleChecker } from '../../../../utils/roleChecker'
 import verifyRequest from '../../../../utils/server/verifyRequest'
+import { CONFIRMATION_RESEARCHER_INFORMATION } from '../../../../utils/permissions'
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff'])) {
+  if (!roleChecker(session.profile, CONFIRMATION_RESEARCHER_INFORMATION)) {
     return res.status(401).json({ error: 'Unauthorized access.' })
   }
 

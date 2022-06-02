@@ -6,9 +6,10 @@ import type { Session } from 'next-auth'
 import type { Institute } from '@prisma/client'
 import handleError from '../../../../../utils/server/handleError'
 import { roleChecker } from '../../../../../utils/roleChecker'
+import { UPDATE_CENTER_INFO } from '../../../../../utils/permissions'
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary'])) {
+  if (!roleChecker(session.profile, UPDATE_CENTER_INFO)) {
     return res.status(401).json({ error: 'Unauthorized access.' })
   }
   

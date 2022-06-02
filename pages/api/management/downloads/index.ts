@@ -12,6 +12,7 @@ import { deleteFile } from '../../../../utils/server/file'
 
 import relevancy from 'relevancy'
 import { roleChecker } from '../../../../utils/roleChecker'
+import { SETTING_DEADLINES, SETTING_DOWNLOADS } from '../../../../utils/permissions'
 
 export const config = {
   api: {
@@ -98,7 +99,7 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary'])) {
+  if (!roleChecker(session.profile, SETTING_DOWNLOADS)) {
     return res.status(401).json({ error: 'Unauthorized access.' })
   }
 
@@ -164,7 +165,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
 }
 
 const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary'])) {
+  if (!roleChecker(session.profile, SETTING_DOWNLOADS)) {
     return res.status(401).json({ error: 'Unauthorized access.' })
   }
   

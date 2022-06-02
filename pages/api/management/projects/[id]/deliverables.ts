@@ -8,7 +8,8 @@ import type { Deliverable } from '@prisma/client'
 
 import handleError from '../../../../../utils/server/handleError'
 import handleDate from '../../../../../utils/server/handleDate'
-import { roleChecker } from '../../../../../utils/roleChecker'
+import { memberChecker, roleChecker } from '../../../../../utils/roleChecker'
+import { MANAGING_DELIVERABLES } from '../../../../../utils/permissions'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const { id } = req.query
@@ -46,12 +47,25 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary'])) {
-    return res.status(401).json({ error: 'Unauthorized access.' })
-  }
-
   const { id } = req.query
   const body = JSON.parse(req.body) as Deliverable
+
+  const tmpDeliverable = await prisma.deliverable.findUnique({
+    where: {
+      id: id as string
+    },
+    include: {
+      project: {
+        include: {
+          bridge_profiles: true
+        }
+      }
+    }
+  })
+
+  if (!roleChecker(session.profile, MANAGING_DELIVERABLES) && !memberChecker(session.profile, tmpDeliverable.project.bridge_profiles)) {
+    return res.status(401).json({ error: 'Unauthorized access.' })
+  }
 
   if (!body.title) {
     return res.status(400).json({ error: 'Title is required!' })

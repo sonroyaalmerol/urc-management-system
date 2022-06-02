@@ -12,12 +12,11 @@ import { AddIcon, ChevronDownIcon } from '@chakra-ui/icons'
 
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
-import { roleChecker } from '../../utils/roleChecker'
+import { memberChecker, roleChecker } from '../../utils/roleChecker'
+import { ExtendedProject } from '../../types/profile-card'
 
 interface NewSubmissionButtonProps {
-  capsuleUrl: string,
-  fullBlownUrl: string,
-  budgetUrl: string
+  project: Partial<ExtendedProject>
 }
 
 const NewSubmissionButton: React.FC<NewSubmissionButtonProps> = (props) => {
@@ -25,7 +24,11 @@ const NewSubmissionButton: React.FC<NewSubmissionButtonProps> = (props) => {
   
   const session = useSession()
 
-  if (!(roleChecker(session.data.profile, ['researcher']))) {
+  const capsuleUrl = `/projects/${props.project.slug}/submissions/new/capsule`
+  const fullBlownUrl = `/projects/${props.project.slug}/submissions/new/full`
+  const budgetUrl = `/projects/${props.project.slug}/submissions/new/budget`
+
+  if (!memberChecker(session.data.profile, props.project.bridge_profiles)) {
     return <></>
   }
 
@@ -41,30 +44,30 @@ const NewSubmissionButton: React.FC<NewSubmissionButtonProps> = (props) => {
       <MenuList>
         <MenuItem
           as="a"
-          href={`${process.env.NEXT_PUBLIC_BASE_URL}${props.capsuleUrl}`}
+          href={`${process.env.NEXT_PUBLIC_BASE_URL}${capsuleUrl}`}
           onClick={(e) => {
             e.preventDefault()
-            router.push(`${props.capsuleUrl}`)
+            router.push(`${capsuleUrl}`)
           }}
         >
           Capsule Proposal
         </MenuItem>
         <MenuItem
           as="a"
-          href={`${process.env.NEXT_PUBLIC_BASE_URL}${props.fullBlownUrl}`}
+          href={`${process.env.NEXT_PUBLIC_BASE_URL}${fullBlownUrl}`}
           onClick={(e) => {
             e.preventDefault()
-            router.push(`${props.fullBlownUrl}`)
+            router.push(`${fullBlownUrl}`)
           }}
         >
           Full-blown Proposal
         </MenuItem>
         <MenuItem
           as="a"
-          href={`${process.env.NEXT_PUBLIC_BASE_URL}${props.budgetUrl}`}
+          href={`${process.env.NEXT_PUBLIC_BASE_URL}${budgetUrl}`}
           onClick={(e) => {
             e.preventDefault()
-            router.push(`${props.budgetUrl}`)
+            router.push(`${budgetUrl}`)
           }}
         >
           Budget Proposal

@@ -28,7 +28,8 @@ const NewVerificationButton: React.FC = (props) => {
 
   const session = useSession()
 
-  if (!(roleChecker(session.data.profile, ['researcher']))) {
+
+  if (!roleChecker(session.data.profile, ['researcher'])) {
     return <></>
   }
 

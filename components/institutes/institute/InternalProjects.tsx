@@ -49,7 +49,7 @@ const InternalProjects: React.FC<ComponentProps> = (props) => {
       onNew={() => {
         router.push(`/projects`)
       }}
-      disabled={(!roleChecker(session.data.profile, ['urc_chairperson', 'urc_staff']))}
+      disabled={true}
     >
       { entries.map((entry) => (
         <CardTemplate

@@ -19,6 +19,7 @@ import Button from '../../general/Button'
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
 import { roleChecker } from '../../../utils/roleChecker'
+import { MODIFY_RESEARCHER_PROFILE } from '../../../utils/permissions'
 
 const ResearchEvent: React.FC<ComponentProps> = (props) => {
   const profile = props.profile
@@ -64,7 +65,7 @@ const ResearchEvent: React.FC<ComponentProps> = (props) => {
       onNew={() => {
         router.push(`/verifications/research_event?profile_id=${profile.id}`)
       }}
-      disabled={profile.id !== session.data.profile.id && !roleChecker(session.data.profile, ['urc_chairperson', 'urc_board_member', 'urc_staff'])}
+      disabled={profile.id !== session.data.profile.id && !roleChecker(session.data.profile, MODIFY_RESEARCHER_PROFILE)}
     >
       { entries.map((entry) => (
         <>

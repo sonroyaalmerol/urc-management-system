@@ -14,6 +14,7 @@ import { useForm, SubmitHandler, Controller } from "react-hook-form"
 import type { Institute } from '@prisma/client'
 import { useSession } from 'next-auth/react'
 import { roleChecker } from '../../../utils/roleChecker'
+import { UPDATE_CENTER_INFO } from '../../../utils/permissions'
 
 const InstituteDetails: React.FC<ComponentProps> = (props) => {
   const institute = props.institute
@@ -66,7 +67,7 @@ const InstituteDetails: React.FC<ComponentProps> = (props) => {
         </WrapItem>
         <Spacer />
         <WrapItem>
-          { (roleChecker(session.data.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary'])) && (
+          { (roleChecker(session.data.profile, UPDATE_CENTER_INFO)) && (
             <IconButton
               padding={0} 
               aria-label='Edit'
@@ -86,7 +87,7 @@ const InstituteDetails: React.FC<ComponentProps> = (props) => {
                 size="2xl"
                 photoId={institute.photo_id}
                 instituteId={institute.id}
-                disabled={!roleChecker(session.data.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary'])}
+                disabled={!roleChecker(session.data.profile, UPDATE_CENTER_INFO)}
               />
             </WrapItem>
             <WrapItem>

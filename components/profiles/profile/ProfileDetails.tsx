@@ -17,6 +17,7 @@ import IconButton from '../../general/IconButton'
 import { CheckIcon, EditIcon } from '@chakra-ui/icons'
 import UnitsSection from './UnitsSection'
 import { roleChecker } from '../../../utils/roleChecker'
+import { MODIFY_RESEARCHER_PROFILE } from '../../../utils/permissions'
 
 const ProfileDetails: React.FC<ComponentProps> = (props) => {
   const profile = props.profile
@@ -90,7 +91,7 @@ const ProfileDetails: React.FC<ComponentProps> = (props) => {
           </WrapItem>
         ) }
         <Spacer />
-        { session.data.profile.id === profile.id || roleChecker(session.data.profile, ['urc_chairperson', 'urc_board_member', 'urc_staff']) && (
+        { session.data.profile.id === profile.id || roleChecker(session.data.profile, MODIFY_RESEARCHER_PROFILE) && (
           <WrapItem>
             <IconButton
               padding={0} 

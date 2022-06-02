@@ -26,7 +26,8 @@ import ProjectStatusTag from '../../../components/general/ProjectStatusTag'
 import AssignInstituteButton from '../../../components/projects/AssignInstituteButton'
 import InnerInstituteCard from '../../../components/projects/InnerInstituteCard'
 import ProjectDetails from '../../../components/projects/ProjectDetails'
-import { roleChecker } from '../../../utils/roleChecker'
+import { memberChecker, roleChecker } from '../../../utils/roleChecker'
+import { CHANGE_PROJECT_STATUS, CREATE_PROJECT_CENTER, MANAGING_DELIVERABLES, REVIEW_PROPOSALS } from '../../../utils/permissions'
 
 interface ProjectProps {
 
@@ -81,11 +82,11 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
               </Wrap>
             </WrapItem>
             <Spacer />
-            { project.bridge_profiles.filter((bridge) => bridge.profile_id === session.data.profile.id).length > 0 || roleChecker(session.data.profile, ['urc_staff', 'urc_chairperson']) && (
+            { (memberChecker(session.data.profile, project.bridge_profiles) || roleChecker(session.data.profile, CHANGE_PROJECT_STATUS)) && (
               <WrapItem>
                 <HStack>
-                  <AddProponentButton projectId={project.id} />
-                  <RemoveProponentButton projectId={project.id} />
+                  <AddProponentButton project={project} />
+                  <RemoveProponentButton project={project} />
                 </HStack>
               </WrapItem>
             ) }
@@ -117,10 +118,10 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
               </Wrap>
             </WrapItem>
             <Spacer />
-            { project.bridge_profiles.filter((bridge) => bridge.profile_id === session.data.profile.id).length > 0 && (
+            { (memberChecker(session.data.profile, project.bridge_profiles) || roleChecker(session.data.profile, CREATE_PROJECT_CENTER)) && (
               <WrapItem>
                 <HStack>
-                  <AssignInstituteButton projectId={project.id} />
+                  <AssignInstituteButton project={project} />
                 </HStack>
               </WrapItem>
             ) }
@@ -154,7 +155,7 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
             <Spacer />
             <WrapItem>
               <HStack>
-                <NewDeliverableButton projectSlug={project.slug} />
+                <NewDeliverableButton project={project} />
               </HStack>
             </WrapItem>
           </Wrap>
@@ -215,19 +216,17 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
               </Wrap>
             </WrapItem>
             <Spacer />
-            { project.bridge_profiles.filter((bridge) => bridge.profile_id === session.data.profile.id).length > 0 && (
+            { (memberChecker(session.data.profile, project.bridge_profiles)) && (
               <WrapItem>
                 <HStack>
                   <NewSubmissionButton
-                    capsuleUrl={`/projects/${project.slug}/submissions/new/capsule`}
-                    fullBlownUrl={`/projects/${project.slug}/submissions/new/full`}
-                    budgetUrl={`/projects/${project.slug}/submissions/new/budget`}
+                    project={project}
                   />
                 </HStack>
               </WrapItem>
             ) }
           </Wrap>
-          <SubmissionList projectId={project.id} types={types} status={status} />
+          <SubmissionList project={project} types={types} status={status} />
         </VStack>
       </VStack>
     </>
@@ -276,8 +275,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 
   if (
-    project.bridge_profiles.filter((bridge) => bridge.profile_id === session.profile.id).length < 1 &&
-    !roleChecker(session.profile, ['urc_chairperson', 'urc_board_member', 'urc_staff'])
+    !memberChecker(session.profile, project.bridge_profiles) &&
+    !roleChecker(session.profile, [
+      ...REVIEW_PROPOSALS,
+      ...MANAGING_DELIVERABLES,
+      ...CHANGE_PROJECT_STATUS
+    ])
   ) {
     return {
       props: {

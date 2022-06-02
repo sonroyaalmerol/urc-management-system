@@ -9,6 +9,7 @@ import type { UserRole } from '@prisma/client'
 
 import { useSession } from 'next-auth/react'
 import { roleChecker } from '../../../utils/roleChecker'
+import { CONFIRMATION_RESEARCHER_INFORMATION } from '../../../utils/permissions'
 
 interface RolesSection {
   profile: Partial<ExtendedProfile>
@@ -19,7 +20,7 @@ const RolesSection: React.FC<RolesSection> = (props) => {
   const { data: { profile: currentProfile } } = useSession()
 
   const isAllowed = React.useMemo(() => {
-    return (roleChecker(currentProfile, ['urc_chairperson', 'urc_staff']))
+    return (roleChecker(currentProfile, CONFIRMATION_RESEARCHER_INFORMATION))
   }, [currentProfile.roles])
 
   const [roleAdding, setRoleAdding] = React.useState(false)

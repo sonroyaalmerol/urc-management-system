@@ -7,10 +7,11 @@ import { useDebounce } from 'use-debounce'
 
 import InfiniteScroll from 'react-infinite-scroller'
 import SubmissionCard from './SubmissionCard'
+import { ExtendedProject } from '../../types/profile-card'
 
 interface ProjectListProps {
   types?: string[],
-  projectId: string,
+  project: Partial<ExtendedProject>,
   status?: string[]
 }
 
@@ -36,7 +37,7 @@ const SubmissionList: React.FC<ProjectListProps> = (props) => {
 
   const loadNewEntries = async (args?: { reset: Boolean }) => {
     const newEntries = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/${props.projectId}?${props.types?.length > 0 ? `&types=${props.types.join(',')}` : ''}${props.status?.length > 0 ? `&status=${props.status}` : ''}`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/${props.project.id}?${props.types?.length > 0 ? `&types=${props.types.join(',')}` : ''}${props.status?.length > 0 ? `&status=${props.status}` : ''}`
     ).then(res => res.json())
     setCount(newEntries?.totalCount ?? 0)
     

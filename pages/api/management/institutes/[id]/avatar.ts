@@ -8,6 +8,7 @@ import parseBodyWithFile from '../../../../../utils/server/parseBodyWithFile'
 import { deleteFile } from '../../../../../utils/server/file'
 import handleError from '../../../../../utils/server/handleError'
 import { roleChecker } from '../../../../../utils/roleChecker'
+import { UPDATE_CENTER_INFO } from '../../../../../utils/permissions'
 
 export const config = {
   api: {
@@ -20,7 +21,7 @@ const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session:
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary'])) {
+  if (!roleChecker(session.profile, UPDATE_CENTER_INFO)) {
     return res.status(401).json({ error: 'Unauthorized access.' })
   }
   const { id } = req.query

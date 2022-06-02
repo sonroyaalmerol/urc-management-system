@@ -8,6 +8,7 @@ import handleError from '../../../utils/server/handleError'
 import { Unit } from '@prisma/client'
 import cleanString from '../../../utils/cleanString'
 import { roleChecker } from '../../../utils/roleChecker'
+import { SETTING_UNITS } from '../../../utils/permissions'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   let [totalCount, tmpData] = await prisma.$transaction([
@@ -54,7 +55,7 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff'])) {
+  if (!roleChecker(session.profile, SETTING_UNITS)) {
     return res.status(401).json({ error: 'Unauthorized access.' })
   }
 
@@ -92,7 +93,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
 }
 
 const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff'])) {
+  if (!roleChecker(session.profile, SETTING_UNITS)) {
     return res.status(401).json({ error: 'Unauthorized access.' })
   }
 

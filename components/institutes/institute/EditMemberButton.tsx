@@ -23,7 +23,8 @@ import DatePicker from '../../general/DatePicker'
 import AutoCompleteInput from '../../general/AutoCompleteInput'
 import { ExtendedInstitute } from '../../../types/profile-card'
 import { useSession } from 'next-auth/react'
-import { roleChecker } from '../../../utils/roleChecker'
+import { instituteHeadChecker, roleChecker } from '../../../utils/roleChecker'
+import { ASSIGN_CENTER_HEAD } from '../../../utils/permissions'
 
 interface EditMemberButtonProps {
   institute: Partial<ExtendedInstitute>
@@ -70,7 +71,7 @@ const EditMemberButton: React.FC<EditMemberButtonProps> = (props) => {
 
   const session = useSession()
 
-  if (!roleChecker(session.data.profile, ['urc_chairperson', 'urc_staff'])) {
+  if (!roleChecker(session.data.profile, ASSIGN_CENTER_HEAD)) {
     return <></>
   }
   
@@ -115,25 +116,27 @@ const EditMemberButton: React.FC<EditMemberButtonProps> = (props) => {
                   render={({ field }) => <DatePicker {...field} />}
                 />
               </VStack>
-              <VStack w="full" align="baseline" spacing={1}>
-                <Controller
-                  name="is_head"
-                  control={control}
-                  defaultValue={props.currentValue.is_head}
-                  render={({ field }) => (
-                    <Switch 
-                      name={field.name} 
-                      onBlur={field.onBlur} 
-                      onChange={field.onChange}
-                      ref={field.ref}
-                      isChecked={field.value}
-                      marginLeft="1rem"
-                    >
-                      Center Head
-                    </Switch>
-                  )}
-                />
-              </VStack>
+              { roleChecker(session.data.profile, ASSIGN_CENTER_HEAD) && (
+                <VStack w="full" align="baseline" spacing={1}>
+                  <Controller
+                    name="is_head"
+                    control={control}
+                    defaultValue={props.currentValue.is_head}
+                    render={({ field }) => (
+                      <Switch 
+                        name={field.name} 
+                        onBlur={field.onBlur} 
+                        onChange={field.onChange}
+                        ref={field.ref}
+                        isChecked={field.value}
+                        marginLeft="1rem"
+                      >
+                        Center Head
+                      </Switch>
+                    )}
+                  />
+                </VStack>
+              ) }
             </VStack>
           </ModalBody>
 

@@ -7,8 +7,10 @@ import type { Session } from 'next-auth'
 import type { Project } from '@prisma/client'
 
 import relevancy from 'relevancy'
-import { roleChecker } from '../../../../utils/roleChecker'
+import { memberChecker, roleChecker } from '../../../../utils/roleChecker'
 import handleError from '../../../../utils/server/handleError'
+import { CHANGE_PROJECT_STATUS, CREATE_PROJECT } from '../../../../utils/permissions'
+import { ExtendedProject } from '../../../../types/profile-card'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const searchQuery = (req.query?.query as string) ?? ''
@@ -104,9 +106,21 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
   const id: string = session.profile.id
 
   let project: Project = null
+
+  let tmpProject: Partial<ExtendedProject> = null
+  if ('id' in body) { 
+    tmpProject = await prisma.project.findUnique({
+      where: {
+        id: body.id
+      },
+      include: {
+        bridge_profiles: true
+      }
+    }) as Partial<ExtendedProject>
+  }
   
   if (body.mode === 'create') {
-    if (!roleChecker(session.profile, ['researcher'])) {
+    if (!roleChecker(session.profile, CREATE_PROJECT)) {
       return res.status(401).json({ error: 'Unauthorized access.' })
     }
 
@@ -130,7 +144,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
       }
     })
   } else if (body.mode === 'update') {
-    if (!roleChecker(session.profile, ['researcher', 'urc_staff', 'urc_chairperson'])) {
+    if (!roleChecker(session.profile, CHANGE_PROJECT_STATUS) && !memberChecker(session.profile, tmpProject.bridge_profiles)) {
       return res.status(401).json({ error: 'Unauthorized access.' })
     }
 
@@ -150,15 +164,15 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
         title: body.title,
         slug: slugGenerator(body.title),
         abstract: body.abstract,
-        project_status: {
+        project_status: roleChecker(session.profile, CHANGE_PROJECT_STATUS) ? {
           connect: {
             id: body.project_status_id as string
           }
-        }
+        } : undefined
       }
     })
   } else if (body.mode === 'add-proponent') {
-    if (!roleChecker(session.profile, ['researcher', 'urc_staff', 'urc_chairperson'])) {
+    if (!roleChecker(session.profile, CHANGE_PROJECT_STATUS) && !memberChecker(session.profile, tmpProject.bridge_profiles)) {
       return res.status(401).json({ error: 'Unauthorized access.' })
     }
 
@@ -193,7 +207,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
       return res.status(500).json({ error: err.message })
     }
   } else if (body.mode === 'remove-proponent') {
-    if (!roleChecker(session.profile, ['researcher', 'urc_staff', 'urc_chairperson'])) {
+    if (!roleChecker(session.profile, CHANGE_PROJECT_STATUS) && !memberChecker(session.profile, tmpProject.bridge_profiles)) {
       return res.status(401).json({ error: 'Unauthorized access.' })
     }
 

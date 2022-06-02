@@ -7,7 +7,8 @@ import type { Comment, UserRole } from '@prisma/client'
 import cleanString from '../../../../../utils/cleanString'
 
 import handleError from '../../../../../utils/server/handleError'
-import { roleChecker } from '../../../../../utils/roleChecker'
+import { memberChecker, roleChecker } from '../../../../../utils/roleChecker'
+import { MANAGING_DELIVERABLES, REVIEW_PROPOSALS } from '../../../../../utils/permissions'
 
 const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const body = JSON.parse(req.body) as Partial<Comment>
@@ -34,8 +35,14 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
     }
   })
 
-  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary', 'urc_board_member']) && submission.project?.bridge_profiles?.filter((bridge) => bridge.profile_id === session.profile.id).length === 0) {
-    return res.status(401).json({ error: 'Unauthorized access.' })
+  if (submission.type === 'DELIVERABLE') {
+    if (!roleChecker(session.profile, MANAGING_DELIVERABLES) && !memberChecker(session.profile, submission.project.bridge_profiles)) {
+      return res.status(401).json({ error: 'Unauthorized access.' })
+    }
+  } else {
+    if (!roleChecker(session.profile, REVIEW_PROPOSALS) && !memberChecker(session.profile, submission.project.bridge_profiles)) {
+      return res.status(401).json({ error: 'Unauthorized access.' })
+    }
   }
   
   const body = JSON.parse(req.body) as Partial<Comment>

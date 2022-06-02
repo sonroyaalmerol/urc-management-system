@@ -32,6 +32,7 @@ import { useRouter } from 'next/router'
 import useUUID from '../../utils/client/useUUID'
 import { roleChecker } from '../../utils/roleChecker'
 import { useSession } from 'next-auth/react'
+import { VERIFY_CENTER_NEWS } from '../../utils/permissions'
 
 interface MemoCardProps extends CardProps {
   memo: (InstituteNews & {
@@ -164,7 +165,7 @@ const MemoCard: React.FC<MemoCardProps> = (props) => {
             <VerifiedTag status={memo.verified} />
           </WrapItem>
           <Spacer />
-          { (roleChecker(session.data.profile, ['urc_chairperson', 'urc_staff'])) && (
+          { (roleChecker(session.data.profile, VERIFY_CENTER_NEWS)) && (
             <>
               <WrapItem>
                 <IconButtonWithConfirmation 

@@ -13,6 +13,8 @@ import cleanString from '../../../../utils/cleanString'
 
 import handleError from '../../../../utils/server/handleError'
 import { deleteFile } from '../../../../utils/server/file'
+import { CREATE_CENTER_NEWS, VERIFY_CENTER_NEWS } from '../../../../utils/permissions'
+import verifyRequest from '../../../../utils/server/verifyRequest'
 
 export const config = {
   api: {
@@ -32,7 +34,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
     InstituteNews & VerificationRequest
   >} = await parseBodyWithFile(req, { publicAccess: false })
 
-  if (!instituteHeadChecker(session.profile, body.fields.institute_id)) {
+  if (!roleChecker(session.profile, CREATE_CENTER_NEWS) && !instituteHeadChecker(session.profile, body.fields.institute_id)) {
     for await (const file of body.files) {
       await deleteFile(file.value.id)
     }
@@ -104,6 +106,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
       institute_news: true
     }
   })
+
+  if (roleChecker(session.profile, VERIFY_CENTER_NEWS)) {
+    await verifyRequest(verificationRequest.id, true, session.profile.id)
+  }
 
   return res.status(200).json({ success: true, data: verificationRequest })
 }

@@ -12,7 +12,8 @@ import { CheckIcon, EditIcon } from '@chakra-ui/icons'
 import EditableText from '../general/EditableText'
 import EditableTextarea from '../general/EditableTextarea'
 import { ProjectStatus } from '@prisma/client'
-import { roleChecker } from '../../utils/roleChecker'
+import { memberChecker, roleChecker } from '../../utils/roleChecker'
+import { CHANGE_PROJECT_STATUS } from '../../utils/permissions'
 
 interface ProjectDetailsProps {
   project: ExtendedProject
@@ -80,7 +81,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = (props) => {
         </WrapItem>
         <Spacer />
         
-        {(project.bridge_profiles.filter((bridge) => bridge.profile_id === session.data.profile.id).length > 0 || roleChecker(session.data.profile, ['urc_staff', 'urc_chairperson'])) && (
+        {(!roleChecker(session.data.profile, CHANGE_PROJECT_STATUS) && !memberChecker(session.data.profile, props.project.bridge_profiles)) && (
           <WrapItem>
             <HStack>
               <IconButton 
@@ -125,7 +126,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = (props) => {
               >Status:</Heading>
             </WrapItem>
             <WrapItem>
-              { !editing ? (
+              { !editing || !roleChecker(session.data.profile, CHANGE_PROJECT_STATUS) ? (
                 <ProjectStatusTag projectStatus={project.project_status} />
               ) : (
                 <Controller

@@ -9,6 +9,7 @@ import cleanString from '../../../utils/cleanString'
 import { Deadline } from '@prisma/client'
 import handleDate from '../../../utils/server/handleDate'
 import { roleChecker } from '../../../utils/roleChecker'
+import { SETTING_DEADLINES } from '../../../utils/permissions'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const [totalCount, data] = await prisma.$transaction([
@@ -38,7 +39,7 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary'])) {
+  if (!roleChecker(session.profile, SETTING_DEADLINES)) {
     return res.status(401).json({ error: 'Unauthorized access.' })
   }
 
@@ -77,7 +78,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
 }
 
 const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary'])) {
+  if (!roleChecker(session.profile, SETTING_DEADLINES)) {
     return res.status(401).json({ error: 'Unauthorized access.' })
   }
 

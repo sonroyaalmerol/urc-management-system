@@ -17,7 +17,8 @@ import CapsuleProposal from '../../../../components/projects/submission/CapsuleP
 import FullBlownProposal from '../../../../components/projects/submission/FullBlownProposal'
 import Actions from '../../../../components/projects/submission/Actions'
 import DeliverableSubmission from '../../../../components/projects/submission/DeliverableSubmission'
-import { roleChecker } from '../../../../utils/roleChecker'
+import { memberChecker, roleChecker } from '../../../../utils/roleChecker'
+import { MANAGING_DELIVERABLES, REVIEW_PROPOSALS } from '../../../../utils/permissions'
 
 interface SubmissionProps {
   
@@ -123,14 +124,21 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       }
     }
   })
-
-  if (
-    submission.project.bridge_profiles.filter((bridge) => bridge.profile_id === session.profile.id).length < 1 &&
-    !roleChecker(session.profile, ['urc_chairperson', 'urc_board_member', 'urc_staff'])
-  ) {
-    return {
-      props: {
-        statusCode: 401
+  
+  if (submission.type === 'DELIVERABLE') {
+    if (!roleChecker(session.profile, MANAGING_DELIVERABLES) && !memberChecker(session.profile, submission.project.bridge_profiles)) {
+      return {
+        props: {
+          statusCode: 401
+        }
+      }
+    }
+  } else {
+    if (!roleChecker(session.profile, REVIEW_PROPOSALS) && !memberChecker(session.profile, submission.project.bridge_profiles)) {
+      return {
+        props: {
+          statusCode: 401
+        }
       }
     }
   }

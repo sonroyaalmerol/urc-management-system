@@ -20,6 +20,7 @@ import type { Institute } from '@prisma/client'
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
 import { roleChecker } from '../../utils/roleChecker'
+import { UPDATE_CENTER_INFO } from '../../utils/permissions'
 
 interface NewInstituteButtonProps {
   onSuccess: () => any
@@ -61,7 +62,7 @@ const NewInstituteButton: React.FC<NewInstituteButtonProps> = (props) => {
 
   const session = useSession()
 
-  if (!(roleChecker(session.data.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary']))) {
+  if (!(roleChecker(session.data.profile, UPDATE_CENTER_INFO))) {
     return <></>
   }
 

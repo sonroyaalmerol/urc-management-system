@@ -6,9 +6,10 @@ import type { Session } from 'next-auth'
 import type { UserRole } from '@prisma/client'
 import handleError from '../../../../../utils/server/handleError'
 import { roleChecker } from '../../../../../utils/roleChecker'
+import { CONFIRMATION_RESEARCHER_INFORMATION } from '../../../../../utils/permissions'
 
 const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_board_member'])) {
+  if (!roleChecker(session.profile, CONFIRMATION_RESEARCHER_INFORMATION)) {
     return res.status(401).json({ error: 'Unauthorized access.' })
   }
 
@@ -33,7 +34,7 @@ const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session:
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff'])) {
+  if (!roleChecker(session.profile, CONFIRMATION_RESEARCHER_INFORMATION)) {
     return res.status(401).json({ error: 'Unauthorized access.' })
   }
 

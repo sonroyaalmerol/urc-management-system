@@ -7,6 +7,7 @@ import ButtonWithConfirmation from '../../general/ButtonWithConfirmation'
 import { CheckIcon, DeleteIcon } from '@chakra-ui/icons'
 import { useSession } from 'next-auth/react'
 import { roleChecker } from '../../../utils/roleChecker'
+import { MANAGING_DELIVERABLES, REVIEW_PROPOSALS } from '../../../utils/permissions'
 
 interface ActionsProps {
   submission: Submission
@@ -20,7 +21,10 @@ const Actions: React.FC<ActionsProps> = (props) => {
 
   const session = useSession()
   const isAllowed = React.useMemo(() => {
-    return roleChecker(session.data.profile, ['urc_chairperson', 'urc_board_member'])
+    if (props.submission.type === 'DELIVERABLE') {
+      return roleChecker(session.data.profile, MANAGING_DELIVERABLES)
+    }
+    return roleChecker(session.data.profile, REVIEW_PROPOSALS)
   }, [session.data])
 
   const humanizeType = (type: SubmissionTypes) => {

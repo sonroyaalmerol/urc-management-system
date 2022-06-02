@@ -7,20 +7,18 @@ import type { Session } from 'next-auth'
 import type { BookPublication, FileUpload, Institute, InstituteNews, Project, ProjectToInstituteBridge, VerificationRequest } from '@prisma/client'
 
 import relevancy from 'relevancy'
-import { roleChecker } from '../../../../utils/roleChecker'
+import { instituteHeadChecker, memberChecker, roleChecker } from '../../../../utils/roleChecker'
 import parseBodyWithFile from '../../../../utils/server/parseBodyWithFile'
 import cleanString from '../../../../utils/cleanString'
 import handleError from '../../../../utils/server/handleError'
+import { CHANGE_PROJECT_STATUS, CREATE_PROJECT_CENTER, VERIFY_CENTER_PROJECTS } from '../../../../utils/permissions'
+import verifyRequest from '../../../../utils/server/verifyRequest'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
 
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  if (!roleChecker(session.profile, ['researcher'])) {
-    return res.status(401).json({ error: 'Unauthorized access.' })
-  }
-
   const body = JSON.parse(req.body) as Partial<
     ProjectToInstituteBridge & VerificationRequest & Institute
   >
@@ -31,6 +29,30 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
 
   if (!cleanString(body.name)) {
     return res.status(400).json({ error: 'Institute is required!' })
+  }
+
+  const [tmpProject, tmpInstitute] = await prisma.$transaction([
+    prisma.project.findUnique({
+      where: {
+        id: body.project_id
+      },
+      include: {
+        bridge_profiles: true
+      }
+    }),
+    prisma.institute.findUnique({
+      where: {
+        name: body.name
+      }
+    })
+  ])
+
+  if (
+    !roleChecker(session.profile, CREATE_PROJECT_CENTER) &&
+    !memberChecker(session.profile, tmpProject.bridge_profiles) &&
+    !instituteHeadChecker(session.profile, tmpInstitute.id)
+  ) {
+    return res.status(401).json({ error: 'Unauthorized access.' })
   }
 
   const currentEntry = await prisma.projectToInstituteBridge.create({
@@ -70,6 +92,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
         project_institute: true
       }
     })
+
+    if (roleChecker(session.profile, VERIFY_CENTER_PROJECTS)) {
+      await verifyRequest(verificationRequest.id, true, session.profile.id)
+    }
 
     return res.status(200).json({ success: true, data: verificationRequest })
   }

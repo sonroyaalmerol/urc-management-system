@@ -32,6 +32,7 @@ import { Institute, ProfileToInstituteBridge } from '@prisma/client'
 import DatePicker from '../../general/DatePicker'
 import { roleChecker } from '../../../utils/roleChecker'
 import { useSession } from 'next-auth/react'
+import { ASSIGN_CENTER_HEAD } from '../../../utils/permissions'
 
 
 const Members: React.FC<ComponentProps> = (props) => {
@@ -115,7 +116,7 @@ const Members: React.FC<ComponentProps> = (props) => {
       hasMore={entries.length < count}
       loadMore={loadNewEntries}
       onNew={onOpen}
-      disabled={!(roleChecker(session.data.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary']))}
+      disabled={!(roleChecker(session.data.profile, ASSIGN_CENTER_HEAD))}
     >
       { entries.map((entry) => (
         <MemberCard

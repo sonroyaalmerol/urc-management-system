@@ -7,7 +7,9 @@ import type { Session } from 'next-auth'
 import type { BudgetProposalSubmission, CapsuleProposalSubmission, DeliverableSubmission, FileUpload, FullBlownProposalSubmission, Submission, SubmissionStatus, SubmissionTypes } from '@prisma/client'
 import parseBodyWithFile from '../../../../../utils/server/parseBodyWithFile'
 import handleError from '../../../../../utils/server/handleError'
-import { roleChecker } from '../../../../../utils/roleChecker'
+import { memberChecker, roleChecker } from '../../../../../utils/roleChecker'
+import { REVIEW_PROPOSALS } from '../../../../../utils/permissions'
+import { deleteFile } from '../../../../../utils/server/file'
 
 export const config = {
   api: {
@@ -78,10 +80,6 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  if (!roleChecker(session.profile, ['researcher'])) {
-    return res.status(401).json({ error: 'Unauthorized access.' })
-  }
-
   const { id } = req.query
 
   const body: { files: {
@@ -96,6 +94,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
   ) } = await parseBodyWithFile(req, { publicAccess: false })
 
   if (!body) {
+    for await (const file of body.files) {
+      await deleteFile(file.value.id)
+    }
+
     return res.status(500).json({ error: 'Something went wrong! Please try again.' })
   }
 
@@ -119,12 +121,27 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
       files: {
         connect: body.files?.map((file) => ({id: file.value.id})) ?? []
       }
+    },
+    include: {
+      project: {
+        include: {
+          bridge_profiles: true
+        }
+      }
     }
   })
 
   let specificSubmission: BudgetProposalSubmission | FullBlownProposalSubmission | CapsuleProposalSubmission | DeliverableSubmission
 
   if (body.fields.type === 'BUDGET') {
+    if (!memberChecker(session.profile, submission.project.bridge_profiles)) {
+      for await (const file of body.files) {
+        await deleteFile(file.value.id)
+      }
+
+      return res.status(401).json({ error: 'Unauthorized access.' })
+    }
+
     specificSubmission = await prisma.budgetProposalSubmission.create({
       data: {
         submission: {
@@ -137,6 +154,14 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
   }
 
   if (body.fields.type === 'FULL') {
+    if (!memberChecker(session.profile, submission.project.bridge_profiles)) {
+      for await (const file of body.files) {
+        await deleteFile(file.value.id)
+      }
+
+      return res.status(401).json({ error: 'Unauthorized access.' })
+    }
+
     specificSubmission = await prisma.fullBlownProposalSubmission.create({
       data: {
         submission: {
@@ -150,6 +175,14 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
   }
 
   if (body.fields.type === 'CAPSULE') {
+    if (!memberChecker(session.profile, submission.project.bridge_profiles)) {
+      for await (const file of body.files) {
+        await deleteFile(file.value.id)
+      }
+
+      return res.status(401).json({ error: 'Unauthorized access.' })
+    }
+
     specificSubmission = await prisma.capsuleProposalSubmission.create({
       data: {
         research_thrust: body.fields.research_thrust,
@@ -167,6 +200,14 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
   }
 
   if (body.fields.type === 'DELIVERABLE') {
+    if (!memberChecker(session.profile, submission.project.bridge_profiles)) {
+      for await (const file of body.files) {
+        await deleteFile(file.value.id)
+      }
+
+      return res.status(401).json({ error: 'Unauthorized access.' })
+    }
+
     specificSubmission = await prisma.deliverableSubmission.create({
       data: {
         deliverable: {

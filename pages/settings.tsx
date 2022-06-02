@@ -11,6 +11,7 @@ import Units from '../components/settings/Units'
 import Deadlines from '../components/settings/Deadlines'
 import DownloadCategories from '../components/settings/DownloadCategories'
 import { roleChecker } from '../utils/roleChecker'
+import { SETTING_DEADLINES, SETTING_DOWNLOADS, SETTING_UNITS } from '../utils/permissions'
 
 interface SettingsProps {
 
@@ -51,7 +52,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 
   if (
-    !roleChecker(session.profile, ['urc_chairperson', 'urc_staff'])
+    !roleChecker(session.profile, [...SETTING_DEADLINES, ...SETTING_DOWNLOADS, ...SETTING_UNITS])
   ) {
     return {
       props: {

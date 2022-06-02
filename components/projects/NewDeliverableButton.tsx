@@ -24,9 +24,11 @@ import ResizeTextarea from "react-textarea-autosize"
 import useUUID from '../../utils/client/useUUID'
 import { useSession } from 'next-auth/react'
 import { roleChecker } from '../../utils/roleChecker'
+import { MANAGING_DELIVERABLES } from '../../utils/permissions'
+import { ExtendedProject } from '../../types/profile-card'
 
 interface NewDeliverableButtonProps {
-  projectSlug: string
+  project: Partial<ExtendedProject>
 }
 
 const NewDeliverableButton: React.FC<NewDeliverableButtonProps> = (props) => {
@@ -44,13 +46,13 @@ const NewDeliverableButton: React.FC<NewDeliverableButtonProps> = (props) => {
     setSubmitting(true)
 
     console.log(data)
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/${props.projectSlug}/deliverables`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/${props.project.slug}/deliverables`, {
       method: 'POST',
       body: JSON.stringify(data)
     }).then((i) => i.json())
 
     if (res.success) {
-      router.push(`/projects/${props.projectSlug}?key=${uuid}`)
+      router.push(`/projects/${props.project.slug}?key=${uuid}`)
       toast({
         title: 'Success!',
         description: 'Successfully added deliverable!',
@@ -69,7 +71,7 @@ const NewDeliverableButton: React.FC<NewDeliverableButtonProps> = (props) => {
 
   const session = useSession()
 
-  if (!(roleChecker(session.data.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary']))) {
+  if (!roleChecker(session.data.profile, MANAGING_DELIVERABLES)) {
     return <></>
   }
 

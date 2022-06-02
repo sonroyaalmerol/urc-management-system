@@ -11,10 +11,6 @@ import handleError from '../../../../utils/server/handleError'
 import { roleChecker } from '../../../../utils/roleChecker'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff', 'urc_board_member'])) {
-    return res.status(401).json({ error: 'Unauthorized access.' })
-  }
-
   const { types: types_raw, status: status_raw } = req.query
 
   const types = (types_raw as string)?.split(',').map((i) => i.trim().toUpperCase()) as VerificationTypes[] ?? []

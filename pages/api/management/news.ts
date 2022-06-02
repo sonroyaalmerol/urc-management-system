@@ -11,6 +11,7 @@ import handleDate from '../../../utils/server/handleDate'
 import slugGenerator from '../../../utils/slugGenerator'
 import { deleteFile } from '../../../utils/server/file'
 import { roleChecker } from '../../../utils/roleChecker'
+import { VERIFY_CENTER_NEWS } from '../../../utils/permissions'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   let instituteChecker
@@ -77,7 +78,7 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff'])) {
+  if (!roleChecker(session.profile, VERIFY_CENTER_NEWS)) {
     return res.status(401).json({ error: 'Unauthorized access.' })
   }
 
@@ -124,7 +125,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
 }
 
 const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff'])) {
+  if (!roleChecker(session.profile, VERIFY_CENTER_NEWS)) {
     return res.status(401).json({ error: 'Unauthorized access.' })
   }
 

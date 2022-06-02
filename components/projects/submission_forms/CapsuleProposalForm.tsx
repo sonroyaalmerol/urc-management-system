@@ -10,11 +10,10 @@ import RichTextarea from '../../general/RichTextarea'
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 import fetchWithFile from '../../../utils/client/fetchWithFile'
 import { useRouter } from 'next/router'
+import { ExtendedProject } from '../../../types/profile-card'
 
 interface CapsuleProposalFormProps {
-  projectTitle: string,
-  projectId: string
-  projectSlug: string
+  project: Partial<ExtendedProject>
 }
 
 const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
@@ -26,10 +25,10 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
   const onSubmit: SubmitHandler<Partial<Submission & CapsuleProposalSubmission>> = async data => {
     setValue('type', 'CAPSULE')
     setSubmitting(true)
-    const res = await fetchWithFile(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/${props.projectId}`, { ...data, type: 'CAPSULE' })
+    const res = await fetchWithFile(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/${props.project.id}`, { ...data, type: 'CAPSULE' })
 
     if (res.success) {
-      router.push(`/projects/${props.projectSlug}`)
+      router.push(`/projects/${props.project.slug}`)
       toast({
         title: 'Success!',
         description: `Successfully created Capsule Proposal!`,
@@ -51,7 +50,7 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
       <Card>
         <VStack align="baseline" spacing={6}>
           <Heading fontFamily="body" fontSize="lg">
-            {props.projectTitle}
+            {props.project.title}
           </Heading>
           <VStack w="full" align="baseline" spacing={1}>
             <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Research Thrust</Text>

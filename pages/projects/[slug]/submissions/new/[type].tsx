@@ -13,7 +13,7 @@ import BudgetProposalForm from '../../../../../components/projects/submission_fo
 import CapsuleProposalForm from '../../../../../components/projects/submission_forms/CapsuleProposalForm'
 import FullBlownProposalForm from '../../../../../components/projects/submission_forms/FullBlownProposalForm'
 import DeliverableForm from '../../../../../components/projects/submission_forms/DeliverableForm'
-import { roleChecker } from '../../../../../utils/roleChecker'
+import { memberChecker, roleChecker } from '../../../../../utils/roleChecker'
 
 interface NewSubmissionProps {
 
@@ -41,13 +41,13 @@ const NewSubmission: React.FC<NewSubmissionProps> = (props: InferGetServerSidePr
   const formConstructor = (type: SubmissionTypes) => {
     switch(type.toUpperCase()) {
       case 'BUDGET':
-        return <BudgetProposalForm projectTitle={project.title} projectId={project.id} projectSlug={project.slug} />
+        return <BudgetProposalForm project={project} />
       case 'CAPSULE':
-        return <CapsuleProposalForm projectTitle={project.title} projectId={project.id} projectSlug={project.slug} />
+        return <CapsuleProposalForm project={project} />
       case 'FULL':
-        return <FullBlownProposalForm projectTitle={project.title} projectId={project.id} projectSlug={project.slug} />
+        return <FullBlownProposalForm project={project} />
       case 'DELIVERABLE':
-        return <DeliverableForm projectTitle={project.title} projectId={project.id} projectSlug={project.slug} deliverable={deliverable} />
+        return <DeliverableForm project={project} deliverable={deliverable} />
     }
   }
 
@@ -71,14 +71,6 @@ const NewSubmission: React.FC<NewSubmissionProps> = (props: InferGetServerSidePr
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getSession(context)
 
-  if (!(roleChecker(session.profile, ['researcher']))) {
-    return {
-      props: {
-        statusCode: 401
-      }
-    }
-  }
-
   const { params: { slug, type } } = context
 
   if (!session) {
@@ -99,10 +91,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     }
   })
 
-  if (
-    project.bridge_profiles.filter((bridge) => bridge.profile_id === session.profile.id).length < 1 &&
-    !roleChecker(session.profile, ['urc_chairperson', 'urc_board_member', 'urc_staff'])
-  ) {
+  if (!memberChecker(session.profile, project.bridge_profiles)) {
     return {
       props: {
         statusCode: 401

@@ -24,10 +24,12 @@ import { useRouter } from 'next/router'
 import useUUID from '../../utils/client/useUUID'
 import AutoCompleteInput from '../general/AutoCompleteInput'
 import { useSession } from 'next-auth/react'
-import { roleChecker } from '../../utils/roleChecker'
+import { memberChecker, roleChecker } from '../../utils/roleChecker'
+import { ExtendedProject } from '../../types/profile-card'
+import { CHANGE_PROJECT_STATUS } from '../../utils/permissions'
 
 interface AssignInstituteButtonProps {
-  projectId: string
+  project: Partial<ExtendedProject>
 }
 
 interface FormFields { 
@@ -51,7 +53,7 @@ const AssignInstituteButton: React.FC<AssignInstituteButtonProps> = (props) => {
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/verifications/project_institute`, {
       method: 'POST',
-      body: JSON.stringify({ ...data, project_id: props.projectId })
+      body: JSON.stringify({ ...data, project_id: props.project.id })
     }).then((i) => i.json())
 
     if (res.success) {
@@ -76,7 +78,7 @@ const AssignInstituteButton: React.FC<AssignInstituteButtonProps> = (props) => {
 
   const session = useSession()
 
-  if (!(roleChecker(session.data.profile, ['researcher']))) {
+  if (!roleChecker(session.data.profile, CHANGE_PROJECT_STATUS) && !memberChecker(session.data.profile, props.project.bridge_profiles)) {
     return <></>
   }
 

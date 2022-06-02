@@ -19,6 +19,7 @@ import { AddIcon } from '@chakra-ui/icons'
 import type { Profile } from '@prisma/client'
 import { useSession } from 'next-auth/react'
 import { roleChecker } from '../../utils/roleChecker'
+import { CONFIRMATION_RESEARCHER_INFORMATION } from '../../utils/permissions'
 
 interface NewProfileButtonProps {
   onSuccess: () => any
@@ -60,7 +61,7 @@ const NewProfileButton: React.FC<NewProfileButtonProps> = (props) => {
 
   const session = useSession()
 
-  if (!(roleChecker(session.data.profile, ['urc_chairperson', 'urc_staff']))) {
+  if (!(roleChecker(session.data.profile, CONFIRMATION_RESEARCHER_INFORMATION))) {
     return <></>
   }
 

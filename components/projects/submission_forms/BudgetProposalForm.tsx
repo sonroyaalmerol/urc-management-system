@@ -10,12 +10,11 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import FileUploadButton from '../../general/FileUploadButton'
 import fetchWithFile from '../../../utils/client/fetchWithFile'
 import { useRouter } from 'next/router'
+import { ExtendedProject } from '../../../types/profile-card'
 
 
 interface BudgetProposalFormProps {
-  projectTitle: string,
-  projectId: string,
-  projectSlug: string
+  project: Partial<ExtendedProject>
 }
 
 const BudgetProposalForm: React.FC<BudgetProposalFormProps> = (props) => {
@@ -26,10 +25,10 @@ const BudgetProposalForm: React.FC<BudgetProposalFormProps> = (props) => {
 
   const onSubmit: SubmitHandler<Partial<BudgetProposalSubmission>> = async data => {
     setSubmitting(true)
-    const res = await fetchWithFile(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/${props.projectId}`, { ...data, type: 'BUDGET' })
+    const res = await fetchWithFile(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/${props.project.id}`, { ...data, type: 'BUDGET' })
 
     if (res.success) {
-      router.push(`/projects/${props.projectSlug}`)
+      router.push(`/projects/${props.project.slug}`)
       toast({
         title: 'Success!',
         description: `Successfully submitted Budget Proposal!`,
@@ -53,7 +52,7 @@ const BudgetProposalForm: React.FC<BudgetProposalFormProps> = (props) => {
       <Card>
         <VStack align="baseline" spacing={6}>
           <Heading fontFamily="body" fontSize="lg">
-            {props.projectTitle}
+            {props.project.title}
           </Heading>
           <FileUploadButton files={file} {...register('file')} />
           <Wrap spacing={4}>

@@ -11,11 +11,10 @@ import { useForm, Controller, SubmitHandler } from "react-hook-form"
 import FileUploadButton from '../../general/FileUploadButton'
 import fetchWithFile from '../../../utils/client/fetchWithFile'
 import { useRouter } from 'next/router'
+import { ExtendedProject } from '../../../types/profile-card'
 
 interface FullBlownProposalFormProps {
-  projectTitle: string,
-  projectId: string
-  projectSlug: string
+  project: Partial<ExtendedProject>
 }
 
 const FullBlownProposalForm: React.FC<FullBlownProposalFormProps> = (props) => {
@@ -26,10 +25,10 @@ const FullBlownProposalForm: React.FC<FullBlownProposalFormProps> = (props) => {
 
   const onSubmit: SubmitHandler<Partial<Submission & FullBlownProposalSubmission>> = async data => {
     setSubmitting(true)
-    const res = await fetchWithFile(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/${props.projectId}`, { ...data, type: 'FULL' })
+    const res = await fetchWithFile(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/${props.project.id}`, { ...data, type: 'FULL' })
 
     if (res.success) {
-      router.push(`/projects/${props.projectSlug}`)
+      router.push(`/projects/${props.project.slug}`)
       toast({
         title: 'Success!',
         description: `Successfully created Full-blown Proposal!`,
@@ -53,7 +52,7 @@ const FullBlownProposalForm: React.FC<FullBlownProposalFormProps> = (props) => {
       <Card>
         <VStack align="baseline" spacing={6}>
           <Heading fontFamily="body" fontSize="lg">
-            {props.projectTitle}
+            {props.project.title}
           </Heading>
           <FileUploadButton files={file} {...register('file')} />
           <VStack w="full" align="baseline" spacing={1}>

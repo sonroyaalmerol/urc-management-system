@@ -12,11 +12,10 @@ import FileUploadButton from '../../general/FileUploadButton'
 import fetchWithFile from '../../../utils/client/fetchWithFile'
 import { useRouter } from 'next/router'
 import { format } from 'date-fns'
+import { ExtendedProject } from '../../../types/profile-card'
 
 interface DeliverableFormProps {
-  projectTitle: string,
-  projectId: string
-  projectSlug: string
+  project: Partial<ExtendedProject>
   deliverable: Deliverable
 }
 
@@ -28,10 +27,10 @@ const DeliverableForm: React.FC<DeliverableFormProps> = (props) => {
 
   const onSubmit: SubmitHandler<Partial<Submission & DeliverableSubmission>> = async data => {
     setSubmitting(true)
-    const res = await fetchWithFile(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/${props.projectId}`, { ...data, type: 'DELIVERABLE', deliverable_id: props.deliverable.id })
+    const res = await fetchWithFile(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/${props.project.id}`, { ...data, type: 'DELIVERABLE', deliverable_id: props.deliverable.id })
 
     if (res.success) {
-      router.push(`/projects/${props.projectSlug}`)
+      router.push(`/projects/${props.project.slug}`)
       toast({
         title: 'Success!',
         description: `Successfully created Deliverable Submission!`,
@@ -55,7 +54,7 @@ const DeliverableForm: React.FC<DeliverableFormProps> = (props) => {
       <Card>
         <VStack align="baseline" spacing={6}>
           <Heading fontFamily="body" fontSize="lg">
-            {props.deliverable.title} Submission ({props.projectTitle})
+            {props.deliverable.title} Submission ({props.project.title})
           </Heading>
           <Text fontSize="sm">{props.deliverable.description}</Text>
           <Text fontSize="sm" fontStyle="italic">Deadline: {format(new Date(props.deliverable.deadline), 'MMM dd, yyyy')}</Text>

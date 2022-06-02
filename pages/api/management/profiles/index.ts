@@ -8,6 +8,7 @@ import handleError from '../../../../utils/server/handleError'
 
 import relevancy from 'relevancy'
 import { roleChecker } from '../../../../utils/roleChecker'
+import { CONFIRMATION_RESEARCHER_INFORMATION } from '../../../../utils/permissions'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const { unit } = req.query
@@ -105,7 +106,7 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff'])) {
+  if (!roleChecker(session.profile, CONFIRMATION_RESEARCHER_INFORMATION)) {
     return res.status(401).json({ error: 'Unauthorized access.' })
   }
 

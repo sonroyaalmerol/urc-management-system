@@ -7,7 +7,8 @@ import type { Profile, ProfileToInstituteBridge } from '@prisma/client'
 import cleanString from '../../../../../utils/cleanString'
 import handleError from '../../../../../utils/server/handleError'
 import handleDate from '../../../../../utils/server/handleDate'
-import { roleChecker } from '../../../../../utils/roleChecker'
+import { instituteHeadChecker, roleChecker } from '../../../../../utils/roleChecker'
+import { ASSIGN_CENTER_HEAD } from '../../../../../utils/permissions'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const searchQuery = (req.query?.query as string) ?? ''
@@ -78,7 +79,7 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff'])) {
+  if (!roleChecker(session.profile, ASSIGN_CENTER_HEAD)) {
     return res.status(401).json({ error: 'Unauthorized access.' })
   }
   
@@ -117,7 +118,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
       role_title: body.role_title,
       start_date: handleDate(body.start_date),
       end_date: handleDate(body.end_date) ?? undefined,
-      is_head: body.is_head ?? false
+      is_head: roleChecker(session.profile, ASSIGN_CENTER_HEAD) ? (body.is_head ?? false) : undefined
     },
     create: {
       profile: {
@@ -133,7 +134,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
       role_title: body.role_title,
       start_date: handleDate(body.start_date),
       end_date: handleDate(body.end_date) ?? undefined,
-      is_head: body.is_head ?? false
+      is_head: roleChecker(session.profile, ASSIGN_CENTER_HEAD) ? (body.is_head ?? false) : undefined
     }
   })
 
@@ -141,7 +142,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
 }
 
 const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  if (!roleChecker(session.profile, ['urc_chairperson', 'urc_staff'])) {
+  if (!roleChecker(session.profile, ASSIGN_CENTER_HEAD) && !instituteHeadChecker(session.profile, req.query.id as string)) {
     return res.status(401).json({ error: 'Unauthorized access.' })
   }
   

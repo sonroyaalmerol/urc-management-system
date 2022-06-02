@@ -13,6 +13,7 @@ import cleanString from '../../../../utils/cleanString'
 import handleError from '../../../../utils/server/handleError'
 import { deleteFile } from '../../../../utils/server/file'
 import verifyRequest from '../../../../utils/server/verifyRequest'
+import { CONFIRMATION_RESEARCHER_INFORMATION, MODIFY_RESEARCHER_PROFILE } from '../../../../utils/permissions'
 
 export const config = {
   api: {
@@ -91,10 +92,6 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  if (!roleChecker(session.profile, ['researcher', 'urc_chairperson', 'urc_board_member', 'urc_staff'])) {
-    return res.status(401).json({ error: 'Unauthorized access.' })
-  }
-
   const body: { files: {
     fieldName: string,
     value: FileUpload
@@ -124,6 +121,14 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
     }
 
     return res.status(400).json({ error: 'Profile is required!' })
+  }
+
+  if (!roleChecker(session.profile, MODIFY_RESEARCHER_PROFILE) && session.profile.id !== body.fields.profile_id) {
+    for await (const file of body.files) {
+      await deleteFile(file.value.id)
+    }
+
+    return res.status(401).json({ error: 'Unauthorized access.' })
   }
 
   let currentEntry = await prisma.researchEvent.findUnique({
@@ -187,7 +192,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
     }
   })
 
-  if (roleChecker(session.profile, ['urc_chairperson', 'urc_board_member', 'urc_staff'])) {
+  if (roleChecker(session.profile, CONFIRMATION_RESEARCHER_INFORMATION)) {
     await verifyRequest(verificationRequest.id, true, session.profile.id)
   }
 
