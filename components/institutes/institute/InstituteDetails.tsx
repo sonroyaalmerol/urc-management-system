@@ -86,6 +86,7 @@ const InstituteDetails: React.FC<ComponentProps> = (props) => {
                 size="2xl"
                 photoId={institute.photo_id}
                 instituteId={institute.id}
+                disabled={!roleChecker(session.data.profile, ['urc_chairperson', 'urc_staff', 'urc_executive_secretary'])}
               />
             </WrapItem>
             <WrapItem>
