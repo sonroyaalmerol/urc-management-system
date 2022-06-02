@@ -16,13 +16,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = (props) => {
     {
       name: 'Dashboard',
       url: '/dashboard',
-      allowedRoles: [
-        'urc_chairperson',
-        'urc_executive_secretary',
-        'urc_staff',
-        'urc_board_member',
-        'researcher'
-      ],
     },
     {
       name: 'Projects',
@@ -82,9 +75,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = (props) => {
       allowedRoles: [
         'urc_chairperson',
         'urc_staff',
+        'urc_executive_secretary'
       ],
     }
-  ].filter((menu) => menu.allowedRoles.filter((allowedRole) => data?.profile.roles.filter((role) => role.id === allowedRole).length > 0).length > 0)
+  ].filter((menu) => (menu.allowedRoles?.filter((allowedRole) => data?.profile.roles.filter((role) => role.id === allowedRole).length > 0).length) ?? 1 > 0)
 
   if (status === 'authenticated') {
     return (
