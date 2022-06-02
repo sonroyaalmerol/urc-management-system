@@ -262,7 +262,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
           institute: true
         }
       },
-      project_status: true
+      project_status: true,
+      units: true
     }
   })
 

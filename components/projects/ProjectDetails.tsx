@@ -14,6 +14,8 @@ import EditableTextarea from '../general/EditableTextarea'
 import { ProjectStatus } from '@prisma/client'
 import { memberChecker, roleChecker } from '../../utils/roleChecker'
 import { CHANGE_PROJECT_STATUS } from '../../utils/permissions'
+import UnitsSection from './UnitsSection'
+import { useRouter } from 'next/router'
 
 interface ProjectDetailsProps {
   project: ExtendedProject
@@ -30,6 +32,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = (props) => {
   });
 
   const toast = useToast()
+  const router = useRouter()
 
   const onSubmit: SubmitHandler<ExtendedProject> = async data => {
     setSubmitting(true)
@@ -40,7 +43,12 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = (props) => {
     }).then((i) => i.json())
 
     if (res.success) {
-      setProject(res.data)
+      if (res.data.slug !== project.slug) {
+        router.replace(`/projects/${res.data.slug}`)
+      } else {
+        setProject(res.data)
+      }
+
       toast({
         title: 'Success!',
         description: `Successfully modified details!`,
@@ -99,50 +107,59 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = (props) => {
 
       <Card>
         <VStack align="baseline">
-          <Wrap align="center">
+          <Wrap spacingX={8}>
             <WrapItem>
-              <Heading
-                fontFamily="body"
-                fontSize="md"
-              >Title:</Heading>
+              <VStack align="baseline">
+                <Wrap align="center">
+                  <WrapItem>
+                    <Heading
+                      fontFamily="body"
+                      fontSize="md"
+                    >Title:</Heading>
+                  </WrapItem>
+                  <WrapItem>
+                    <Controller
+                      name="title"
+                      control={control}
+                      render={({ field }) => 
+                        <EditableText 
+                          editMode={editing}
+                          {...field}
+                        />
+                      }
+                    />
+                  </WrapItem>
+                </Wrap>
+                <Wrap align="center">
+                  <WrapItem>
+                    <Heading
+                      fontFamily="body"
+                      fontSize="md"
+                    >Status:</Heading>
+                  </WrapItem>
+                  <WrapItem>
+                    { !editing || !roleChecker(session.data.profile, CHANGE_PROJECT_STATUS) ? (
+                      <ProjectStatusTag projectStatus={project.project_status} />
+                    ) : (
+                      <Controller
+                        name="project_status_id"
+                        control={control}
+                        defaultValue={project.project_status.id}
+                        render={({ field }) => (
+                          <Select {...field}>
+                            { statusList.map((status) => (
+                              <option key={status.id} value={status.id}>{status.comment}</option>
+                            )) }
+                          </Select>
+                        )}
+                      />
+                    ) }
+                  </WrapItem>
+                </Wrap>
+              </VStack>
             </WrapItem>
             <WrapItem>
-              <Controller
-                name="title"
-                control={control}
-                render={({ field }) => 
-                  <EditableText 
-                    editMode={editing}
-                    {...field}
-                  />
-                }
-              />
-            </WrapItem>
-          </Wrap>
-          <Wrap align="center">
-            <WrapItem>
-              <Heading
-                fontFamily="body"
-                fontSize="md"
-              >Status:</Heading>
-            </WrapItem>
-            <WrapItem>
-              { !editing || !roleChecker(session.data.profile, CHANGE_PROJECT_STATUS) ? (
-                <ProjectStatusTag projectStatus={project.project_status} />
-              ) : (
-                <Controller
-                  name="project_status_id"
-                  control={control}
-                  defaultValue={project.project_status.id}
-                  render={({ field }) => (
-                    <Select {...field}>
-                      { statusList.map((status) => (
-                        <option key={status.id} value={status.id}>{status.comment}</option>
-                      )) }
-                    </Select>
-                  )}
-                />
-              ) }
+              <UnitsSection project={project} />
             </WrapItem>
           </Wrap>
           <Heading

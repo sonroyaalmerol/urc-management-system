@@ -2,21 +2,21 @@ import React from 'react'
 
 import { Center, Heading, Menu, MenuButton, MenuDivider, MenuGroup, MenuItem, MenuList, Spinner, Tag, TagCloseButton, Text, VStack, Wrap, WrapItem } from '@chakra-ui/react'
 
-import type { ExtendedProfile } from '../../../types/profile-card'
-import Button from '../../general/Button'
+import type { ExtendedProject } from '../../types/profile-card'
+import Button from '../general/Button'
 import { AddIcon } from '@chakra-ui/icons'
 import type { Unit } from '@prisma/client'
 
 import { useSession } from 'next-auth/react'
-import { roleChecker } from '../../../utils/roleChecker'
-import { CONFIRMATION_RESEARCHER_INFORMATION } from '../../../utils/permissions'
+import { roleChecker } from '../../utils/roleChecker'
+import { CONFIRMATION_RESEARCHER_INFORMATION } from '../../utils/permissions'
 
 interface UnitsSectionProps {
-  profile: Partial<ExtendedProfile>
+  project: Partial<ExtendedProject>
 }
 
 const UnitsSection: React.FC<UnitsSectionProps> = (props) => {
-  const profile = props.profile
+  const project = props.project
   const { data: { profile: currentProfile } } = useSession()
 
   const isAllowed = React.useMemo(() => {
@@ -26,7 +26,7 @@ const UnitsSection: React.FC<UnitsSectionProps> = (props) => {
   const [unitAdding, setRoleAdding] = React.useState(false)
   const [unitsLoading, setUnitsLoading] = React.useState(true)
   const [units, setUnits] = React.useState<{ parent_name: string, parent_id: string, units: Unit[] }[]>([])
-  const [profileUnits, setProfileUnits] = React.useState(profile.units)
+  const [projectUnits, setProjectUnits] = React.useState(project.units ?? [])
 
   const reloadSession = () => {
     const event = new Event("visibilitychange")
@@ -41,26 +41,26 @@ const UnitsSection: React.FC<UnitsSectionProps> = (props) => {
 
   const addRole = async (unit: Unit) => {
     setRoleAdding(true)
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/profiles/${profile.id}/units`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/${project.id}/units`, {
       method: 'POST',
       body: JSON.stringify({ id: unit.id })
     }).then(res => res.json())
 
     if (res.success) {
-      setProfileUnits((prev) => [...prev.filter((x) => x.id !== unit.id), unit])
+      setProjectUnits((prev) => [...prev.filter((x) => x.id !== unit.id), unit])
       reloadSession()
     }
   }
 
   const removeRole = async (unit: Unit) => {
     setRoleAdding(true)
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/profiles/${profile.id}/units`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/${project.id}/units`, {
       method: 'DELETE',
       body: JSON.stringify({ id: unit.id })
     }).then(res => res.json())
 
     if (res.success) {
-      setProfileUnits((prev) => prev.filter((x) => x.id !== unit.id))
+      setProjectUnits((prev) => prev.filter((x) => x.id !== unit.id))
       reloadSession()
     }
   }
@@ -122,7 +122,7 @@ const UnitsSection: React.FC<UnitsSectionProps> = (props) => {
           </Menu>
         </WrapItem>
       </Wrap>
-      { profileUnits.map((unit) => (
+      { projectUnits.map((unit) => (
         <Tag
           key={unit.id}
           borderRadius={20}
