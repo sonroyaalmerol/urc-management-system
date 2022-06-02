@@ -6,6 +6,8 @@ import type { ComponentProps, ExtendedProject } from '../../../types/profile-car
 import CardTemplate from '../../general/templates/CardTemplate'
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
+import { roleChecker } from '../../../utils/roleChecker'
+import { CREATE_PROJECT } from '../../../utils/permissions'
 
 const InternalProjects: React.FC<ComponentProps> = (props) => {
   const profile = props.profile
@@ -49,7 +51,7 @@ const InternalProjects: React.FC<ComponentProps> = (props) => {
         router.push(`/projects`)
       }}
       profileId={profile.id}
-      disabled={profile.id !== session.data.profile.id}
+      disabled={profile.id !== session.data.profile.id && !(roleChecker(session.data.profile, CREATE_PROJECT))}
     >
       { entries.map((entry) => (
         <CardTemplate
