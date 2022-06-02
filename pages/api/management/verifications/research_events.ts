@@ -12,6 +12,7 @@ import parseBodyWithFile from '../../../../lib/server/parseBodyWithFile'
 import cleanString from '../../../../lib/cleanString'
 import handleError from '../../../../lib/server/handleError'
 import { deleteFile } from '../../../../lib/server/file'
+import verifyRequest from '../../../../lib/server/verifyRequest'
 
 export const config = {
   api: {
@@ -90,6 +91,10 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
+  if (!roleChecker(session.profile, ['researcher', 'urc_chairperson', 'urc_board_member', 'urc_staff'])) {
+    return res.status(401).json({ error: 'Unauthorized access.' })
+  }
+
   const body: { files: {
     fieldName: string,
     value: FileUpload
@@ -111,6 +116,14 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
     }
 
     return res.status(400).json({ error: 'Role is required!' })
+  }
+
+  if (!cleanString(body.fields.profile_id)) {
+    for await (const file of body.files) {
+      await deleteFile(file.value.id)
+    }
+
+    return res.status(400).json({ error: 'Profile is required!' })
   }
 
   let currentEntry = await prisma.researchEvent.findUnique({
@@ -158,7 +171,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
     data: {
       profile: {
         connect: {
-          id: session.profile.id
+          id: body.fields.profile_id
         }
       },
       role: body.fields.role,
@@ -173,6 +186,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
       }
     }
   })
+
+  if (roleChecker(session.profile, ['urc_chairperson', 'urc_board_member', 'urc_staff'])) {
+    await verifyRequest(verificationRequest.id, true, session.profile.id)
+  }
 
   return res.status(200).json({ success: true, data: verificationRequest })
 }

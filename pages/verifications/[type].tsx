@@ -21,7 +21,7 @@ interface NewSubmissionProps {
 }
 
 const NewVerification: React.FC<NewSubmissionProps> = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const { type } = props
+  const { type, profileId } = props
 
   const humanizeType = (type: SubmissionTypes) => {
     switch(type.toUpperCase()) {
@@ -43,17 +43,17 @@ const NewVerification: React.FC<NewSubmissionProps> = (props: InferGetServerSide
   const formConstructor = (type: SubmissionTypes) => {
     switch(type.toUpperCase()) {
       case 'EXTERNAL_RESEARCH':
-        return <ExternalResearchForm />
+        return <ExternalResearchForm profileId={profileId as string} />
       case 'JOURNAL_PUBLICATION':
-        return <JournalPublicationForm />
+        return <JournalPublicationForm profileId={profileId as string} />
       case 'BOOK_PUBLICATION':
-        return <BookPublicationForm />
+        return <BookPublicationForm profileId={profileId as string} />
       case 'RESEARCH_DISSEMINATION':
-        return <ResearchDisseminationForm />
+        return <ResearchDisseminationForm profileId={profileId as string} />
       case 'RESEARCH_PRESENTATION':
-        return <ResearchPresentationForm />
+        return <ResearchPresentationForm profileId={profileId as string} />
       case 'RESEARCH_EVENT':
-        return <ResearchEventForm />
+        return <ResearchEventForm profileId={profileId as string} />
     }
   }
 
@@ -91,7 +91,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   return {
     props: { 
       session,
-      type: type as SubmissionTypes
+      type: type as SubmissionTypes,
+      profileId: context.query?.profile_id ?? null
     }
   }
 }

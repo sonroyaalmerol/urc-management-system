@@ -11,8 +11,10 @@ import AutoCompleteInput from '../../general/AutoCompleteInput'
 import fetchWithFile from '../../../lib/client/fetchWithFile'
 import FileUploadButton from '../../general/FileUploadButton'
 import { useRouter } from 'next/router'
+import { useSession } from 'next-auth/react'
 
 interface ExternalResearchFormProps {
+  profileId?: string
 }
 
 const ExternalResearchForm: React.FC<ExternalResearchFormProps> = (props) => {
@@ -24,10 +26,11 @@ const ExternalResearchForm: React.FC<ExternalResearchFormProps> = (props) => {
   const toast = useToast()
   const { proof_files } = watch()
   const router = useRouter()
+  const session = useSession()
 
   const onSubmit: SubmitHandler<Partial<ExternalResearch> & Partial<VerificationRequest> & { proof_files: FileList }> = async data => {
     setSubmitting(true)
-    const res = await fetchWithFile(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/verifications/external_researches`, data)
+    const res = await fetchWithFile(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/verifications/external_researches`, {...data, profile_id: props?.profileId ?? session.data.profile.id})
 
     if (res.success) {
       toast({
@@ -35,7 +38,12 @@ const ExternalResearchForm: React.FC<ExternalResearchFormProps> = (props) => {
         description: `Successfully created verification request!`,
         status: 'success'
       })
-      router.push(`/verifications`)
+      
+      if (props.profileId) {
+        router.push(`/profiles/${props.profileId}`)
+      } else {
+        router.push(`/verifications`)
+      }
     } else {
       toast({
         title: 'Error!',

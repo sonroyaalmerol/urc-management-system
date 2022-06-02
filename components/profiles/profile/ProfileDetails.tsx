@@ -90,7 +90,7 @@ const ProfileDetails: React.FC<ComponentProps> = (props) => {
           </WrapItem>
         ) }
         <Spacer />
-        { session.data.profile.id === profile.id && (
+        { session.data.profile.id === profile.id || roleChecker(session.data.profile, ['urc_chairperson', 'urc_board_member', 'urc_staff']) && (
           <WrapItem>
             <IconButton
               padding={0} 

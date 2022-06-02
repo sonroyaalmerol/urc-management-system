@@ -20,6 +20,7 @@ import {
 import Button from '../../general/Button'
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
+import { roleChecker } from '../../../lib/roleChecker'
 
 const BookPublications: React.FC<ComponentProps> = (props) => {
   const profile = props.profile
@@ -63,9 +64,9 @@ const BookPublications: React.FC<ComponentProps> = (props) => {
       loadMore={loadNewEntries}
       profileId={profile.id}
       onNew={() => {
-        router.push(`/verifications/book_publication`)
+        router.push(`/verifications/book_publication?profile_id=${profile.id}`)
       }}
-      disabled={profile.id !== session.data.profile.id}
+      disabled={profile.id !== session.data.profile.id && !roleChecker(session.data.profile, ['urc_chairperson', 'urc_board_member', 'urc_staff'])}
     >
       { entries.map((entry) => (
         <>
