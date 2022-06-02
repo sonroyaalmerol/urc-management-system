@@ -96,119 +96,129 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  if (!roleChecker(session.profile, ['researcher'])) {
-    return res.status(401).json({ error: 'Unauthorized access.' })
-  }
-
   const body = JSON.parse(req.body) as Partial<
     (Project & { mode: 'create' | 'update' }) |
     ({ id: string, email: string, role: string, mode: 'add-proponent' | 'remove-proponent' })
   >
 
-  if (roleChecker(session.profile, ['researcher']) || true) {
-    const id: string = session.profile.id
+  const id: string = session.profile.id
 
-    let project: Project = null
-    
-    if (body.mode === 'create') {
-      if (!body.title) {
-        return res.status(400).json({ error: 'Title is required!' })
+  let project: Project = null
+  
+  if (body.mode === 'create') {
+    if (!roleChecker(session.profile, ['researcher'])) {
+      return res.status(401).json({ error: 'Unauthorized access.' })
+    }
+
+    if (!body.title) {
+      return res.status(400).json({ error: 'Title is required!' })
+    }
+
+    project = await prisma.project.create({
+      data: {
+        title: body.title,
+        bridge_profiles: {
+          create: {
+            profile_id: id,
+            role_title: 'Main Proponent'
+          }
+        },
+        slug: slugGenerator(body.title),
+        main_proponents: {
+          set: [`${session.profile.first_name} ${session.profile.middle_initial} ${session.profile.last_name}`]
+        }
       }
+    })
+  } else if (body.mode === 'update') {
+    if (!roleChecker(session.profile, ['researcher', 'urc_staff', 'urc_chairperson'])) {
+      return res.status(401).json({ error: 'Unauthorized access.' })
+    }
 
-      project = await prisma.project.create({
-        data: {
-          title: body.title,
-          bridge_profiles: {
-            create: {
-              profile_id: id,
-              role_title: 'Main Proponent'
-            }
-          },
-          slug: slugGenerator(body.title),
-          main_proponents: {
-            set: [`${session.profile.first_name} ${session.profile.middle_initial} ${session.profile.last_name}`]
+    if (!body.title) {
+      return res.status(400).json({ error: 'Title is required!' })
+    }
+
+    if (!body.project_status_id) {
+      return res.status(400).json({ error: 'Project Status is required!' })
+    }
+
+    project = await prisma.project.update({
+      where: {
+        id: body.id
+      },
+      data: {
+        title: body.title,
+        slug: slugGenerator(body.title),
+        abstract: body.abstract,
+        project_status: {
+          connect: {
+            id: body.project_status_id as string
           }
         }
-      })
-    } else if (body.mode === 'update') {
-      if (!body.title) {
-        return res.status(400).json({ error: 'Title is required!' })
       }
+    })
+  } else if (body.mode === 'add-proponent') {
+    if (!roleChecker(session.profile, ['researcher', 'urc_staff', 'urc_chairperson'])) {
+      return res.status(401).json({ error: 'Unauthorized access.' })
+    }
 
-      if (!body.project_status_id) {
-        return res.status(400).json({ error: 'Project Status is required!' })
-      }
 
+    if (!body.email) {
+      return res.status(400).json({ error: 'Email is required!' })
+    }
+
+    if (!body.role) {
+      return res.status(400).json({ error: 'Role is required!' })
+    }
+
+    try {
       project = await prisma.project.update({
         where: {
           id: body.id
         },
         data: {
-          title: body.title,
-          slug: slugGenerator(body.title),
-          abstract: body.abstract,
-          project_status: {
-            connect: {
-              id: body.project_status_id as string
-            }
-          }
-        }
-      })
-    } else if (body.mode === 'add-proponent') {
-      if (!body.email) {
-        return res.status(400).json({ error: 'Email is required!' })
-      }
-
-      if (!body.role) {
-        return res.status(400).json({ error: 'Role is required!' })
-      }
-
-      try {
-        project = await prisma.project.update({
-          where: {
-            id: body.id
-          },
-          data: {
-            bridge_profiles: {
-              create: {
-                role_title: body.role,
-                profile: {
-                  connect: {
-                    email: body.email as string
-                  }
+          bridge_profiles: {
+            create: {
+              role_title: body.role,
+              profile: {
+                connect: {
+                  email: body.email as string
                 }
               }
             }
           }
-        })
-      } catch (err) {
-        return res.status(500).json({ error: err.message })
-      }
-    } else if (body.mode === 'remove-proponent') {
-      if (!body.email) {
-        return res.status(400).json({ error: 'Email is required!' })
-      }
-
-      try {
-        await prisma.profileToProjectBridge.deleteMany({
-          where: {
-            profile: {
-              email: body.email
-            },
-            project: {
-              id: body.id
-            }
-          }
-        })
-      } catch (err) {
-        return res.status(500).json({ error: err.message })
-      }
+        }
+      })
+    } catch (err) {
+      return res.status(500).json({ error: err.message })
+    }
+  } else if (body.mode === 'remove-proponent') {
+    if (!roleChecker(session.profile, ['researcher', 'urc_staff', 'urc_chairperson'])) {
+      return res.status(401).json({ error: 'Unauthorized access.' })
     }
 
-    return res.status(200).json({ success: true, data: project })
+
+    if (!body.email) {
+      return res.status(400).json({ error: 'Email is required!' })
+    }
+
+    try {
+      await prisma.profileToProjectBridge.deleteMany({
+        where: {
+          profile: {
+            email: body.email
+          },
+          project: {
+            id: body.id
+          }
+        }
+      })
+    } catch (err) {
+      return res.status(500).json({ error: err.message })
+    }
   }
 
-  return res.status(401).json({ error: 'Unauthorized access.' })
+  return res.status(200).json({ success: true, data: project })
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

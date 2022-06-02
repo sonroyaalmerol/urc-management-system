@@ -1,6 +1,6 @@
 import React from 'react'
 import ContentHeader from '../../../components/general/ContentHeader'
-import { getSession } from 'next-auth/react'
+import { getSession, useSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
 import { VStack, HStack, Heading, Wrap, WrapItem, Spacer, Select, SimpleGrid } from '@chakra-ui/react'
 
@@ -52,6 +52,8 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
       return [statusFilter]
     }
   }, [statusFilter])
+  
+  const session = useSession()
 
   return (
     <>
@@ -79,12 +81,14 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
               </Wrap>
             </WrapItem>
             <Spacer />
-            <WrapItem>
-              <HStack>
-                <AddProponentButton projectId={project.id} />
-                <RemoveProponentButton projectId={project.id} />
-              </HStack>
-            </WrapItem>
+            { project.bridge_profiles.filter((bridge) => bridge.profile_id === session.data.profile.id).length > 0 || roleChecker(session.data.profile, ['urc_staff', 'urc_chairperson']) && (
+              <WrapItem>
+                <HStack>
+                  <AddProponentButton projectId={project.id} />
+                  <RemoveProponentButton projectId={project.id} />
+                </HStack>
+              </WrapItem>
+            ) }
           </Wrap>
           
           <Card>
@@ -113,11 +117,13 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
               </Wrap>
             </WrapItem>
             <Spacer />
-            <WrapItem>
-              <HStack>
-                <AssignInstituteButton projectId={project.id} />
-              </HStack>
-            </WrapItem>
+            { project.bridge_profiles.filter((bridge) => bridge.profile_id === session.data.profile.id).length > 0 && (
+              <WrapItem>
+                <HStack>
+                  <AssignInstituteButton projectId={project.id} />
+                </HStack>
+              </WrapItem>
+            ) }
           </Wrap>
 
           <Card>
@@ -209,15 +215,17 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
               </Wrap>
             </WrapItem>
             <Spacer />
-            <WrapItem>
-              <HStack>
-                <NewSubmissionButton
-                  capsuleUrl={`/projects/${project.slug}/submissions/new/capsule`}
-                  fullBlownUrl={`/projects/${project.slug}/submissions/new/full`}
-                  budgetUrl={`/projects/${project.slug}/submissions/new/budget`}
-                />
-              </HStack>
-            </WrapItem>
+            { project.bridge_profiles.filter((bridge) => bridge.profile_id === session.data.profile.id).length > 0 && (
+              <WrapItem>
+                <HStack>
+                  <NewSubmissionButton
+                    capsuleUrl={`/projects/${project.slug}/submissions/new/capsule`}
+                    fullBlownUrl={`/projects/${project.slug}/submissions/new/full`}
+                    budgetUrl={`/projects/${project.slug}/submissions/new/budget`}
+                  />
+                </HStack>
+              </WrapItem>
+            ) }
           </Wrap>
           <SubmissionList projectId={project.id} types={types} status={status} />
         </VStack>

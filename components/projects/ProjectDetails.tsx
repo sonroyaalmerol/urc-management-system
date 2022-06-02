@@ -79,7 +79,8 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = (props) => {
           </Wrap>
         </WrapItem>
         <Spacer />
-        {(roleChecker(session.data.profile, ['researcher'])) && (
+        
+        {(project.bridge_profiles.filter((bridge) => bridge.profile_id === session.data.profile.id).length > 0 || roleChecker(session.data.profile, ['urc_staff', 'urc_chairperson'])) && (
           <WrapItem>
             <HStack>
               <IconButton 
