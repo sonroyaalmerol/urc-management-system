@@ -5,14 +5,10 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  /* await prisma.instituteNews.updateMany({
+  await prisma.userRole.delete({
     where: {
-      institute_id: null
+      id: 'default_role'
     },
-    data: {
-      institute_id: 'cl3p7sntw00861kini3ov0y1i',
-      verified: true
-    }
   })
   //*/
   return res.status(200).json({ success: true })
