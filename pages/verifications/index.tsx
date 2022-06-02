@@ -1,6 +1,6 @@
 import React from 'react'
 import ContentHeader from '../../components/general/ContentHeader'
-import { getSession } from 'next-auth/react'
+import { getSession, useSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
 import { VStack, HStack, Heading, Wrap, WrapItem, Spacer, Select } from '@chakra-ui/react'
 
@@ -8,6 +8,8 @@ import { NextSeo } from 'next-seo'
 
 import NewVerificationButton from '../../components/verifications/NewVerificationButton'
 import VerificationList from '../../components/verifications/VerificationList'
+import { roleChecker } from '../../utils/roleChecker'
+import { CONFIRMATION_RESEARCHER_INFORMATION, VERIFY_CENTER_NEWS, VERIFY_CENTER_PROJECTS } from '../../utils/permissions'
 
 interface VerificationsProps {
 
@@ -15,6 +17,52 @@ interface VerificationsProps {
 
 const Verifications: React.FC<VerificationsProps> = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   // const project: Project = JSON.parse(props.project)
+  const session = useSession()
+
+  const TYPE_OPTIONS = [
+    {
+      name: 'External Research',
+      value: 'external_research'
+    },
+    {
+      name: 'Journal Publication',
+      value: 'journal_publication'
+    },
+    {
+      name: 'Book Publication',
+      value: 'book_publication'
+    },
+    {
+      name: 'Research Dissemination',
+      value: 'research_dissemination'
+    },
+    {
+      name: 'Research Presentation',
+      value: 'research_presentation'
+    },
+    {
+      name: 'Research Event',
+      value: 'research_event'
+    },
+    {
+      name: 'Institute News',
+      value: 'institute_news'
+    },
+    {
+      name: 'Project',
+      value: 'project_institute'
+    },
+  ].filter((option) => {
+    if (option.value.toUpperCase() === 'INSTITUTE_NEWS') {
+      return roleChecker(session.data.profile, VERIFY_CENTER_NEWS)
+    }
+
+    if (option.value.toUpperCase() === 'PROJECT_INSTITUTE') {
+      return roleChecker(session.data.profile, VERIFY_CENTER_PROJECTS)
+    }
+
+    return roleChecker(session.data.profile, CONFIRMATION_RESEARCHER_INFORMATION)
+  })
 
   const [typeFilter, setTypeFilter] = React.useState('')
   const types = React.useMemo(() => {
@@ -78,14 +126,9 @@ const Verifications: React.FC<VerificationsProps> = (props: InferGetServerSidePr
                       onChange={(e) => { setTypeFilter(e.target.value) }}
                       cursor="pointer"
                     >
-                      <option value="external_research">External Research</option>
-                      <option value="journal_publication">Journal Publication</option>
-                      <option value="book_publication">Book Publication</option>
-                      <option value="research_dissemination">Research Dissemination</option>
-                      <option value="research_presentation">Research Presentation</option>
-                      <option value="research_event">Research Event</option>
-                      <option value="institute_news">Institute News</option>
-                      <option value="project_institute">Project</option>
+                      { TYPE_OPTIONS.map((option) => (
+                        <option value={option.value} key={option.value}>{option.name}</option>
+                      )) }
                     </Select>
                   </WrapItem>
                   <WrapItem>

@@ -8,13 +8,26 @@ import type { VerificationStatus, VerificationTypes } from '@prisma/client'
 
 import handleError from '../../../../utils/server/handleError'
 
-import { roleChecker } from '../../../../utils/roleChecker'
+import { instituteHeadChecker, roleChecker } from '../../../../utils/roleChecker'
+import { CONFIRMATION_RESEARCHER_INFORMATION, CREATE_CENTER_NEWS, VERIFY_CENTER_NEWS, VERIFY_CENTER_PROJECTS } from '../../../../utils/permissions'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const { types: types_raw, status: status_raw } = req.query
 
-  const types = (types_raw as string)?.split(',').map((i) => i.trim().toUpperCase()) as VerificationTypes[] ?? []
+  let types = (types_raw as string)?.split(',').map((i) => i.trim().toUpperCase()) as VerificationTypes[] ?? []
   const status = (status_raw as string)?.split(',').map((i) => i.trim().toUpperCase()) as VerificationStatus[] ?? []
+
+  types = types.filter((type) => {
+    if (type === 'INSTITUTE_NEWS') {
+      return roleChecker(session.profile, VERIFY_CENTER_NEWS)
+    }
+
+    if (type === 'PROJECT_INSTITUTE') {
+      return roleChecker(session.profile, VERIFY_CENTER_PROJECTS)
+    }
+
+    return roleChecker(session.profile, CONFIRMATION_RESEARCHER_INFORMATION)
+  })
 
   let [totalCount, data] = await prisma.$transaction([
     prisma.verificationRequest.count({
