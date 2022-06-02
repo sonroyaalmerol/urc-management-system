@@ -3,6 +3,7 @@ import { Box, VStack } from '@chakra-ui/react'
 import Sidebar from './Sidebar'
 import Navbar from './Navbar'
 import { useSession } from 'next-auth/react'
+import { ASSIGN_CENTER_HEAD, CHANGE_PROJECT_STATUS, CONFIRMATION_RESEARCHER_INFORMATION, CREATE_CENTER_NEWS, CREATE_PROJECT, CREATE_PROJECT_CENTER, MANAGING_DELIVERABLES, MODIFY_RESEARCHER_PROFILE, REVIEW_PROPOSALS, SETTING_DEADLINES, SETTING_DOWNLOADS, SETTING_UNITS, UPDATE_CENTER_INFO, VERIFY_CENTER_NEWS, VERIFY_CENTER_PROJECTS } from '../../utils/permissions'
 // import Head from 'next/head'
 
 interface DashboardLayoutProps {
@@ -20,61 +21,38 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = (props) => {
     {
       name: 'Projects',
       url: '/projects',
-      allowedRoles: [
-        'urc_chairperson',
-        'urc_executive_secretary',
-        'urc_staff',
-        'urc_board_member',
-        'researcher'
-      ],
     },
     {
       name: 'Profiles',
       url: '/profiles',
-      allowedRoles: [
-        'urc_chairperson',
-        'urc_executive_secretary',
-        'urc_staff',
-        'urc_board_member',
-        'researcher'
-      ],
     },
     {
       name: 'Verifications',
       url: '/verifications',
       allowedRoles: [
-        'urc_chairperson',
-        'urc_staff',
-        'urc_board_member',
+        ...VERIFY_CENTER_NEWS,
+        ...VERIFY_CENTER_PROJECTS,
+        ...CONFIRMATION_RESEARCHER_INFORMATION
       ],
     },
     {
       name: 'Institutes',
       url: '/institutes',
-      allowedRoles: [
-        'urc_chairperson',
-        'urc_executive_secretary',
-        'urc_staff',
-        'urc_board_member',
-        'researcher'
-      ],
     },
     {
       name: 'Downloads',
       url: '/downloads',
       allowedRoles: [
-        'urc_chairperson',
-        'urc_staff',
-        'urc_executive_secretary'
+        ...SETTING_DOWNLOADS
       ],
     },
     {
       name: 'Settings',
       url: '/settings',
       allowedRoles: [
-        'urc_chairperson',
-        'urc_staff',
-        'urc_executive_secretary'
+        ...SETTING_DOWNLOADS,
+        ...SETTING_UNITS,
+        ...SETTING_DEADLINES
       ],
     }
   ].filter((menu) => (menu.allowedRoles?.filter((allowedRole) => data?.profile.roles.filter((role) => role.id === allowedRole).length > 0).length) ?? 1 > 0)
