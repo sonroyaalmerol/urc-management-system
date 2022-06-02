@@ -5,7 +5,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  await prisma.userRole.delete({
+  /* await prisma.userRole.delete({
     where: {
       id: 'default'
     },
