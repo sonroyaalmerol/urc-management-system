@@ -66,7 +66,7 @@ const MemberCard: React.FC<MemberCardProps> = (props) => {
     <InnerCard
       {...divProps}
     >
-      <HStack spacing={8} alignItems="center">
+      <HStack alignItems="center" maxW="full">
         <HStack spacing={4} alignItems="flex-start">
           <Avatar
             as="a"
@@ -85,7 +85,7 @@ const MemberCard: React.FC<MemberCardProps> = (props) => {
             >
               {profile.first_name} {profile.middle_initial} {profile.last_name}
             </Heading>
-            <Text>
+            <Text overflowWrap="anywhere">
               {profile.email}
             </Text>
             <Text fontSize="sm" fontStyle="italic">

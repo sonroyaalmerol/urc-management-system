@@ -23,12 +23,14 @@ const RichTextarea: React.ForwardRefRenderFunction<HTMLTextAreaElement, Textarea
       const currentState = ContentState.createFromBlockArray(
         htmlToDraft(
           (props.value as string)
-            .replace('<b>', '<strong>')
+            .replace('<b', '<strong')
             .replace('</b>', '</strong>')
-            .replace('<i>', '<em>')
+            .replace('<i', '<em')
             .replace('</i>', '</em>')
-            .replace('<u>', '<ins>')
+            .replace('<u', '<ins')
             .replace('</u>', '</ins>')
+            .replace('<figure', '<div')
+            .replace('</figure>', '</div>')
         )
       )
       return currentState

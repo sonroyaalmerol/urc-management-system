@@ -66,7 +66,7 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
         institute: true,
       },
       orderBy: {
-        updated_at: 'desc'
+        created_at: 'desc'
       }
     })
   ])

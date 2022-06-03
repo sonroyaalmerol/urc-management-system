@@ -1,4 +1,4 @@
-module.exports = [
+const council = [
   {
     first_name: 'Lourdesita',
     middle_initial: 'S.',
@@ -187,3 +187,5 @@ module.exports = [
     image: 'https://research.addu.edu.ph/wp-content/uploads/2016/09/Kem-300x300.jpg',
   },
 ]
+
+export default council

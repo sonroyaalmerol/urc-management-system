@@ -71,7 +71,7 @@ const ProjectCard: React.FC<ProjectCardProps> = (props) => {
               { [...project.main_proponents, ...project.co_proponents].map((proponent, i) => (
                 <WrapItem key={`${proponent}-avatar-${i}`}>
                   <SmallAvatar
-                    user={{ name: proponent }}
+                    first_name={proponent}
                   />
                 </WrapItem>
               )) }

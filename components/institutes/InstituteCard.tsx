@@ -47,7 +47,7 @@ const InstituteCard: React.FC<InstituteCardProps> = (props) => {
           >
             {institute.name} {institute.short_name ? `(${institute.short_name})` : ''}
           </Heading>
-          <Text>
+          <Text overflowWrap="anywhere">
             {institute.email}
           </Text>
         </VStack>

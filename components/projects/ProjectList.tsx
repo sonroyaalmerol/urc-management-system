@@ -1,5 +1,5 @@
 import React from 'react'
-import { Center, Spinner, chakra, VStack } from '@chakra-ui/react'
+import { Center, Spinner, chakra, VStack, SimpleGrid } from '@chakra-ui/react'
 
 import type { ProfileToProjectBridge, Profile, User, Project, ProjectStatus } from '@prisma/client'
 
@@ -73,11 +73,11 @@ const ProjectList: React.FC<ProjectListProps> = (props) => {
           element={chakra.div}
           w="full"
         >
-          <VStack w="full">
+          <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={4} w="full">
             { entries.map((project) => (
               <ProjectCard key={project.id} project={project} />
             )) }
-          </VStack>
+          </SimpleGrid>
         </InfiniteScroll>
       ) : (
         <Center marginTop="2rem">

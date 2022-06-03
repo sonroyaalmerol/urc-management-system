@@ -54,7 +54,7 @@ const ProfileCard: React.FC<ProfileCardProps> = (props) => {
           >
             {profile.last_name}, {profile.first_name} {profile.middle_initial}
           </Heading>
-          <Text>
+          <Text overflowWrap="anywhere">
             {profile.email}
           </Text>
         </VStack>

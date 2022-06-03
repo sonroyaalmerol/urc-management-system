@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "prisma": {
-    "seed": "node prisma/seed.js"
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "engines": {
     "npm": ">=8.5.5",
@@ -73,6 +73,7 @@
     "pm2": "^5.2.0",
     "prisma": "^3.14.0",
     "sass": "^1.52.1",
+    "ts-node": "^10.8.0",
     "typescript": "^4.7.2"
   }
 }

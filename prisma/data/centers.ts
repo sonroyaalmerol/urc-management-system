@@ -1,4 +1,4 @@
-module.exports = [
+const centers = [
   {
     name: 'Ateneo Institute of Anthropology',
     short_name: 'AIA',
@@ -313,3 +313,5 @@ module.exports = [
     ]
   },
 ]
+
+export default centers
