@@ -27,6 +27,9 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
       },
       include: {
         parent_unit: true
+      },
+      orderBy: {
+        name: 'asc'
       }
     })
   ])

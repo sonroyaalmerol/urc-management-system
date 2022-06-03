@@ -31,64 +31,56 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function)
 
   if (search) {
     (fields as string).split(',').forEach((i) => {
-      if(i !== 'units') {
+      if(i === 'units') {
         ORarray.push({
-          [i]: {
-            mode: 'insensitive',
-            contains: search
+          units: {
+            some: {
+              name: {
+                mode: 'insensitive',
+                contains: search
+              },
+            }
+          }
+        })
+        ORarray.push({
+          units: {
+            some: {
+              id: {
+                mode: 'insensitive',
+                contains: search
+              },
+            }
+          }
+        })
+        ORarray.push({
+          units: {
+            some: {
+              parent_unit: {
+                name: {
+                  mode: 'insensitive',
+                  contains: search
+                }
+              },
+            }
+          }
+        })
+        ORarray.push({
+          units: {
+            some: {
+              parent_unit: {
+                id: {
+                  mode: 'insensitive',
+                  contains: search
+                }
+              },
+            }
           }
         })
       } else {
         ORarray.push({
-          bridge_units: {
-            some: {
-              unit: {
-                name: {
-                  mode: 'insensitive',
-                  contains: search
-                },
-              }
-            }
-          }
-        })
-        ORarray.push({
-          bridge_units: {
-            some: {
-              unit: {
-                id: {
-                  mode: 'insensitive',
-                  contains: search
-                },
-              }
-            }
-          }
-        })
-        ORarray.push({
-          bridge_units: {
-            some: {
-              unit: {
-                parent_unit: {
-                  name: {
-                    mode: 'insensitive',
-                    contains: search
-                  }
-                },
-              }
-            }
-          }
-        })
-        ORarray.push({
-          bridge_units: {
-            some: {
-              unit: {
-                parent_unit: {
-                  id: {
-                    mode: 'insensitive',
-                    contains: search
-                  }
-                },
-              }
-            }
+          [i]: {
+            mode: 'insensitive',
+            contains: search
           }
         })
       }
