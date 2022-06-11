@@ -1,6 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-const injector = async (req: NextApiRequest, res: NextApiResponse, fn: (any) => Promise<any>) => {
+const injector = async (req: NextApiRequest, res: NextApiResponse, fn: (any) => Promise<any>, type: (
+  'book_publications' |
+  'disseminations' |
+  'downloads' |
+  'external_researches' |
+  'institutes' |
+  'internal_researches' |
+  'journal_publications' |
+  'news' |
+  'presentations' |
+  'researchers' |
+  'units'
+)) => {
   const { id } = req.query
 
   const returnError = (code: number, message: string) => {

@@ -13,8 +13,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         skip,
         take,
         where,
-        orderBy
+        orderBy,
+        include: {
+          categories: true
+        }
       })
     ])
-  })
+  }, 'downloads')
 }

@@ -8,7 +8,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return await prisma.download.findFirst({ 
       where: {
         ...where.OR[0]
+      },
+      include: {
+        categories: true
       }
     })
-  })
+  }, 'downloads')
 }

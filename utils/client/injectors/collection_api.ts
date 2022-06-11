@@ -1,8 +1,150 @@
+import { parse } from 'date-fns';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { Function } from '../../../types/api';
 
-const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function) => {
-  let { page: raw_page, per_page: raw_per_page, search, fields, sort_field, sort } = req.query
+type CollectionTypes = (
+  'book_publications' |
+  'disseminations' |
+  'downloads' |
+  'external_researches' |
+  'institutes' |
+  'internal_researches' |
+  'journal_publications' |
+  'news' |
+  'presentations' |
+  'researchers' |
+  'units'
+)
+
+const injectUnits = (search: string) => {
+  const ORarray = []
+  ORarray.push({
+    units: {
+      some: {
+        name: {
+          mode: 'insensitive',
+          contains: search
+        },
+      }
+    }
+  })
+  ORarray.push({
+    units: {
+      some: {
+        id: {
+          mode: 'insensitive',
+          contains: search
+        },
+      }
+    }
+  })
+  ORarray.push({
+    units: {
+      some: {
+        parent_unit: {
+          name: {
+            mode: 'insensitive',
+            contains: search
+          }
+        },
+      }
+    }
+  })
+  ORarray.push({
+    units: {
+      some: {
+        parent_unit: {
+          id: {
+            mode: 'insensitive',
+            contains: search
+          }
+        },
+      }
+    }
+  })
+
+  return ORarray
+}
+
+const injectAuthors = async (search: string, type: CollectionTypes) => {
+  let ORarray = []
+  const defaultCase = () => {
+    ORarray.push({
+      bridge_profiles: {
+        some: {
+          profile: {
+            first_name: {
+              mode: 'insensitive',
+              contains: search
+            }
+          }
+        }
+      }
+    })
+    ORarray.push({
+      bridge_profiles: {
+        some: {
+          profile: {
+            last_name: {
+              mode: 'insensitive',
+              contains: search
+            }
+          }
+        }
+      }
+    })
+    ORarray.push({
+      bridge_profiles: {
+        some: {
+          profile: {
+            middle_initial: {
+              mode: 'insensitive',
+              contains: search
+            }
+          }
+        }
+      }
+    })
+  }
+  const wildcardSearch = `%${search}%`
+  switch (type) {
+    case 'book_publications':
+    case 'journal_publications':
+      const journalIds: { id: string }[] = await prisma.$queryRaw`
+        select id from public."JournalPublication" where lower(array_to_string(authors, ', ')) like lower(${wildcardSearch})
+      `
+      ORarray = [...ORarray, ...journalIds.map((id) => (
+        { id: id.id }
+      ))]
+
+      defaultCase()
+      break
+    case 'external_researches':
+    case 'internal_researches':
+      const projectIds: { id: string }[] = await prisma.$queryRaw`
+        select id from public."Project" where lower(array_to_string(main_proponents , ', ')) like lower(${wildcardSearch}) or lower(array_to_string(co_proponents, ', ')) like lower(${wildcardSearch});
+      `
+      ORarray = [...ORarray, ...projectIds.map((id) => (
+        { id: id.id }
+      ))]
+      defaultCase()
+      break
+    case 'presentations':
+      const presentationIds: { id: string }[] = await prisma.$queryRaw`
+        select id from public."ResearchPresentation" where lower(array_to_string(presentors , ', ')) like lower(${wildcardSearch});
+      `
+      ORarray = [...ORarray, ...presentationIds.map((id) => (
+        { id: id.id }
+      ))]
+    case 'disseminations':
+      defaultCase()
+  }
+
+  return ORarray
+}
+
+const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function, type: CollectionTypes) => {
+  let { page: raw_page, per_page: raw_per_page, search, fields, sort_field, sort, created_range, updated_range } = req.query
   const page: number = raw_page ? parseInt(raw_page as string) : 1
   const per_page: number = raw_per_page ? parseInt(raw_per_page as string) : 10
 
@@ -27,55 +169,15 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function)
   let rawData: any[] = [];
   let data: any[] = []
 
-  const ORarray = [];
+  let ORarray = [];
+  let ANDarray = []
 
   if (search) {
-    (fields as string).split(',').forEach((i) => {
+    for await (const i of (fields as string).split(',')) {
       if(i === 'units') {
-        ORarray.push({
-          units: {
-            some: {
-              name: {
-                mode: 'insensitive',
-                contains: search
-              },
-            }
-          }
-        })
-        ORarray.push({
-          units: {
-            some: {
-              id: {
-                mode: 'insensitive',
-                contains: search
-              },
-            }
-          }
-        })
-        ORarray.push({
-          units: {
-            some: {
-              parent_unit: {
-                name: {
-                  mode: 'insensitive',
-                  contains: search
-                }
-              },
-            }
-          }
-        })
-        ORarray.push({
-          units: {
-            some: {
-              parent_unit: {
-                id: {
-                  mode: 'insensitive',
-                  contains: search
-                }
-              },
-            }
-          }
-        })
+        ORarray = [...ORarray, ...injectUnits(search as string)]
+      } else if (i === 'authors') {
+        ORarray = [...ORarray, ...await injectAuthors(search as string, type)]
       } else {
         ORarray.push({
           [i]: {
@@ -84,15 +186,46 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function)
           }
         })
       }
+    }
+  }
+
+  if (created_range) {
+    const createdRange = (created_range as string).split(',')
+    const from = parse(createdRange[0], 'yyyy-MM-dd', new Date())
+    const to = parse(createdRange[1], 'yyyy-MM-dd', new Date())
+
+    ANDarray.push({
+      created_at: {
+        gte: from,
+        lte: to
+      }
+    })
+  }
+
+  if (updated_range) {
+    const createdRange = (created_range as string).split(',')
+    const from = parse(createdRange[0], 'yyyy-MM-dd', new Date())
+    const to = parse(createdRange[1], 'yyyy-MM-dd', new Date())
+
+    ANDarray.push({
+      created_at: {
+        gte: from,
+        lte: to
+      }
     })
   }
 
   const args = {
     skip: (per_page ?? 10) * (page ? (page - 1) : 0),
     take: (per_page ?? 10),
-    where: search ? {
-      OR: ORarray
-    } : undefined,
+    where: {
+      AND: [
+        ...ANDarray,
+        search ? {
+          OR: ORarray
+        } : undefined
+      ]
+    },
     orderBy: sort_field && sort ? {
       [sort_field as string]: sort
     } : undefined

@@ -22,5 +22,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         },
       }
     })
-  })
+  }, 'external_researches')
 }
