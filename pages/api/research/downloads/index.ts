@@ -8,15 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return await prisma.$transaction([
       prisma.download.count({
         where: {
-          ...where,
-          categories: {
-            some: {
-              title: {
-                mode: 'insensitive',
-                contains: ''
-              }
-            }
-          }
+          ...where
         }
       }),
       prisma.download.findMany({
