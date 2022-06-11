@@ -214,7 +214,7 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function,
     const to = parse(createdRange[1].trim(), 'yyyy-MM-dd', baseDateTo)
 
     ANDarray.push({
-      created_at: {
+      updated_at: {
         gte: from,
         lte: to
       }
