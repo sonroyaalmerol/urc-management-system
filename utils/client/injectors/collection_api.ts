@@ -176,7 +176,7 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function,
     for await (const i of (fields as string).split(',')) {
       if(i === 'units') {
         ORarray = [...ORarray, ...injectUnits(search as string)]
-      } else if (i === 'authors') {
+      } else if (i === 'authors' || i === 'presentors' || i === 'users') {
         ORarray = [...ORarray, ...await injectAuthors(search as string, type)]
       } else {
         ORarray.push({
