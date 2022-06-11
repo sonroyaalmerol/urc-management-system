@@ -6,28 +6,15 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   await injector(req, res, async ({ skip, take, where, orderBy }) => {
     return await prisma.$transaction([
-      prisma.download.count({
-        where: {
-          ...where,
-          categories: {
-            some: {
-              title: {
-                mode: 'insensitive',
-                contains: ''
-              }
-            }
-          }
-        }
+      prisma.downloadCategory.count({
+        where
       }),
-      prisma.download.findMany({
+      prisma.downloadCategory.findMany({
         skip,
         take,
         where,
-        orderBy,
-        include: {
-          categories: true
-        }
+        orderBy
       })
     ])
-  }, 'downloads')
+  }, 'download_categories')
 }

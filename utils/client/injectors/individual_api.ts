@@ -11,7 +11,8 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: (any) => 
   'news' |
   'presentations' |
   'researchers' |
-  'units'
+  'units' |
+  'download_categories'
 )) => {
   const { id } = req.query
 

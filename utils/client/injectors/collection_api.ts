@@ -13,7 +13,8 @@ type CollectionTypes = (
   'news' |
   'presentations' |
   'researchers' |
-  'units'
+  'units' |
+  'download_categories'
 )
 
 const injectUnits = (search: string) => {
@@ -178,6 +179,24 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function,
         ORarray = [...ORarray, ...injectUnits(search as string)]
       } else if (i === 'authors' || i === 'presentors' || i === 'users') {
         ORarray = [...ORarray, ...await injectAuthors(search as string, type)]
+      } else if (i === 'categories') {
+        ORarray.push({
+          categories: {
+            some: {
+              id: search
+            }
+          }
+        })
+        ORarray.push({
+          categories: {
+            some: {
+              title: {
+                mode: 'insensitive',
+                contains: search
+              }
+            }
+          }
+        })
       } else {
         ORarray.push({
           [i]: {
