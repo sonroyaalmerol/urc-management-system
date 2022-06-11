@@ -203,9 +203,11 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function,
   }
 
   if (updated_range) {
+    const baseDate = new Date()
+    baseDate.setHours(0, 0, 0, 0)
     const createdRange = (created_range as string).split(',')
-    const from = parse(createdRange[0], 'yyyy-MM-dd', new Date())
-    const to = parse(createdRange[1], 'yyyy-MM-dd', new Date())
+    const from = parse(createdRange[0], 'yyyy-MM-dd', baseDate)
+    const to = parse(createdRange[1], 'yyyy-MM-dd', baseDate)
 
     ANDarray.push({
       created_at: {
