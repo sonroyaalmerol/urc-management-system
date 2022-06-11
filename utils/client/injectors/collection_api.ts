@@ -111,6 +111,15 @@ const injectAuthors = async (search: string, type: CollectionTypes) => {
   const wildcardSearch = `%${search}%`
   switch (type) {
     case 'book_publications':
+      const bookIds: { id: string }[] = await prisma.$queryRaw`
+        select id from public."BookPublication" where lower(array_to_string(authors, ', ')) like lower(${wildcardSearch})
+      `
+      ORarray = [...ORarray, ...bookIds.map((id) => (
+        { id: id.id }
+      ))]
+
+      defaultCase()
+      break
     case 'journal_publications':
       const journalIds: { id: string }[] = await prisma.$queryRaw`
         select id from public."JournalPublication" where lower(array_to_string(authors, ', ')) like lower(${wildcardSearch})
@@ -122,6 +131,14 @@ const injectAuthors = async (search: string, type: CollectionTypes) => {
       defaultCase()
       break
     case 'external_researches':
+      const externalIds: { id: string }[] = await prisma.$queryRaw`
+        select id from public."ExternalResearch" where lower(array_to_string(main_proponents , ', ')) like lower(${wildcardSearch}) or lower(array_to_string(co_proponents, ', ')) like lower(${wildcardSearch});
+      `
+      ORarray = [...ORarray, ...externalIds.map((id) => (
+        { id: id.id }
+      ))]
+      defaultCase()
+      break
     case 'internal_researches':
       const projectIds: { id: string }[] = await prisma.$queryRaw`
         select id from public."Project" where lower(array_to_string(main_proponents , ', ')) like lower(${wildcardSearch}) or lower(array_to_string(co_proponents, ', ')) like lower(${wildcardSearch});
