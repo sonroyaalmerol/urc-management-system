@@ -1,6 +1,7 @@
 import { parse } from 'date-fns';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { Function } from '../../../types/api';
+import { prisma } from '../../server/prisma'
 
 type CollectionTypes = (
   'book_publications' |
