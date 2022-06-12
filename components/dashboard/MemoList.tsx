@@ -3,8 +3,7 @@ import { Center, Spinner, chakra } from '@chakra-ui/react'
 
 import MemoCard from './MemoCard'
 import type { InstituteNews, User, FileUpload, Institute, Profile } from '@prisma/client'
-
-import InfiniteScroll from 'react-infinite-scroller'
+import CustomInfiniteScroll from '../general/CustomInfiniteScroll'
 
 interface MemoListProps {
   institute?: Institute
@@ -38,17 +37,10 @@ const MemoList: React.FC<MemoListProps> = (props) => {
   return (
     <>
       { !loading ? (
-        <InfiniteScroll
+        <CustomInfiniteScroll
           pageStart={0}
           loadMore={loadNewEntries}
           hasMore={memos.length < count}
-          loader={
-            <Center marginTop="2rem" key="infinite-scroll-load">
-              <Spinner color="brand.blue" />
-            </Center>
-          }
-          element={chakra.div}
-          w="full"
         >
           { memos.map((memo) => (
             <MemoCard
@@ -56,7 +48,7 @@ const MemoList: React.FC<MemoListProps> = (props) => {
               memo={memo}
             />
           )) }
-        </InfiniteScroll>
+        </CustomInfiniteScroll>
       ) : (
         <Center marginTop="2rem">
           <Spinner color="brand.blue" />

@@ -2,7 +2,7 @@ import React from 'react'
 import ContentHeader from '../../../components/general/ContentHeader'
 import { getSession, useSession } from 'next-auth/react'
 import type { InferGetServerSidePropsType, GetServerSidePropsContext } from "next"
-import { VStack, HStack, Heading, Wrap, WrapItem, Spacer, Select, SimpleGrid } from '@chakra-ui/react'
+import { VStack, HStack, Heading, Wrap, WrapItem, Spacer, Select, Text, Center } from '@chakra-ui/react'
 
 import { AddIcon } from '@chakra-ui/icons'
 
@@ -94,12 +94,16 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
           
           <Card>
             <VStack align="baseline">
-              <Wrap spacing={4}>
-                { project.bridge_profiles.map(({ profile, role_title }) => (
+              <Wrap spacing={4} w="full">
+                { project.bridge_profiles.length > 0 ? project.bridge_profiles.map(({ profile, role_title }) => (
                   <WrapItem key={profile.id}>
                     <InnerProfileCard profile={profile} role={role_title} />
                   </WrapItem>
-                )) }
+                )) : (
+                  <Center marginTop="2rem" w="full">
+                    <Text>No entries found</Text>
+                  </Center>
+                ) }
               </Wrap>
             </VStack>
           </Card>
@@ -129,12 +133,16 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
 
           <Card>
             <VStack align="baseline">
-              <Wrap spacing={4}>
-                { project.bridge_institutes.map(({ institute, verified }) => (
+              <Wrap spacing={4} w="full">
+                { project.bridge_institutes.length > 0 ? project.bridge_institutes.map(({ institute, verified }) => (
                   <WrapItem key={institute.id}>
                     <InnerInstituteCard institute={institute} verified={verified} />
                   </WrapItem>
-                )) }
+                )) : (
+                  <Center marginTop="2rem" w="full">
+                    <Text>No entries found</Text>
+                  </Center>
+                ) }
               </Wrap>
             </VStack>
           </Card>

@@ -5,8 +5,8 @@ import type { ProfileToProjectBridge, Profile, User, Project, ProjectStatus } fr
 
 import { useDebounce } from 'use-debounce'
 
-import InfiniteScroll from 'react-infinite-scroller'
 import ProjectCard from './ProjectCard'
+import CustomInfiniteScroll from '../general/CustomInfiniteScroll'
 
 interface ProjectListProps {
   search?: string
@@ -61,24 +61,19 @@ const ProjectList: React.FC<ProjectListProps> = (props) => {
   return (
     <>
       { !loading ? (
-        <InfiniteScroll
+        <CustomInfiniteScroll
           pageStart={0}
           loadMore={loadNewEntries}
           hasMore={entries.length < count}
-          loader={
-            <Center marginTop="2rem" key="infinite-scroll-load">
-              <Spinner color="brand.blue" />
-            </Center>
-          }
-          element={chakra.div}
+          element={SimpleGrid}
+          columns={{ base: 1, lg: 2 }}
+          spacing={4}
           w="full"
         >
-          <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={4} w="full">
-            { entries.map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            )) }
-          </SimpleGrid>
-        </InfiniteScroll>
+          { entries.map((project) => (
+            <ProjectCard key={project.id} project={project} />
+          )) }
+        </CustomInfiniteScroll>
       ) : (
         <Center marginTop="2rem">
           <Spinner color="brand.blue" />

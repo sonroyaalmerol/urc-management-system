@@ -3,7 +3,7 @@ import React from 'react'
 import { useSession } from 'next-auth/react'
 import ListTemplate from '../general/templates/ListTemplate'
 import type { DownloadCategory } from '@prisma/client'
-import { Box, HStack, Input, SimpleGrid, Spacer, Text, useDisclosure, useToast, VStack } from '@chakra-ui/react'
+import { Box, Center, HStack, Input, SimpleGrid, Spacer, Text, useDisclosure, useToast, VStack } from '@chakra-ui/react'
 import { useForm, Controller, SubmitHandler } from "react-hook-form"
 
 import {
@@ -106,7 +106,7 @@ const DownloadCategories: React.FC<DownloadCategoriesProps> = (props) => {
       onNew={onOpen}
     >
       <Accordion allowToggle>
-      { entries.map((entry) => (
+      { entries.length > 0 ? entries.map((entry) => (
         <AccordionItem key={entry.id}>
           <h2>
             <AccordionButton>
@@ -125,7 +125,11 @@ const DownloadCategories: React.FC<DownloadCategoriesProps> = (props) => {
             </VStack>
           </AccordionPanel>
         </AccordionItem>
-      )) }
+      )) : (
+        <Center marginTop="2rem" w="full">
+          <Text>No entries found</Text>
+        </Center>
+      ) }
       </Accordion>
       <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />

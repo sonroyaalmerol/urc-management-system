@@ -5,8 +5,8 @@ import type { Profile, User } from '@prisma/client'
 
 import { useDebounce } from 'use-debounce'
 
-import InfiniteScroll from 'react-infinite-scroller'
 import ProfileCard from './ProfileCard'
+import CustomInfiniteScroll from '../general/CustomInfiniteScroll'
 
 interface ProfileListProps {
   search?: string,
@@ -57,24 +57,18 @@ const ProfileList: React.FC<ProfileListProps> = (props) => {
   return (
     <>
       { !loading ? (
-        <InfiniteScroll
+        <CustomInfiniteScroll
           pageStart={0}
           loadMore={loadNewEntries}
           hasMore={entries.length < count}
-          loader={
-            <Center marginTop="2rem" key="infinite-scroll-load">
-              <Spinner color="brand.blue" />
-            </Center>
-          }
-          element={chakra.div}
-          w="full"
+          element={SimpleGrid}
+          columns={{ base: 1, lg: 2, xl: 3 }}
+          spacing={4}
         >
-          <SimpleGrid columns={{ base: 1, lg: 2, xl: 3 }} spacing={4}>
-            { entries.map((profile) => (
-              <ProfileCard key={profile.id} profile={profile} />
-            )) }
-          </SimpleGrid>
-        </InfiniteScroll>
+          { entries.map((profile) => (
+            <ProfileCard key={profile.id} profile={profile} />
+          )) }
+        </CustomInfiniteScroll>
       ) : (
         <Center marginTop="2rem" w="full" h="full">
           <Spinner color="brand.blue" />

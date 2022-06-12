@@ -5,9 +5,9 @@ import type { Profile, BudgetProposalSubmission, FileUpload, CapsuleProposalSubm
 
 import { useDebounce } from 'use-debounce'
 
-import InfiniteScroll from 'react-infinite-scroller'
 import SubmissionCard from './SubmissionCard'
 import { ExtendedProject } from '../../types/profile-card'
+import CustomInfiniteScroll from '../general/CustomInfiniteScroll'
 
 interface ProjectListProps {
   types?: string[],
@@ -58,24 +58,17 @@ const SubmissionList: React.FC<ProjectListProps> = (props) => {
   return (
     <>
       { !loading ? (
-        <InfiniteScroll
+        <CustomInfiniteScroll
           pageStart={0}
           loadMore={loadNewEntries}
           hasMore={entries.length < count}
-          loader={
-            <Center marginTop="2rem" key="infinite-scroll-load">
-              <Spinner color="brand.blue" />
-            </Center>
-          }
-          element={chakra.div}
+          element={VStack}
           w="full"
         >
-          <VStack w="full">
-            { entries.map((submission) => (
-              <SubmissionCard key={submission.id} submission={submission} />
-            )) }
-          </VStack>
-        </InfiniteScroll>
+          { entries.map((submission) => (
+            <SubmissionCard key={submission.id} submission={submission} />
+          )) }
+        </CustomInfiniteScroll>
       ) : (
         <Center marginTop="2rem">
           <Spinner color="brand.blue" />

@@ -3,9 +3,6 @@ import { Center, Spinner, chakra, VStack, SimpleGrid, Text } from '@chakra-ui/re
 
 import type { Deliverable, Project } from '@prisma/client'
 
-import { useDebounce } from 'use-debounce'
-
-import InfiniteScroll from 'react-infinite-scroller'
 import DeliverableCard from './DeliverableCard'
 import SeeMorePagination from '../general/SeeMorePagination'
 import Card from '../general/Card'

@@ -2,7 +2,7 @@ import React from 'react'
 
 import { useSession } from 'next-auth/react'
 import ListTemplate from '../general/templates/ListTemplate'
-import { Box, Heading, HStack, Input, Spacer, Text, useDisclosure, useToast, VStack } from '@chakra-ui/react'
+import { Box, Center, Heading, HStack, Input, Spacer, Text, useDisclosure, useToast, VStack } from '@chakra-ui/react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { Deadline } from '@prisma/client'
 import { useRouter } from 'next/router'
@@ -121,9 +121,9 @@ const Deadlines: React.FC<DeadlinesProps> = (props) => {
         hasMore={false}
         loadMore={() => {}}
         onNew={onOpen}
-        grid={{ base: 1, sm: 2, md: 3 }}
+        grid={entries.length > 0 ? { base: 1, sm: 2, md: 3 } : 1}
       >
-        { entries.map((entry) => (
+        { entries.length > 0 ? entries.map((entry) => (
           <Box
             key={entry.id}
             padding="1rem"
@@ -159,7 +159,11 @@ const Deadlines: React.FC<DeadlinesProps> = (props) => {
               </VStack>
             </HStack>
           </Box>
-        )) }
+        )) : (
+          <Center marginTop="2rem" w="full">
+            <Text>No entries found</Text>
+          </Center>
+        ) }
       </ListTemplate>
       <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />

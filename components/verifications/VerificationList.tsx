@@ -1,9 +1,9 @@
 import React from 'react'
 import { Center, Spinner, chakra, VStack, SimpleGrid } from '@chakra-ui/react'
 
-import InfiniteScroll from 'react-infinite-scroller'
 import type { ExtendedVerificationRequest } from '../../types/profile-card'
 import VerificationCard from './VerificationCard'
+import CustomInfiniteScroll from '../general/CustomInfiniteScroll'
 
 interface VerificationListProps {
   search?: string,
@@ -45,28 +45,23 @@ const VerificationList: React.FC<VerificationListProps> = (props) => {
   return (
     <>
       { !loading ? (
-        <InfiniteScroll
+        <CustomInfiniteScroll
           pageStart={0}
           loadMore={loadNewEntries}
           hasMore={entries.length < count}
-          loader={
-            <Center marginTop="2rem" key="infinite-scroll-load">
-              <Spinner color="brand.blue" />
-            </Center>
-          }
-          element={chakra.div}
+          element={SimpleGrid}
           w="full"
+          columns={{ base: 1, lg: 2 }}
+          spacing={4}
         >
-          <SimpleGrid w="full" columns={{ base: 1, lg: 2 }} spacing={4}>
-            { entries.map((entry) => (
-              <VerificationCard
-                key={entry.id}
-                request={entry}
-                afterAction={afterAction}
-              />
-            )) }
-          </SimpleGrid>
-        </InfiniteScroll>
+          { entries.map((entry) => (
+            <VerificationCard
+              key={entry.id}
+              request={entry}
+              afterAction={afterAction}
+            />
+          )) }
+        </CustomInfiniteScroll>
       ) : (
         <Center marginTop="2rem">
           <Spinner color="brand.blue" />

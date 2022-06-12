@@ -5,8 +5,8 @@ import type { Institute, User } from '@prisma/client'
 
 import { useDebounce } from 'use-debounce'
 
-import InfiniteScroll from 'react-infinite-scroller'
 import InstituteCard from './InstituteCard'
+import CustomInfiniteScroll from '../general/CustomInfiniteScroll'
 
 interface InstituteListProps {
   search?: string,
@@ -55,24 +55,18 @@ const InstituteList: React.FC<InstituteListProps> = (props) => {
   return (
     <>
       { !loading ? (
-        <InfiniteScroll
+        <CustomInfiniteScroll
           pageStart={0}
           loadMore={loadNewEntries}
           hasMore={entries.length < count}
-          loader={
-            <Center marginTop="2rem" key="infinite-scroll-load">
-              <Spinner color="brand.blue" />
-            </Center>
-          }
-          element={chakra.div}
-          w="full"
+          element={SimpleGrid}
+          columns={{ base: 1, lg: 2, xl: 3 }}
+          spacing={4}
         >
-          <SimpleGrid columns={{ base: 1, lg: 2, xl: 3 }} spacing={4}>
-            { entries.map((institute) => (
-              <InstituteCard key={institute.id} institute={institute} />
-            )) }
-          </SimpleGrid>
-        </InfiniteScroll>
+          { entries.map((institute) => (
+            <InstituteCard key={institute.id} institute={institute} />
+          )) }
+        </CustomInfiniteScroll>
       ) : (
         <Center marginTop="2rem">
           <Spinner color="brand.blue" />
