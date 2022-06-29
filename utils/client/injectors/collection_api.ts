@@ -115,6 +115,27 @@ const injectAuthors = async (search: string, type: CollectionTypes) => {
         bridge_profiles: {
           some: {
             profile: {
+              id: word
+            }
+          }
+        }
+      })
+      ORarray.push({
+        bridge_profiles: {
+          some: {
+            profile: {
+              email: {
+                mode: 'insensitive',
+                contains: word
+              }
+            }
+          }
+        }
+      })
+      ORarray.push({
+        bridge_profiles: {
+          some: {
+            profile: {
               first_name: {
                 mode: 'insensitive',
                 contains: word
