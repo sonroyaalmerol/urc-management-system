@@ -38,6 +38,12 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: (any) => 
   let rawData: any = {};
   let data: any = {}
 
+  if (type === 'researchers') {
+    args.where.OR[0] = {
+      email: `${id}@addu.edu.ph`
+    } as any
+  }
+
   try {
     rawData = await fn(args)
 

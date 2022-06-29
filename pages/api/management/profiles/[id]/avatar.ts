@@ -23,7 +23,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
   const body: { files: {
     fieldName: string,
     value: FileUpload
-  }[] } = await parseBodyWithFile(req, { publicAccess: false })
+  }[] } = await parseBodyWithFile(req, { publicAccess: true })
 
   if (body.files?.length < 1) {
     return res.status(400).json({ error: 'A file is required!' })

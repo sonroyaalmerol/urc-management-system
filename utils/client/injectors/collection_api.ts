@@ -68,6 +68,45 @@ const injectUnits = (search: string) => {
   return ORarray
 }
 
+const injectFullname = (search: string) => {
+  const ORarray = []
+
+  search.split(' ').forEach((word) => {
+    ORarray.push({
+      first_name: {
+        mode: 'insensitive',
+        contains: word
+      }
+    })
+    ORarray.push({
+      middle_initial: {
+        mode: 'insensitive',
+        contains: word
+      }
+    })
+    ORarray.push({
+      last_name: {
+        mode: 'insensitive',
+        contains: word
+      }
+    })
+    ORarray.push({
+      honorific: {
+        mode: 'insensitive',
+        contains: word
+      }
+    })
+    ORarray.push({
+      titles: {
+        mode: 'insensitive',
+        contains: word
+      }
+    })
+  })
+
+  return ORarray
+}
+
 const injectAuthors = async (search: string, type: CollectionTypes) => {
   let ORarray = []
   const defaultCase = () => {
@@ -197,6 +236,8 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function,
         ORarray = [...ORarray, ...injectUnits(search as string)]
       } else if (i === 'authors' || i === 'presentors' || i === 'users') {
         ORarray = [...ORarray, ...await injectAuthors(search as string, type)]
+      } else if (i === 'full_name') {
+        ORarray = [...ORarray, ...injectFullname(search as string)]
       } else if (i === 'categories') {
         ORarray.push({
           categories: {

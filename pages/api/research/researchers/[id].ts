@@ -5,14 +5,12 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   await injector(req, res, async ({ where }) => {
-    return await prisma.user.findFirst({
+    return await prisma.profile.findFirst({
       where: {
         ...where.OR[0],
-        profile: {
-          roles: {
-            some: {
-              id: 'researcher'
-            }
+        roles: {
+          some: {
+            id: 'researcher'
           }
         }
       }
