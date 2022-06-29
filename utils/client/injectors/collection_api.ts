@@ -110,41 +110,43 @@ const injectFullname = (search: string) => {
 const injectAuthors = async (search: string, type: CollectionTypes) => {
   let ORarray = []
   const defaultCase = () => {
-    ORarray.push({
-      bridge_profiles: {
-        some: {
-          profile: {
-            first_name: {
-              mode: 'insensitive',
-              contains: search
+    search.split(' ').forEach((word) => {
+      ORarray.push({
+        bridge_profiles: {
+          some: {
+            profile: {
+              first_name: {
+                mode: 'insensitive',
+                contains: word
+              }
             }
           }
         }
-      }
-    })
-    ORarray.push({
-      bridge_profiles: {
-        some: {
-          profile: {
-            last_name: {
-              mode: 'insensitive',
-              contains: search
+      })
+      ORarray.push({
+        bridge_profiles: {
+          some: {
+            profile: {
+              last_name: {
+                mode: 'insensitive',
+                contains: word
+              }
             }
           }
         }
-      }
-    })
-    ORarray.push({
-      bridge_profiles: {
-        some: {
-          profile: {
-            middle_initial: {
-              mode: 'insensitive',
-              contains: search
+      })
+      ORarray.push({
+        bridge_profiles: {
+          some: {
+            profile: {
+              middle_initial: {
+                mode: 'insensitive',
+                contains: word
+              }
             }
           }
         }
-      }
+      })
     })
   }
   const wildcardSearch = `%${search}%`
