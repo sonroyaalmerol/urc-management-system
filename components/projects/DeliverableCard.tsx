@@ -19,6 +19,7 @@ const DeliverableCard: React.FC<DeliverableCardProps> = (props) => {
 
   const divProps = Object.assign({}, props)
   delete divProps.deliverable
+  delete divProps.projectSlug
 
   const router = useRouter()
 

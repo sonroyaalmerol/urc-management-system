@@ -109,14 +109,8 @@ const MemberCard: React.FC<MemberCardProps> = (props) => {
             <IconButtonWithConfirmation 
               aria-label='Remove Member'
               icon={<DeleteIcon />}
-              backgroundColor="brand.red"
-              borderRadius={10}
-              color="white"
+              variant='red'
               fontWeight="bold"
-              _hover={{
-                color: "brand.red",
-                backgroundColor: "brand.cardBackground"
-              }}
               confirmationMessage={
                 `Remove ${profile.first_name}'s membership?`
               }

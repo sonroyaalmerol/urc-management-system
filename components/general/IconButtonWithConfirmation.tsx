@@ -10,11 +10,11 @@ import {
   ModalCloseButton,
 } from '@chakra-ui/react'
 
-import IconButton from './IconButton'
+import IconButton, { CustomIconButtonProps } from './IconButton'
 import parseHTML from '../../utils/client/parseHTML'
 import Button from './Button'
 
-interface IconButtonWithConfirmationProps extends IconButtonProps {
+interface IconButtonWithConfirmationProps extends CustomIconButtonProps {
   confirmationMessage?: string
 }
 

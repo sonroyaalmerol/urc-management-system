@@ -120,11 +120,7 @@ const RemoveProponentButton: React.FC<RemoveProponentButtonProps> = (props) => {
         aria-label='Remove Proponent'
         onClick={onOpen}
         icon={<Icon as={MdGroupOff} w={6} h={6} />}
-        bgColor="brand.red"
-        _hover={{
-          color: 'brand.red',
-          bgColor: 'brand.cardBackground'
-        }}
+        variant='red'
       />
       <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />

@@ -141,13 +141,7 @@ const Deadlines: React.FC<DeadlinesProps> = (props) => {
               <VStack>
                 <IconButtonWithConfirmation 
                   aria-label='Remove'
-                  color="white"
-                  bgColor="brand.red"
-                  borderRadius={10}
-                  _hover={{
-                    color: 'brand.red',
-                    bgColor: 'brand.cardBackground'
-                  }}
+                  variant='red'
                   confirmationMessage={`
                     You are about to delete ${entry.title}. Do you want to proceed?
                   `}

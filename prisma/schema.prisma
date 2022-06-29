@@ -197,7 +197,7 @@ model CapsuleProposalSubmission {
   significance_of_the_study     String
   methodology                   String
   
-  submission_id                 String
+  submission_id                 String                         @unique
   submission                    Submission                        @relation(fields: [submission_id], references: [id], onDelete: Cascade)
 }
 
@@ -228,7 +228,7 @@ model DeliverableSubmission {
   
   deliverable    Deliverable @relation(fields: [deliverable_id], references: [id], onDelete: Cascade)
 
-  submission_id                    String
+  submission_id                    String                            @unique
   submission                       Submission                        @relation(fields: [submission_id], references: [id], onDelete: Cascade)
 }
 
@@ -237,7 +237,7 @@ model BudgetProposalSubmission {
   created_at     DateTime     @default(now())
   updated_at     DateTime     @updatedAt
                   
-  submission_id                    String
+  submission_id                    String                            @unique
   submission                       Submission                        @relation(fields: [submission_id], references: [id], onDelete: Cascade)
 }
 
@@ -317,6 +317,8 @@ model FileUpload {
   profile_id                         String?
   public_access                   Boolean                           @default(false)
   profile                         Profile?                             @relation("upload_to_owner", fields: [profile_id], references: [id], onDelete: SetNull)
+  
+  projects                        Project[]
   downloads                       Download[]
   external_researches             ExternalResearch[]
   institute_news                  InstituteNews[]
@@ -336,7 +338,7 @@ model FullBlownProposalSubmission {
   description                      String?
   created_at                       DateTime?                        @default(now())
   updated_at                       DateTime?                        @updatedAt
-  submission_id                    String
+  submission_id                    String                           @unique
   submission                       Submission                        @relation(fields: [submission_id], references: [id], onDelete: Cascade)
 }
 
@@ -662,6 +664,7 @@ model Project {
   academic_term_id                 String?
   academic_term                    AcademicTerm?     @relation(fields: [academic_term_id], references: [id], onDelete: SetNull)
 
+  related_files                    FileUpload[]
   submissions                      Submission[]
   deliverables                     Deliverable[]
   research_presentations           ResearchPresentation[]
@@ -694,7 +697,7 @@ model User {
   accounts                       Account[]
   sessions                       Session[]
 
-  profile_id                     String?
+  profile_id                     String?      @unique
   profile                        Profile?     @relation(fields: [profile_id], references: [id], onDelete: SetNull)
 }
 

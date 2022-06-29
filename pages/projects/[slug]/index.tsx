@@ -28,6 +28,8 @@ import InnerInstituteCard from '../../../components/projects/InnerInstituteCard'
 import ProjectDetails from '../../../components/projects/ProjectDetails'
 import { memberChecker, roleChecker } from '../../../utils/roleChecker'
 import { CHANGE_PROJECT_STATUS, CREATE_PROJECT_CENTER, MANAGING_DELIVERABLES, REVIEW_PROPOSALS } from '../../../utils/permissions'
+import NewRelatedFileButton from '../../../components/projects/NewRelatedFileButton'
+import RelatedFilesList from '../../../components/projects/RelatedFilesList'
 
 interface ProjectProps {
 
@@ -168,6 +170,30 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
             </WrapItem>
           </Wrap>
           <DeliverableList project={project} />
+
+          <Wrap align="center" w="full">
+            <WrapItem>
+              <Wrap spacing={4} align="center">
+                <WrapItem>
+                  <Heading
+                    fontFamily="body"
+                    fontSize="xl"
+                  >
+                    Related Files (Non-submissions)
+                  </Heading>
+                </WrapItem>
+              </Wrap>
+            </WrapItem>
+            <Spacer />
+            { (roleChecker(session.data.profile, CHANGE_PROJECT_STATUS) || memberChecker(session.data.profile, project.bridge_profiles)) && (
+              <WrapItem>
+                <HStack>
+                  <NewRelatedFileButton project={project} />
+                </HStack>
+              </WrapItem>
+            ) }
+          </Wrap>
+          <RelatedFilesList project={project} />
 
           <Wrap align="center" w="full">
             <WrapItem>

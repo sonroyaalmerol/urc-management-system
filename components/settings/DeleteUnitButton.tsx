@@ -85,13 +85,7 @@ const DeleteUnitButton: React.FC<DeleteUnitButtonProps> = (props) => {
       ) : (
         <IconButton 
           aria-label='Remove'
-          color="white"
-          bgColor="brand.red"
-          borderRadius={10}
-          _hover={{
-            color: 'brand.red',
-            bgColor: 'brand.cardBackground'
-          }}
+          variant='red'
           onClick={onOpen}
           icon={<DeleteIcon />}
         />

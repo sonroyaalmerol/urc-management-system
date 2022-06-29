@@ -2,19 +2,63 @@ import React from 'react'
 
 import { IconButton as StockButton, IconButtonProps } from '@chakra-ui/react'
 
-const IconButton: React.ForwardRefRenderFunction<HTMLButtonElement, IconButtonProps> = (props, ref) => {
+export interface CustomIconButtonProps extends IconButtonProps {
+  variant?: 'default' | 'red'
+}
+
+interface Theme {
+  backgroundColor: string | undefined,
+  color: string,
+  _hover: {
+    color: string,
+    backgroundColor: string
+  } | undefined
+}
+
+const IconButton: React.ForwardRefRenderFunction<HTMLButtonElement, CustomIconButtonProps> = (props, ref) => {
+  const divProps = { ...props }
+  delete divProps.variant
+
+  const theme: Theme = React.useMemo(() => {
+    const ret = {
+      backgroundColor: undefined,
+      color: 'brand.blue',
+      _hover: undefined
+    }
+
+    let variant = props.variant
+
+    if (!variant) variant = 'default'
+    
+    switch (variant) {
+      case 'default':
+        ret.backgroundColor = 'brand.blue'
+        ret.color = 'white'
+        ret._hover = {
+          color: 'brand.blue',
+          backgroundColor: 'brand.cardBackground'
+        }
+        break
+      case 'red':
+        ret.color = 'white'
+        ret.backgroundColor = 'brand.red'
+        ret._hover = {
+          color: 'brand.red',
+          backgroundColor: 'brand.cardBackground'
+        }
+        break
+    }
+
+    return ret
+  }, [])
+
   return (
     <StockButton
-      backgroundColor={!props.variant ? "brand.blue" : undefined}
+      {...theme}
       borderRadius={10}
-      color={!props.variant ? "white" : "brand.blue"}
       fontWeight="bold"
-      _hover={!props.variant ? {
-        color: "brand.blue",
-        backgroundColor: "brand.cardBackground"
-      }: undefined}
       ref={ref}
-      {...props}
+      {...divProps}
     />
   )
 }
