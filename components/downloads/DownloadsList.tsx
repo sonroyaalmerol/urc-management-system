@@ -68,8 +68,9 @@ const DownloadsList: React.FC<DownloadsListProps> = (props) => {
   const toast = useToast()
 
   const uuid = useUUID()
+  
 
-  const onSubmit: SubmitHandler<Partial<ExtendedDownload & { file: FileList, category_id: string }>> = async data => {
+  const onSubmit: SubmitHandler<Partial<ExtendedDownload & { file: FileList, category_id: string }>> = async data => {    
     setSubmitting(true)
 
     const res = await fetchWithFile(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/downloads`, {...data, id: currentDownload?.id ?? undefined})
@@ -237,26 +238,19 @@ const DownloadsList: React.FC<DownloadsListProps> = (props) => {
               </VStack>
               <VStack w="full" align="baseline" spacing={1}>
                 <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Category</Text>
-                <Controller
-                  name="category_id"
-                  control={control}
-                  defaultValue={currentDownload?.categories[0]?.id ?? ''}
-                  render={({ field }) => 
-                    <Select
-                      color="brand.blue"
-                      borderRadius={10}
-                      _focus={{
-                        boxShadow: "none"
-                      }}
-                      cursor="pointer"
-                      {...field}
-                    >
-                      { categories.map((entry) => (
-                        <option key={entry.id} value={entry.id}>{entry.title}</option>
-                      ))}
-                    </Select>
-                  }
-                />
+                <Select
+                  color="brand.blue"
+                  borderRadius={10}
+                  _focus={{
+                    boxShadow: "none"
+                  }}
+                  cursor="pointer"
+                  {...register('category_id')}
+                >
+                  { categories.map((entry) => (
+                    <option key={entry.id} value={entry.id}>{entry.title}</option>
+                  ))}
+                </Select>
               </VStack>
               { currentDownload ? null : (
                 <VStack w="full" align="baseline" spacing={1}>
