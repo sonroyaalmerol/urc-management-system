@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       prisma.project.count({
         where: {
           ...where,
-          approved: true
+          project_status_id: 'finished'
         }
       }),
       prisma.project.findMany({
@@ -33,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         },
         where: {
           ...where,
-          approved: true
+          project_status_id: 'finished'
         },
         orderBy
       })

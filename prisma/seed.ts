@@ -9,7 +9,6 @@ const importDynamic = new Function('modulePath', 'return import(modulePath)');
 
 import type fetchType from 'node-fetch'
 const fetch: typeof fetchType = async (...args:any[]) => {
-  // eslint-disable-next-line @next/next/no-assign-module-variable
   const module = await importDynamic('node-fetch');
   return module.default(...args);
 }
