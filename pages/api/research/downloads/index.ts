@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         where,
         orderBy,
         include: {
-          categories: true
+          category: true
         }
       })
     ])

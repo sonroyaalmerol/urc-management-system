@@ -46,10 +46,8 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
   let [totalCount, data] = await prisma.$transaction([
     prisma.download.count({
       where: {
-        categories: category ? {
-          some: {
-            id: category as string
-          }
+        category: category ? {
+          id: category as string
         } : undefined,
         ...whereQuery
       }
@@ -61,10 +59,8 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
         id: req.query.cursor as string
       } : undefined,
       where: {
-        categories: category ? {
-          some: {
-            id: category as string
-          }
+        category: category ? {
+          id: category as string
         } : undefined,
         ...whereQuery
       },
