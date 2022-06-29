@@ -263,7 +263,8 @@ model Download {
   created_at   DateTime     @default(now())
   updated_at   DateTime     @updatedAt
 
-  categories   DownloadCategory[]
+  category_id  String       @unique
+  category     DownloadCategory @relation(fields: [category_id], references: [id], onDelete: SetNull)
 
   file_upload  FileUpload @relation(fields: [upload_id], references: [id], onDelete: SetNull)
   profile      Profile        @relation(fields: [profile_id], references: [id], onDelete: SetNull)

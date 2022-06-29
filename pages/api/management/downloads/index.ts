@@ -69,7 +69,7 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
         ...whereQuery
       },
       include: {
-        categories: true
+        category: true
       },
       orderBy: {
         updated_at: 'desc'
@@ -110,7 +110,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
     Download & { category_id: string }
   > } = await parseBodyWithFile(req, { publicAccess: true })
 
-  if (!cleanString(body.fields.title)) {
+  if (!cleanString(body.fields.title) && !body.fields.category_id) {
     return res.status(400).json({ error: 'Title is required!' })
   }
 
@@ -124,12 +124,10 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
       data: {
         title: body.fields.title,
         description: body.fields.description,
-        categories: body.fields.category_id ? {
-          set: [
-            {
-              id: body.fields.category_id
-            }
-          ]
+        category: cleanString(body.fields.category_id) ? {
+          connect: {
+            id: body.fields.category_id
+          }
         } : undefined
       }
     })
@@ -152,7 +150,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
             id: session.profile.id
           }
         },
-        categories: cleanString(body.fields.category_id) ? {
+        category: cleanString(body.fields.category_id) ? {
           connect: {
             id: body.fields.category_id
           }
