@@ -82,7 +82,9 @@ const Verifications: React.FC<VerificationsProps> = (props: InferGetServerSidePr
     }
   }, [typeFilter])
 
-  const [statusFilter, setStatusFilter] = React.useState('not_verified')
+  const [statusFilter, setStatusFilter] = React.useState(
+    roleChecker(session.data.profile, ['researcher'], { exact: true }) ? '' : 'not_verified'
+  )
   const status = React.useMemo(() => {
     if (statusFilter === '') {
       return ['verified', 'invalid', 'not_verified']

@@ -17,7 +17,7 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
   let types = (types_raw as string)?.split(',').map((i) => i.trim().toUpperCase()) as VerificationTypes[] ?? []
   const status = (status_raw as string)?.split(',').map((i) => i.trim().toUpperCase()) as VerificationStatus[] ?? []
 
-  types = types.filter((type) => {
+  /* types = types.filter((type) => {
     if (type === 'INSTITUTE_NEWS') {
       return roleChecker(session.profile, VERIFY_CENTER_NEWS)
     }
@@ -27,7 +27,7 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
     }
 
     return roleChecker(session.profile, CONFIRMATION_RESEARCHER_INFORMATION)
-  })
+  }) */
 
   let [totalCount, data] = await prisma.$transaction([
     prisma.verificationRequest.count({

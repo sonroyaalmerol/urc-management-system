@@ -29,11 +29,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = (props) => {
     {
       name: 'Verifications',
       url: '/verifications',
-      allowedRoles: [
-        ...VERIFY_CENTER_NEWS,
-        ...VERIFY_CENTER_PROJECTS,
-        ...CONFIRMATION_RESEARCHER_INFORMATION
-      ],
     },
     {
       name: 'Institutes',
