@@ -259,7 +259,7 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function,
         ORarray = [...ORarray, ...injectUnits(search as string)]
       } else if (i === 'authors' || i === 'presentors' || i === 'users') {
         ORarray = [...ORarray, ...await injectAuthors(search as string, type)]
-      } else if (i === 'full_name') {
+      } else if (i === 'fullname') {
         ORarray = [...ORarray, ...injectFullname(search as string)]
       } else if (i === 'categories') {
         ORarray.push({
