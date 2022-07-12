@@ -12,6 +12,7 @@ import Deadlines from '../components/settings/Deadlines'
 import DownloadCategories from '../components/settings/DownloadCategories'
 import { roleChecker } from '../utils/roleChecker'
 import { SETTING_DEADLINES, SETTING_DOWNLOADS, SETTING_UNITS } from '../utils/permissions'
+import UniversityMissions from '../components/settings/UniversityMissions'
 
 interface SettingsProps {
 
@@ -33,7 +34,7 @@ const Settings: React.FC<SettingsProps> = (props: InferGetServerSidePropsType<ty
           <Deadlines />
           <DownloadCategories />
           <Units />
-          {/* TODO: Research Thrusts */}
+          <UniversityMissions />
         </VStack>
       </VStack>
     </>

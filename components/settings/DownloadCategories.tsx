@@ -107,7 +107,7 @@ const DownloadCategories: React.FC<DownloadCategoriesProps> = (props) => {
     >
       <Accordion allowToggle>
       { entries.length > 0 ? entries.map((entry) => (
-        <AccordionItem key={entry.id}>
+        <AccordionItem key={entry.id} border="none">
           <h2>
             <AccordionButton>
               <Box flex='1' textAlign='left'>
