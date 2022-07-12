@@ -41,7 +41,7 @@
     "googleapis": "^105.0.0",
     "html-react-parser": "^3.0.1",
     "html-to-draftjs": "1.5.0",
-    "nanoid": "^4.0.0",
+    "nanoid": "^3.3.4",
     "next": "12.2.2",
     "next-auth": "^4.9.0",
     "next-seo": "^5.4.0",
