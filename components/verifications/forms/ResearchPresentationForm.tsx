@@ -6,20 +6,21 @@ import Button from '../../general/Button'
 import type { ExternalResearch, ResearchPresentation, VerificationRequest } from '@prisma/client'
 import Card from '../../general/Card'
 
-import { useForm, SubmitHandler } from "react-hook-form"
+import { useForm, SubmitHandler, Controller } from "react-hook-form"
 
 import AutoCompleteInput from '../../general/AutoCompleteInput'
 import fetchWithFile from '../../../utils/client/fetchWithFile'
 import FileUploadButton from '../../general/FileUploadButton'
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
+import DatePicker from '../../general/DatePicker'
 
 interface ResearchPresentationFormProps {
   profileId?: string
 }
 
 const ResearchPresentationForm: React.FC<ResearchPresentationFormProps> = (props) => {
-  const { watch, handleSubmit, register, reset, setValue } = useForm<Partial<ResearchPresentation> & Partial<VerificationRequest> & { proof_files: FileList }>();
+  const { watch, handleSubmit, register, control, setValue } = useForm<Partial<ResearchPresentation> & Partial<VerificationRequest> & { proof_files: FileList }>();
 
   const [exists, setExists] = React.useState(true)
   const [submitting, setSubmitting] = React.useState(false)
@@ -88,7 +89,15 @@ const ResearchPresentationForm: React.FC<ResearchPresentationFormProps> = (props
               </VStack>
               <VStack w="full" align="baseline" spacing={1}>
                 <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Event Date</Text>
-                <Input {...register('event_date')} />
+                <Controller
+                  name="event_date"
+                  control={control}
+                  render={({ field }) => 
+                    <DatePicker
+                      {...field}
+                    />
+                  }
+                />
               </VStack>
               <VStack w="full" align="baseline" spacing={1}>
                 <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Conference</Text>

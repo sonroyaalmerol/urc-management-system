@@ -6,20 +6,21 @@ import Button from '../../general/Button'
 import type { ExternalResearch, ResearchDissemination, VerificationRequest } from '@prisma/client'
 import Card from '../../general/Card'
 
-import { useForm, SubmitHandler } from "react-hook-form"
+import { useForm, SubmitHandler, Controller } from "react-hook-form"
 import FileUploadButton from '../../general/FileUploadButton'
 
 import AutoCompleteInput from '../../general/AutoCompleteInput'
 import fetchWithFile from '../../../utils/client/fetchWithFile'
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
+import DatePicker from '../../general/DatePicker'
 
 interface ResearchDisseminationFormProps {
   profileId?: string
 }
 
 const ResearchDisseminationForm: React.FC<ResearchDisseminationFormProps> = (props) => {
-  const { watch, handleSubmit, register, reset, setValue } = useForm<Partial<ResearchDissemination> & Partial<VerificationRequest> & { proof_files: FileList }>();
+  const { watch, handleSubmit, register, control, setValue } = useForm<Partial<ResearchDissemination> & Partial<VerificationRequest> & { proof_files: FileList }>();
 
   const [exists, setExists] = React.useState(true)
   const [submitting, setSubmitting] = React.useState(false)
@@ -92,7 +93,15 @@ const ResearchDisseminationForm: React.FC<ResearchDisseminationFormProps> = (pro
               </VStack>
               <VStack w="full" align="baseline" spacing={1}>
                 <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Event Date</Text>
-                <Input {...register('event_date')} />
+                <Controller
+                  name="event_date"
+                  control={control}
+                  render={({ field }) => 
+                    <DatePicker
+                      {...field}
+                    />
+                  }
+                />
               </VStack>
               <VStack w="full" align="baseline" spacing={1}>
                 <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">URL</Text>

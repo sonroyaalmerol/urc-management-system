@@ -463,7 +463,7 @@ model ResearchPresentation {
   external_research_id   String?                
   title                  String                 @unique
   location               String
-  event_date             String?             
+  event_date             DateTime?             
   created_at             DateTime               @default(now())
   updated_at             DateTime               @updatedAt
   presentors             String[]
@@ -505,7 +505,7 @@ model ResearchDissemination {
   title                  String                 @unique
   location               String?
   organization           String?
-  event_date             String?
+  event_date             DateTime?
   slug                   String?                @unique
   created_at             DateTime               @default(now())
   updated_at             DateTime               @updatedAt

@@ -146,7 +146,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
       return res.status(400).json({ error: 'Location is required!' })
     }
 
-    if (!cleanString(body.fields.event_date)) {
+    if (!body.fields.event_date) {
       for await (const file of body.files) {
         await deleteFile(file.value.id)
       }
@@ -166,7 +166,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
       data: {
         title: body.fields.title,
         location: body.fields.location,
-        event_date: body.fields.event_date,
+        event_date: new Date(body.fields.event_date),
         conference: body.fields.conference,
         url: body.fields.url
       }
