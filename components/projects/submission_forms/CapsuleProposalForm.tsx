@@ -1,9 +1,9 @@
 import React from 'react'
-import { VStack, Heading, Text, useToast, Wrap, WrapItem, Input } from '@chakra-ui/react'
+import { VStack, Heading, Text, useToast, Wrap, WrapItem, Input, Select } from '@chakra-ui/react'
 
 import Button from '../../general/Button'
 
-import type { CapsuleProposalSubmission, Submission } from '@prisma/client'
+import type { CapsuleProposalSubmission, ResearchThrust, Submission, UniversityMission } from '@prisma/client'
 import Card from '../../general/Card'
 import RichTextarea from '../../general/RichTextarea'
 
@@ -22,6 +22,23 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
   const router = useRouter()
   const [submitting, setSubmitting] = React.useState(false)
 
+  const [missionList, setMissionList] = React.useState<(UniversityMission & { research_thrusts: ResearchThrust[] })[]>([])
+
+  const thrustList: ResearchThrust[] = React.useMemo(() => {
+    const list = []
+    missionList.forEach((entry) => {
+      entry.research_thrusts.forEach((thrust) => {
+        list.push(thrust)
+      })
+    })
+
+    return list
+  }, [missionList])
+
+  React.useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/university_missions`).then((i) => i.json()).then((res) => setMissionList(res.data))
+  }, [])
+
   const onSubmit: SubmitHandler<Partial<Submission & CapsuleProposalSubmission>> = async data => {
     setValue('type', 'CAPSULE')
     setSubmitting(true)
@@ -34,6 +51,7 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
         description: `Successfully created Capsule Proposal!`,
         status: 'success'
       })
+      reset()
     } else {
       toast({
         title: 'Error!',
@@ -42,7 +60,6 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
       })
     }
     setSubmitting(false)
-    reset()
   };
 
   return (
@@ -52,7 +69,6 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
           <Heading fontFamily="body" fontSize="lg">
             {props.project.title}
           </Heading>
-          { /* TODO: Research Thrust */ }
           <VStack w="full" align="baseline" spacing={1}>
             <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Brief Background</Text>
             <Controller
@@ -60,6 +76,22 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
               control={control}
               defaultValue=""
               render={({ field }) => <RichTextarea {...field} />}
+            />
+          </VStack>
+          <VStack w="full" align="baseline" spacing={1}>
+            <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Research Thrust</Text>
+            <Controller
+              name="research_thrust_id"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <Select {...field}>
+                  <option value={null}>Select a Research Thrust</option>
+                  { thrustList.map((status) => (
+                    <option key={status.id} value={status.id}>{status.description}</option>
+                  )) }
+                </Select>
+              )}
             />
           </VStack>
           <VStack w="full" align="baseline" spacing={1}>
@@ -95,7 +127,7 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
               name="tentative_budget"
               control={control}
               defaultValue={0}
-              render={({ field }) => <Input type="number" step="0.01" isReadOnly {...field} />}
+              render={({ field }) => <Input type="number" step="0.01" {...field} />}
             />
           </VStack>
           <VStack w="full" align="baseline" spacing={1}>
@@ -104,7 +136,7 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
               name="tentative_schedule"
               control={control}
               defaultValue=""
-              render={({ field }) => <Input readOnly {...field} />}
+              render={({ field }) => <Input {...field} />}
             />
           </VStack>
           <Wrap spacing={4}>

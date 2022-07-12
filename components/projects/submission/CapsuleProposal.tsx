@@ -1,7 +1,7 @@
 import React from 'react'
-import { VStack, Heading, Text,  Wrap, WrapItem, Tag, Input } from '@chakra-ui/react'
+import { VStack, Heading, Text,  Wrap, WrapItem, Tag, Input, Select } from '@chakra-ui/react'
 
-import type { Submission, SubmissionStatus, DeliverableSubmission, BudgetProposalSubmission, CapsuleProposalSubmission, FullBlownProposalSubmission, Profile, Project, SubmissionTypes, FileUpload } from '@prisma/client'
+import type { Submission, SubmissionStatus, DeliverableSubmission, BudgetProposalSubmission, CapsuleProposalSubmission, FullBlownProposalSubmission, Profile, Project, SubmissionTypes, FileUpload, ResearchThrust, UniversityMission } from '@prisma/client'
 import Card from '../../general/Card'
 
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
@@ -35,6 +35,23 @@ interface CapsuleProposalProps {
 const CapsuleProposal: React.FC<CapsuleProposalProps> = (props) => {
   const { control, handleSubmit } = useForm<Partial<CapsuleProposalSubmission>>();
 
+  const [missionList, setMissionList] = React.useState<(UniversityMission & { research_thrusts: ResearchThrust[] })[]>([])
+
+  const thrustList: ResearchThrust[] = React.useMemo(() => {
+    const list = []
+    missionList.forEach((entry) => {
+      entry.research_thrusts.forEach((thrust) => {
+        list.push(thrust)
+      })
+    })
+
+    return list
+  }, [missionList])
+
+  React.useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/university_missions`).then((i) => i.json()).then((res) => setMissionList(res.data))
+  }, [])
+
   const onSubmit: SubmitHandler<Partial<CapsuleProposalSubmission>> = data => {
     console.log(data)
   };
@@ -50,7 +67,6 @@ const CapsuleProposal: React.FC<CapsuleProposalProps> = (props) => {
       </Wrap>
       <Card>
         <VStack align="baseline" spacing={6}>
-          { /* TODO: Research Thrust */ }
           <VStack w="full" align="baseline" spacing={1}>
             <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Brief Background</Text>
             <Controller
@@ -58,6 +74,21 @@ const CapsuleProposal: React.FC<CapsuleProposalProps> = (props) => {
               control={control}
               defaultValue={props.submission.capsule_proposal_submission.brief_background}
               render={({ field }) => <RichTextarea isReadOnly {...field} />}
+            />
+          </VStack>
+          <VStack w="full" align="baseline" spacing={1}>
+            <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Research Thrust</Text>
+            <Controller
+              name="research_thrust_id"
+              control={control}
+              defaultValue={props.submission.capsule_proposal_submission.research_thrust_id}
+              render={({ field }) => (
+                <Select disabled {...field}>
+                  { thrustList.map((status) => (
+                    <option key={status.id} value={status.id}>{status.description}</option>
+                  )) }
+                </Select>
+              )}
             />
           </VStack>
           <VStack w="full" align="baseline" spacing={1}>
