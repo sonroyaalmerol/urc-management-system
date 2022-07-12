@@ -91,7 +91,6 @@ const ExternalResearchForm: React.FC<ExternalResearchFormProps> = (props) => {
                 <Controller
                   name="duration_start"
                   control={control}
-                  defaultValue={new Date()}
                   render={({ field }) => <DatePicker {...field} />}
                 />
               </VStack>
@@ -100,7 +99,6 @@ const ExternalResearchForm: React.FC<ExternalResearchFormProps> = (props) => {
                 <Controller
                   name="duration_end"
                   control={control}
-                  defaultValue={new Date()}
                   render={({ field }) => <DatePicker {...field} />}
                 />
               </VStack>
