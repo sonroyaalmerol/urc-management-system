@@ -586,7 +586,7 @@ model BookPublication {
   publisher              String?
   isbn                   String?
   slug                   String?                @unique
-  date_published         String?
+  date_published         DateTime?
   bridge_profiles   ProfileToBookPublicationBridge[]
 
   file_uploads                  FileUpload[]

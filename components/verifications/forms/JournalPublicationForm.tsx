@@ -6,20 +6,21 @@ import Button from '../../general/Button'
 import type { ExternalResearch, JournalPublication, VerificationRequest } from '@prisma/client'
 import Card from '../../general/Card'
 
-import { useForm, SubmitHandler } from "react-hook-form"
+import { useForm, SubmitHandler, Controller } from "react-hook-form"
 import FileUploadButton from '../../general/FileUploadButton'
 
 import AutoCompleteInput from '../../general/AutoCompleteInput'
 import fetchWithFile from '../../../utils/client/fetchWithFile'
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
+import DatePicker from '../../general/DatePicker'
 
 interface JournalPublicationFormProps {
   profileId?: string
 }
 
 const JournalPublicationForm: React.FC<JournalPublicationFormProps> = (props) => {
-  const { watch, handleSubmit, register, reset, setValue } = useForm<Partial<JournalPublication> & Partial<VerificationRequest> & { proof_files: FileList }>();
+  const { watch, handleSubmit, register, control, setValue } = useForm<Partial<JournalPublication> & Partial<VerificationRequest> & { proof_files: FileList }>();
 
   const [exists, setExists] = React.useState(true)
   const [submitting, setSubmitting] = React.useState(false)
@@ -93,6 +94,18 @@ const JournalPublicationForm: React.FC<JournalPublicationFormProps> = (props) =>
               <VStack w="full" align="baseline" spacing={1}>
                 <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">URL</Text>
                 <Input {...register('url')} />
+              </VStack>
+              <VStack w="full" align="baseline" spacing={1}>
+                <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Date Published</Text>
+                <Controller
+                  name="date_published"
+                  control={control}
+                  render={({ field }) => 
+                    <DatePicker
+                      {...field}
+                    />
+                  }
+                />
               </VStack>
             </>
           ) }

@@ -155,7 +155,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
       return res.status(400).json({ error: 'ISBN is required!' })
     }
 
-    if (!cleanString(body.fields.date_published)) {
+    if (!body.fields.date_published) {
       for await (const file of body.files) {
         await deleteFile(file.value.id)
       }
@@ -168,7 +168,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
         title: body.fields.title,
         publisher: body.fields.publisher,
         isbn: body.fields.isbn,
-        date_published: body.fields.date_published
+        date_published: new Date(body.fields.date_published)
       }
     })
   }

@@ -155,12 +155,21 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
       return res.status(400).json({ error: 'ISSN is required!' })
     }
 
+    if (!body.fields.date_published) {
+      for await (const file of body.files) {
+        await deleteFile(file.value.id)
+      }
+
+      return res.status(400).json({ error: 'Date Published is required!' })
+    }
+
     currentEntry = await prisma.journalPublication.create({
       data: {
         title: body.fields.title,
         issn: body.fields.issn,
         journal: body.fields.journal,
-        url: body.fields.url
+        url: body.fields.url,
+        date_published: new Date(body.fields.date_published)
       }
     })
   }

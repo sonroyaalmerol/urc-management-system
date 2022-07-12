@@ -6,19 +6,20 @@ import Button from '../../general/Button'
 import type { BookPublication, ExternalResearch, VerificationRequest } from '@prisma/client'
 import Card from '../../general/Card'
 
-import { useForm, SubmitHandler } from "react-hook-form"
+import { useForm, SubmitHandler, Controller } from "react-hook-form"
 import AutoCompleteInput from '../../general/AutoCompleteInput'
 import fetchWithFile from '../../../utils/client/fetchWithFile'
 import FileUploadButton from '../../general/FileUploadButton'
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
+import DatePicker from '../../general/DatePicker'
 
 interface BookPublicationFormProps {
   profileId?: string
 }
 
 const BookPublicationForm: React.FC<BookPublicationFormProps> = (props) => {
-  const { watch, handleSubmit, register, reset, setValue } = useForm<Partial<BookPublication> & Partial<VerificationRequest> & { proof_files: FileList }>();
+  const { watch, handleSubmit, register, control, setValue } = useForm<Partial<BookPublication> & Partial<VerificationRequest> & { proof_files: FileList }>();
 
   const [exists, setExists] = React.useState(true)
   const [submitting, setSubmitting] = React.useState(false)
@@ -92,7 +93,15 @@ const BookPublicationForm: React.FC<BookPublicationFormProps> = (props) => {
               </VStack>
               <VStack w="full" align="baseline" spacing={1}>
                 <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Date Published</Text>
-                <Input {...register('date_published')} />
+                <Controller
+                  name="date_published"
+                  control={control}
+                  render={({ field }) => 
+                    <DatePicker
+                      {...field}
+                    />
+                  }
+                />
               </VStack>
             </>
           ) }
