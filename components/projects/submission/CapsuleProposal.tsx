@@ -50,15 +50,7 @@ const CapsuleProposal: React.FC<CapsuleProposalProps> = (props) => {
       </Wrap>
       <Card>
         <VStack align="baseline" spacing={6}>
-          <VStack w="full" align="baseline" spacing={1}>
-            <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Research Thrust</Text>
-            <Controller
-              name="research_thrust"
-              control={control}
-              defaultValue={props.submission.capsule_proposal_submission.research_thrust}
-              render={({ field }) => <RichTextarea isReadOnly {...field} />}
-            />
-          </VStack>
+          { /* TODO: Research Thrust */ }
           <VStack w="full" align="baseline" spacing={1}>
             <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Brief Background</Text>
             <Controller

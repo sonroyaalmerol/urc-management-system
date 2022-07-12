@@ -16,6 +16,7 @@ import { memberChecker, roleChecker } from '../../utils/roleChecker'
 import { CHANGE_PROJECT_STATUS } from '../../utils/permissions'
 import UnitsSection from './UnitsSection'
 import { useRouter } from 'next/router'
+import ResearchAreaSection from './ResearchAreaSection'
 
 interface ProjectDetailsProps {
   project: ExtendedProject
@@ -160,6 +161,9 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = (props) => {
             </WrapItem>
             <WrapItem>
               <UnitsSection project={project} />
+            </WrapItem>
+            <WrapItem>
+              <ResearchAreaSection project={project} />
             </WrapItem>
           </Wrap>
           <Heading

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-assign-module-variable */
 import { FileUpload, PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 import slugify from 'slugify'
@@ -17,6 +18,8 @@ import centers from './data/centers'
 import council from './data/council'
 import { scrapeNews, scrapePresentations, scrapePublications, scrapeResearches } from './scraper'
 import { uploadFile as upload } from '../utils/server/file'
+
+import parse from 'date-fns/parse'
 
 prisma.$use(async (params, next) => {
   // Manipulate params here
@@ -220,7 +223,15 @@ async function main() {
           id: 'researcher',
           comment: 'Researcher'
         }
-      })
+      }),
+      prisma.userRole.upsert({
+        where: { id: 'admin' },
+        update: {},
+        create: {
+          id: 'admin',
+          comment: 'Administrator'
+        }
+      }),
     ])
 
   } catch (err) {
@@ -233,16 +244,24 @@ async function main() {
   let news = []
 
   try {
+    /* 
     [researches, presentations, publications, news] = await Promise.all([
       scrapeResearches(),
       scrapePresentations(),
       scrapePublications(),
       scrapeNews()
     ])
+
+    */
+
+    [news] = await Promise.all([
+      scrapeNews()
+    ])
   } catch (err) {
     console.log(err)
   }
-
+  
+  /*
   const extractUnits = (unitsString) => {
     const rawUnits = unitsString.split(',')
     const doneUnits = []
@@ -294,7 +313,6 @@ async function main() {
       }
     })
   }
-
   for (const research of researches) {
     if (research.fundSource === 'AdDU-URC') {
       try {
@@ -303,12 +321,8 @@ async function main() {
           update: {},
           create: {
             title: research.name,
-            main_proponents: research.mainProponent.split(',').map((i) => i.trim()).filter((i) => i),
-            co_proponents: research.coProponents.split(',').map((i) => i.trim()).filter((i) => i),
-            duration: research.duration,
             cycle: research.cycle,
             budget: research.budget,
-            approved: true,
             completed_at: research.dateCompleted,
             abstract: research.abstract,
             keywords: research.keywords,
@@ -331,9 +345,6 @@ async function main() {
           create: {
             title: research.name,
             organization: research.fundSource,
-            main_proponents: research.mainProponent.split(',').map((i) => i.trim()).filter((i) => i),
-            co_proponents: research.coProponents.split(',').map((i) => i.trim()).filter((i) => i),
-            duration: research.duration,
             cycle: research.cycle,
             budget: research.budget,
             verified: true,
@@ -417,6 +428,8 @@ async function main() {
       }
     }
   }
+  
+  //*/
 
   for (const article of news) {
     try {
@@ -427,7 +440,6 @@ async function main() {
         uploads.push(res)
       }
 
-      //*/
       const bridgeConstructor = uploads.map((upload) => (
         {
           id: upload.id
@@ -452,7 +464,6 @@ async function main() {
           created_at: new Date(article.date)
         },
       })
-      //*/
     } catch (err) {
       console.log(err)
     }
@@ -461,6 +472,20 @@ async function main() {
   for (const member of council) {
     try {
       const res = await uploadFile(member.image)
+
+      const dates = member.duration.split("-").map((date) => date.trim())
+
+      const start_date = dates[0].split(" ").length > 1 ? (
+        parse(dates[0], 'MMMM yyyy', new Date())
+      ) : (
+        dates[0].toLowerCase() === "present" ? null : parse(dates[0], 'yyyy', new Date())
+      );
+
+      const end_date = dates[1].split(" ").length > 1 ? (
+        parse(dates[1], 'MMMM yyyy', new Date())
+      ) : (
+        dates[1].toLowerCase() === "present" ? null : parse(dates[1], 'yyyy', new Date())
+      );
 
       await prisma.profile.upsert({
         where: { email: member.email },
@@ -486,7 +511,8 @@ async function main() {
                 }
               },
               role_title: member.position,
-              duration: member.duration
+              start_date,
+              end_date
             }
           },
           photo: {
@@ -516,6 +542,27 @@ async function main() {
 
       const usersConstructor = await Promise.all(center.users.map(async (member) => {
         const res = await uploadFile(member.image)
+
+        let start_date = null
+        let end_date = null
+
+        try {
+          const dates = member.duration.replace("–", "-").split("-").map((date) => date.trim())
+
+          start_date = dates[0].split(" ").length > 1 ? (
+            parse(dates[0], 'dd MMMM yyyy', new Date())
+          ) : (
+            dates[0].toLowerCase() === "present" ? null : parse(dates[0], 'yyyy', new Date())
+          );
+
+          end_date = dates[1].split(" ").length > 1 ? (
+            parse(dates[1], 'dd MMMM yyyy', new Date())
+          ) : (
+            dates[1].toLowerCase() === "present" ? null : parse(dates[1], 'yyyy', new Date())
+          );
+        } catch (err) {
+        }
+
         return ({
           profile: {
             connectOrCreate: {
@@ -538,7 +585,8 @@ async function main() {
             }
           },
           role_title: member.position,
-          duration: member.duration
+          start_date,
+          end_date,
         })
       }))
       
@@ -552,7 +600,8 @@ async function main() {
           contact_number: center.contact_number,
           address: center.address,
           description: center.description,
-          research_areas: center.research_areas,
+          /* TODO: research_areas */
+          // research_areas: center.research_areas,
           bridge_profiles: {
             create: usersConstructor
           }

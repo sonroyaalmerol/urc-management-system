@@ -80,14 +80,16 @@ const NewProjectButton: React.FC<NewProjectButtonProps> = (props) => {
           <ModalHeader>New Project</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <VStack w="full" align="baseline" spacing={1}>
-              <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Project Title</Text>
-              <Controller
-                name="title"
-                control={control}
-                defaultValue=""
-                render={({ field }) => <Input {...field} />}
-              />
+            <VStack w="full" spacing={4}>
+              <VStack w="full" align="baseline" spacing={1}>
+                <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Project Title</Text>
+                <Controller
+                  name="title"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => <Input {...field} />}
+                />
+              </VStack>
             </VStack>
           </ModalBody>
 

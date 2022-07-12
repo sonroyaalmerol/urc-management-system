@@ -25,7 +25,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
       email: body.email,
       address: body.address,
       contact_number: body.contact_number,
-      research_areas: body.research_areas,
+      /* TODO: Research Areas */
       short_name: body.short_name,
       name: body.name,
       description: body.description

@@ -191,14 +191,42 @@ model CapsuleProposalSubmission {
   created_at                    DateTime?                     @default(now())
   updated_at                    DateTime?                     @updatedAt
   
-  research_thrust               String
+  research_thrust_id            String?
+  research_thrust               ResearchThrust?                @relation(fields: [research_thrust_id], references: [id], onDelete: SetNull)
+
   brief_background              String
   objectives_of_the_study       String
   significance_of_the_study     String
   methodology                   String
+
+  tentative_schedule            String
+  tentative_budget              Float
   
   submission_id                 String                         @unique
-  submission                    Submission                        @relation(fields: [submission_id], references: [id], onDelete: Cascade)
+  submission                    Submission                     @relation(fields: [submission_id], references: [id], onDelete: Cascade)
+}
+
+model UniversityMission {
+  id                            String                        @id @default(cuid())
+  created_at                    DateTime?                     @default(now())
+  updated_at                    DateTime?                     @updatedAt
+
+  description                   String
+
+  research_thrusts              ResearchThrust[]
+}
+
+model ResearchThrust {
+  id                            String                        @id @default(cuid())
+  created_at                    DateTime?                     @default(now())
+  updated_at                    DateTime?                     @updatedAt
+
+  description                   String
+
+  capsule_proposal_submissions  CapsuleProposalSubmission[]
+
+  university_mission_id         String?
+  university_mission            UniversityMission?             @relation(fields: [university_mission_id], references: [id], onDelete: SetNull)
 }
 
 model Comment {
@@ -285,9 +313,8 @@ model ExternalResearch {
   id                             String                           @id @default(cuid())
   title                          String                           @unique
   organization                   String?
-  main_proponents                String[]
-  co_proponents                  String[]
-  duration                       String?
+  duration_start                 DateTime?
+  duration_end                   DateTime?
   cycle                          String?
   budget                         Float?
   upload_id                      String?                          
@@ -369,7 +396,7 @@ model Institute {
   email               String?
   description         String?
   address             String?
-  research_areas      String?
+  research_areas      ResearchArea[]
   photo_id            String?
   photo               FileUpload?  @relation(fields: [photo_id], references: [id], onDelete: SetNull)
   created_at          DateTime?             @default(now())
@@ -381,10 +408,9 @@ model Institute {
 }
 
 model ProfileToInstituteBridge {
-  profile_id      String
-  institute_id String     
-  role_title   String
-  duration     String?
+  profile_id         String
+  institute_id       String     
+  role_title         String
 
   is_head       Boolean  @default(false)
 
@@ -609,6 +635,8 @@ model Deadline {
   created_at            DateTime?             @default(now())
   updated_at            DateTime?             @updatedAt
 
+  projects              Project[]
+
   academic_term_id      String?
   academic_term         AcademicTerm?     @relation(fields: [academic_term_id], references: [id], onDelete: Cascade)
 }
@@ -646,11 +674,13 @@ model Unit {
 model Project {
   id                               String                             @id @default(cuid())
   title                            String                             @unique
-  main_proponents                  String[]
-  co_proponents                    String[]
+
+  research_areas                   ResearchArea[]
+
   keywords                         String[]
   abstract                         String?
-  duration                         String?
+  duration_start                   DateTime?
+  duration_end                     DateTime?
   cycle                            String?
   budget                           Float?
   source_of_fund                   String?
@@ -674,6 +704,17 @@ model Project {
   bridge_profiles                  ProfileToProjectBridge[]
   bridge_institutes                ProjectToInstituteBridge[]
   units                            Unit[]
+  deadlines                        Deadline[]
+}
+
+model ResearchArea {
+  id                               String                             @id @default(cuid())
+  
+  field                            String                             @unique
+
+  profiles                         Profile[]
+  projects                         Project[]
+  institutes                       Institute[]
 }
 
 model UserRole {
@@ -719,6 +760,8 @@ model Profile {
   updated_at                     DateTime                         @updatedAt                     
   units                          Unit[]
   roles                          UserRole[]
+
+  research_areas                 ResearchArea[]
 
   actions_made                   Action[]     @relation("acted_users")
   actions_involved               Action[]

@@ -17,6 +17,8 @@ interface ExtendedAutoCompleteInputProps {
   primaryDisplayName?: string
   secondaryDisplayName?: string
   formSetValue?: UseFormSetValue<any>
+  disableClearIfNotExists?: boolean
+  disableSecondValue?: boolean
   watchExists?: (exists: boolean) => any
 }
 
@@ -65,8 +67,10 @@ const AutoCompleteInput: React.FC<ExtendedAutoCompleteInputProps> = (props) => {
       display = `${display} ${secondary}`
     }
 
-    if (name && (primary || secondary)) {
+    if (name && (primary || secondary) && !props.disableSecondValue) {
       display = `${display} <${name}>`
+    } else if (props.disableSecondValue) {
+      display = display
     } else {
       display = name
     }
@@ -97,7 +101,7 @@ const AutoCompleteInput: React.FC<ExtendedAutoCompleteInputProps> = (props) => {
           setExists(false)
         }}
         onBlur={(e) => {
-          if (!exists && e.target.value !== '' && !('watchExists' in props)) {
+          if (!exists && e.target.value !== '' && !('watchExists' in props) && !props.disableClearIfNotExists) {
             e.target.value = ''
             if ('formSetValue' in props && 'name' in props) {
               props.formSetValue(props.name, e.target.value)

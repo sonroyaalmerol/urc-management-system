@@ -76,7 +76,7 @@ const VerificationCard: React.FC<VerificationCardProps> = (props) => {
           description: (
             <VStack align="baseline" spacing={0}>
               <Text fontSize="sm"><strong>Organization</strong>: {request.external_research.organization}</Text>
-              <Text fontSize="sm"><strong>Duration</strong>: {request.external_research.duration}</Text>
+              {/* TODO: Duration */}
               <Text fontSize="sm"><strong>Cycle</strong>: {request.external_research.cycle}</Text>
             </VStack>
           )

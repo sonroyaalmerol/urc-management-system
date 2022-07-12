@@ -69,7 +69,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     include: {
       user: true,
       units: true,
-      roles: true
+      roles: true,
+      research_areas: true
     }
   })
 

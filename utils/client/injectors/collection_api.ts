@@ -68,6 +68,22 @@ const injectUnits = (search: string) => {
   return ORarray
 }
 
+const injectResearchAreas = (search: string) => {
+  const ORarray = []
+  ORarray.push({
+    research_areas: {
+      some: {
+        field: {
+          mode: 'insensitive',
+          contains: search
+        },
+      }
+    }
+  })
+
+  return ORarray
+}
+
 const injectFullname = (search: string) => {
   const ORarray = []
 
@@ -257,6 +273,8 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function,
     for await (const i of (fields as string).split(',')) {
       if(i === 'units') {
         ORarray = [...ORarray, ...injectUnits(search as string)]
+      } else if (i === 'research_areas') {
+        ORarray = [...ORarray, ...injectResearchAreas(search as string)]
       } else if (i === 'authors' || i === 'presentors' || i === 'users') {
         ORarray = [...ORarray, ...await injectAuthors(search as string, type)]
       } else if (i === 'fullname') {

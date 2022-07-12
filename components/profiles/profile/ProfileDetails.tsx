@@ -18,6 +18,7 @@ import { CheckIcon, EditIcon } from '@chakra-ui/icons'
 import UnitsSection from './UnitsSection'
 import { roleChecker } from '../../../utils/roleChecker'
 import { MODIFY_RESEARCHER_PROFILE } from '../../../utils/permissions'
+import ResearchAreaSection from './ResearchAreaSection'
 
 const ProfileDetails: React.FC<ComponentProps> = (props) => {
   const profile = props.profile
@@ -256,6 +257,9 @@ const ProfileDetails: React.FC<ComponentProps> = (props) => {
             </WrapItem>
             <WrapItem>
               <UnitsSection profile={profile} />
+            </WrapItem>
+            <WrapItem>
+              <ResearchAreaSection profile={profile} />
             </WrapItem>
           </Wrap>
         </VStack>

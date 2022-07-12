@@ -12,21 +12,15 @@ import { SETTING_UNITS } from '../../../utils/permissions'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   let [totalCount, tmpData] = await prisma.$transaction([
-    prisma.unit.count({
-      where: {
-        parent_unit: {
-          isNot: null
-        }
-      },
-    }),
+    prisma.unit.count(),
     prisma.unit.findMany({
       where: {
         parent_unit: {
-          isNot: null
+          is: null
         }
       },
       include: {
-        parent_unit: true
+        sub_units: true
       },
       orderBy: {
         name: 'asc'
@@ -34,22 +28,11 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
     })
   ])
 
-  const data: { parent_name: string, parent_id: string, units: Unit[] }[] = []
-
-  tmpData.forEach(unit => {
-    const index = data.findIndex((u) => unit.parent_unit.id === u.parent_id)
-    if (index === -1) {
-      data.push({
-        parent_name: unit.parent_unit.name,
-        parent_id: unit.parent_unit.id,
-        units: [
-          unit
-        ]
-      })
-    } else {
-      data[index].units.push(unit)
-    }
-  })
+  const data: { parent_name: string, parent_id: string, units: Unit[] }[] = tmpData.map(unit => ({
+    parent_name: unit.name,
+    parent_id: unit.id,
+    units: unit.sub_units
+  }))
 
   return res.status(200).json({
     totalCount,

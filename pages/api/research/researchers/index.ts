@@ -28,7 +28,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           }
         },
         include: {
-          user: true
+          user: true,
+          research_areas: true,
+          units: true
         },
         orderBy
       })

@@ -68,10 +68,10 @@ const ProjectCard: React.FC<ProjectCardProps> = (props) => {
             </WrapItem>
           )) : (
             <>
-              { [...project.main_proponents, ...project.co_proponents].map((proponent, i) => (
-                <WrapItem key={`${proponent}-avatar-${i}`}>
+              { project.bridge_profiles.map(({ profile }, i) => (
+                <WrapItem key={`${profile.id}-avatar-${i}`}>
                   <SmallAvatar
-                    first_name={proponent}
+                    {...profile}
                   />
                 </WrapItem>
               )) }

@@ -52,15 +52,7 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
           <Heading fontFamily="body" fontSize="lg">
             {props.project.title}
           </Heading>
-          <VStack w="full" align="baseline" spacing={1}>
-            <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Research Thrust</Text>
-            <Controller
-              name="research_thrust"
-              control={control}
-              defaultValue=""
-              render={({ field }) => <RichTextarea {...field} />}
-            />
-          </VStack>
+          { /* TODO: Research Thrust */ }
           <VStack w="full" align="baseline" spacing={1}>
             <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Brief Background</Text>
             <Controller

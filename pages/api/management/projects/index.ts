@@ -131,16 +131,13 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
     project = await prisma.project.create({
       data: {
         title: body.title,
-        bridge_profiles: {
+        bridge_profiles: !roleChecker(session.profile, ['researcher']) ? undefined : {
           create: {
             profile_id: id,
             role_title: 'Main Proponent'
           }
         },
-        slug: slugGenerator(body.title),
-        main_proponents: {
-          set: [`${session.profile.first_name} ${session.profile.middle_initial} ${session.profile.last_name}`]
-        }
+        slug: slugGenerator(body.title)
       }
     })
   } else if (body.mode === 'update') {

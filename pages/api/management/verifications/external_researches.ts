@@ -146,14 +146,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
 
       return res.status(400).json({ error: 'Organization is required!' })
     }
-
-    if (!cleanString(body.fields.duration)) {
-      for await (const file of body.files) {
-        await deleteFile(file.value.id)
-      }
-
-      return res.status(400).json({ error: 'Duration is required!' })
-    }
+    /* TODO: Duration */
 
     if (!cleanString(body.fields.cycle)) {
       for await (const file of body.files) {
@@ -167,7 +160,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
       data: {
         title: body.fields.title,
         organization: body.fields.organization,
-        duration: body.fields.duration,
+        /* TODO: Duration */
         cycle: body.fields.cycle
       }
     })

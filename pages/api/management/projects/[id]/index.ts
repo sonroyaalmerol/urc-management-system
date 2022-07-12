@@ -185,7 +185,9 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
 
     specificSubmission = await prisma.capsuleProposalSubmission.create({
       data: {
-        research_thrust: body.fields.research_thrust,
+        tentative_budget: 0,
+        tentative_schedule: '',
+        /* TODO: Research Thrust, Tentative Budget and Schedule */
         brief_background: body.fields.brief_background,
         objectives_of_the_study: body.fields.objectives_of_the_study,
         significance_of_the_study: body.fields.significance_of_the_study,

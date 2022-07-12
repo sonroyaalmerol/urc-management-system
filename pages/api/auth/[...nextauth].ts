@@ -67,7 +67,8 @@ export default NextAuth({
                 last_name: true,
                 middle_initial: true,
                 roles: true,
-                photo_id: true
+                photo_id: true,
+                research_areas: true
               }
             }
           }

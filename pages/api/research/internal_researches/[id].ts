@@ -16,6 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             parent_unit: true
           }
         },
+        research_areas: true,
         bridge_profiles: {
           include: {
             profile: {

@@ -85,10 +85,7 @@ const ExternalResearchForm: React.FC<ExternalResearchFormProps> = (props) => {
                 <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Organization</Text>
                 <Input {...register('organization')} />
               </VStack>
-              <VStack w="full" align="baseline" spacing={1}>
-                <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Duration</Text>
-                <Input {...register('duration')} />
-              </VStack>
+              {/* TODO: Duration */}
               <VStack w="full" align="baseline" spacing={1}>
                 <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Cycle</Text>
                 <Input {...register('cycle')} />

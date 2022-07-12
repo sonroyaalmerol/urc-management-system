@@ -39,7 +39,8 @@ export const MANAGING_DELIVERABLES = [
 ]
 
 export const CREATE_PROJECT = [
-  RESEARCHER
+  RESEARCHER,
+  STAFF
 ]
 
 export const CHANGE_PROJECT_STATUS = [

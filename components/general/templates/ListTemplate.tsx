@@ -29,6 +29,7 @@ const ListTemplate: React.FC<ListTemplateProps> = (props) => {
   delete divProps.hasMore
   delete divProps.loadMore
   delete divProps.leftComponent
+  delete divProps.profileId
 
   return (
     <VStack w="full">

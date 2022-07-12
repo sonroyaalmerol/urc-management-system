@@ -297,7 +297,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         }
       },
       project_status: true,
-      units: true
+      units: true,
+      research_areas: true
     }
   })
 

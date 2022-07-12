@@ -20,6 +20,7 @@ import type {
   Project,
   ProjectStatus,
   ProjectToInstituteBridge,
+  ResearchArea,
   ResearchDissemination,
   ResearchEvent,
   ResearchPresentation,
@@ -49,6 +50,7 @@ export interface ExtendedInstitute extends Institute {
   bridge_profiles: (ProfileToInstituteBridge & {
       profile: Profile;
   })[];
+  research_areas: ResearchArea[];
   institute_news: InstituteNews[];
 }
 
@@ -112,6 +114,7 @@ export interface ExtendedProject extends Project {
   bridge_institutes: (ProjectToInstituteBridge & {
     institute: Institute;
   })[];
+  research_areas: ResearchArea[];
   project_status: ProjectStatus;
 }
 
@@ -169,6 +172,7 @@ export interface ExtendedProfile extends Profile {
   bridge_research_presentations: (ProfileToResearchPresentationBridge & {
     presentation: ResearchPresentation;
   })[];
+  research_areas: ResearchArea[];
   roles: UserRole[];
 }
 

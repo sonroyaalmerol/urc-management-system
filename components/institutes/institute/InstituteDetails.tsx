@@ -203,26 +203,7 @@ const InstituteDetails: React.FC<ComponentProps> = (props) => {
                   </WrapItem>
                 </Wrap>
                 <Wrap align="baseline">
-                  <WrapItem>
-                    <Heading
-                      fontFamily="body"
-                      fontSize="md"
-                    >
-                      Research Areas:
-                    </Heading>
-                  </WrapItem>
-                  <WrapItem>
-                    <Controller
-                      name="research_areas"
-                      control={control}
-                      render={({ field }) => 
-                        <EditableText
-                          editMode={editing}
-                          {...field}
-                        />
-                      }
-                    />
-                  </WrapItem>
+                  {/* TODO: Research Area */}
                 </Wrap>
               </VStack>
             </WrapItem>

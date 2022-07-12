@@ -13,7 +13,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             id: 'researcher'
           }
         }
-      }
+      },
+      include: {
+        user: true,
+        research_areas: true,
+        units: true
+      },
     })
   }, 'researchers')
 }
