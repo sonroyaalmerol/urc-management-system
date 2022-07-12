@@ -2,23 +2,23 @@ import React from 'react'
 
 import { Center, Heading, Menu, MenuButton, MenuDivider, MenuGroup, MenuItem, MenuList, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spinner, Tag, TagCloseButton, Text, useDisclosure, VStack, Wrap, WrapItem } from '@chakra-ui/react'
 
-import type { ExtendedProject } from '../../types/profile-card'
-import Button from '../general/Button'
+import type { ExtendedInstitute, ExtendedProfile, ExtendedProject } from '../../../types/profile-card'
+import Button from '../../general/Button'
 import { AddIcon } from '@chakra-ui/icons'
 import type { ResearchArea, Unit } from '@prisma/client'
 
 import { useSession } from 'next-auth/react'
-import { memberChecker, roleChecker } from '../../utils/roleChecker'
-import { CHANGE_PROJECT_STATUS, CONFIRMATION_RESEARCHER_INFORMATION } from '../../utils/permissions'
-import AutoCompleteInput from '../general/AutoCompleteInput'
+import { roleChecker } from '../../../utils/roleChecker'
+import { CONFIRMATION_RESEARCHER_INFORMATION, UPDATE_CENTER_INFO } from '../../../utils/permissions'
+import AutoCompleteInput from '../../general/AutoCompleteInput'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 
 interface ResearchAreaSectionProps {
-  project: Partial<ExtendedProject>
+  institute: Partial<ExtendedInstitute>
 }
 
 const ResearchAreaSection: React.FC<ResearchAreaSectionProps> = (props) => {
-  const project = props.project
+  const institute = props.institute
   const { data: { profile: currentProfile } } = useSession()
 
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -26,12 +26,12 @@ const ResearchAreaSection: React.FC<ResearchAreaSectionProps> = (props) => {
   const { control, handleSubmit, reset, setValue, watch } = useForm<ResearchArea>();
 
   const isAllowed = React.useMemo(() => {
-    return roleChecker(currentProfile, CHANGE_PROJECT_STATUS) || memberChecker(currentProfile, project.bridge_profiles)
+    return (roleChecker(currentProfile, UPDATE_CENTER_INFO))
   }, [currentProfile.roles])
 
   const [researchAreaAdding, setResearchAreaAdding] = React.useState(false)
 
-  const [researchAreas, setResearchAreas] = React.useState(project.research_areas ?? [])
+  const [researchAreas, setResearchAreas] = React.useState(institute.research_areas ?? [])
 
   const reloadSession = () => {
     const event = new Event("visibilitychange")
@@ -40,7 +40,7 @@ const ResearchAreaSection: React.FC<ResearchAreaSectionProps> = (props) => {
 
   const onSubmit: SubmitHandler<ResearchArea> = async (data) => {
     setResearchAreaAdding(true)
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/${project.id}/research_areas`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/institutes/${institute.id}/research_areas`, {
       method: 'POST',
       body: JSON.stringify(data)
     }).then(res => res.json())
@@ -56,7 +56,7 @@ const ResearchAreaSection: React.FC<ResearchAreaSectionProps> = (props) => {
 
   const removeResearchArea = async (researchArea: ResearchArea) => {
     setResearchAreaAdding(true)
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/${project.id}/research_areas`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/institutes/${institute.id}/research_areas`, {
       method: 'DELETE',
       body: JSON.stringify({ id: researchArea.id })
     }).then(res => res.json())

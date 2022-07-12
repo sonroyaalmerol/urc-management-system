@@ -15,6 +15,7 @@ import type { Institute } from '@prisma/client'
 import { useSession } from 'next-auth/react'
 import { roleChecker } from '../../../utils/roleChecker'
 import { UPDATE_CENTER_INFO } from '../../../utils/permissions'
+import ResearchAreaSection from './ResearchAreaSection'
 
 const InstituteDetails: React.FC<ComponentProps> = (props) => {
   const institute = props.institute
@@ -202,10 +203,10 @@ const InstituteDetails: React.FC<ComponentProps> = (props) => {
                     />
                   </WrapItem>
                 </Wrap>
-                <Wrap align="baseline">
-                  {/* TODO: Research Area */}
-                </Wrap>
               </VStack>
+            </WrapItem>
+            <WrapItem>
+              <ResearchAreaSection institute={institute} />
             </WrapItem>
           </Wrap>
           <Wrap align="baseline" w="full">

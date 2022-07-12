@@ -1,5 +1,5 @@
 import React from 'react'
-import { VStack, Heading, Text, useToast, Wrap, WrapItem } from '@chakra-ui/react'
+import { VStack, Heading, Text, useToast, Wrap, WrapItem, Input } from '@chakra-ui/react'
 
 import Button from '../../general/Button'
 
@@ -87,6 +87,24 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
               control={control}
               defaultValue=""
               render={({ field }) => <RichTextarea {...field} />}
+            />
+          </VStack>
+          <VStack w="full" align="baseline" spacing={1}>
+            <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Tentative Budget</Text>
+            <Controller
+              name="tentative_budget"
+              control={control}
+              defaultValue={0}
+              render={({ field }) => <Input type="number" step="0.01" isReadOnly {...field} />}
+            />
+          </VStack>
+          <VStack w="full" align="baseline" spacing={1}>
+            <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Tentative Schedule</Text>
+            <Controller
+              name="tentative_schedule"
+              control={control}
+              defaultValue=""
+              render={({ field }) => <Input readOnly {...field} />}
             />
           </VStack>
           <Wrap spacing={4}>

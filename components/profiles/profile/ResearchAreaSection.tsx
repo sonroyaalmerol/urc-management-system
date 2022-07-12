@@ -48,6 +48,7 @@ const ResearchAreaSection: React.FC<ResearchAreaSectionProps> = (props) => {
     if (res.success) {
       setResearchAreas((prev) => [...prev.filter((x) => x.id !== data.id), data])
       reloadSession()
+      onClose()
     }
 
     setResearchAreaAdding(false)

@@ -114,7 +114,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
           }
         }
       },
-      institute_news: true
+      institute_news: true,
+      research_areas: true
     }
   })
 

@@ -12,13 +12,14 @@ import fetchWithFile from '../../../utils/client/fetchWithFile'
 import FileUploadButton from '../../general/FileUploadButton'
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
+import DatePicker from '../../general/DatePicker'
 
 interface ExternalResearchFormProps {
   profileId?: string
 }
 
 const ExternalResearchForm: React.FC<ExternalResearchFormProps> = (props) => {
-  const { watch, handleSubmit, register, reset, setValue } = useForm<Partial<ExternalResearch> & Partial<VerificationRequest> & { proof_files: FileList }>();
+  const { watch, handleSubmit, register, control, setValue } = useForm<Partial<ExternalResearch> & Partial<VerificationRequest> & { proof_files: FileList }>();
 
   const [exists, setExists] = React.useState(true)
   const [submitting, setSubmitting] = React.useState(false)
@@ -85,7 +86,24 @@ const ExternalResearchForm: React.FC<ExternalResearchFormProps> = (props) => {
                 <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Organization</Text>
                 <Input {...register('organization')} />
               </VStack>
-              {/* TODO: Duration */}
+              <VStack w="full" align="baseline" spacing={1}>
+                <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Duration Start</Text>
+                <Controller
+                  name="duration_start"
+                  control={control}
+                  defaultValue={new Date()}
+                  render={({ field }) => <DatePicker {...field} />}
+                />
+              </VStack>
+              <VStack w="full" align="baseline" spacing={1}>
+                <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Duration End</Text>
+                <Controller
+                  name="duration_end"
+                  control={control}
+                  defaultValue={new Date()}
+                  render={({ field }) => <DatePicker {...field} />}
+                />
+              </VStack>
               <VStack w="full" align="baseline" spacing={1}>
                 <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Cycle</Text>
                 <Input {...register('cycle')} />

@@ -22,6 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               }
             }
           },
+          research_areas: true
         },
         where,
         orderBy

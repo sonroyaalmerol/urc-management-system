@@ -33,6 +33,7 @@ const Settings: React.FC<SettingsProps> = (props: InferGetServerSidePropsType<ty
           <Deadlines />
           <DownloadCategories />
           <Units />
+          {/* TODO: Research Thrusts */}
         </VStack>
       </VStack>
     </>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { VStack, Heading, Text,  Wrap, WrapItem, Tag } from '@chakra-ui/react'
+import { VStack, Heading, Text,  Wrap, WrapItem, Tag, Input } from '@chakra-ui/react'
 
 import type { Submission, SubmissionStatus, DeliverableSubmission, BudgetProposalSubmission, CapsuleProposalSubmission, FullBlownProposalSubmission, Profile, Project, SubmissionTypes, FileUpload } from '@prisma/client'
 import Card from '../../general/Card'
@@ -85,6 +85,24 @@ const CapsuleProposal: React.FC<CapsuleProposalProps> = (props) => {
               control={control}
               defaultValue={props.submission.capsule_proposal_submission.methodology}
               render={({ field }) => <RichTextarea isReadOnly {...field} />}
+            />
+          </VStack>
+          <VStack w="full" align="baseline" spacing={1}>
+            <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Tentative Budget</Text>
+            <Controller
+              name="tentative_budget"
+              control={control}
+              defaultValue={props.submission.capsule_proposal_submission.tentative_budget}
+              render={({ field }) => <Input type="number" step="0.01" isReadOnly {...field} />}
+            />
+          </VStack>
+          <VStack w="full" align="baseline" spacing={1}>
+            <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Tentative Schedule</Text>
+            <Controller
+              name="tentative_schedule"
+              control={control}
+              defaultValue={props.submission.capsule_proposal_submission.tentative_schedule}
+              render={({ field }) => <Input readOnly {...field} />}
             />
           </VStack>
         </VStack>

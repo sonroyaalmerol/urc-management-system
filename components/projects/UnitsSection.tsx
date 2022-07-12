@@ -8,8 +8,8 @@ import { AddIcon } from '@chakra-ui/icons'
 import type { Unit } from '@prisma/client'
 
 import { useSession } from 'next-auth/react'
-import { roleChecker } from '../../utils/roleChecker'
-import { CONFIRMATION_RESEARCHER_INFORMATION } from '../../utils/permissions'
+import { memberChecker, roleChecker } from '../../utils/roleChecker'
+import { CHANGE_PROJECT_STATUS } from '../../utils/permissions'
 
 interface UnitsSectionProps {
   project: Partial<ExtendedProject>
@@ -20,7 +20,7 @@ const UnitsSection: React.FC<UnitsSectionProps> = (props) => {
   const { data: { profile: currentProfile } } = useSession()
 
   const isAllowed = React.useMemo(() => {
-    return (roleChecker(currentProfile, CONFIRMATION_RESEARCHER_INFORMATION))
+    return roleChecker(currentProfile, CHANGE_PROJECT_STATUS) || memberChecker(currentProfile, project.bridge_profiles)
   }, [currentProfile.roles])
 
   const [unitAdding, setRoleAdding] = React.useState(false)

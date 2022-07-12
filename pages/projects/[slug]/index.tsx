@@ -69,7 +69,7 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
         </ContentHeader>
         <VStack spacing={8} w="full">
           <ProjectDetails project={project} />
-
+          { /* TODO: Specific Deadlines */ }
           <Wrap align="center" w="full">
             <WrapItem>
               <Wrap spacing={4} align="center">
