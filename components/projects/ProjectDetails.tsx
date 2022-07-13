@@ -150,7 +150,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = (props) => {
 
       <Card>
         <VStack align="baseline">
-          <Wrap spacingX={8}>
+          <Wrap>
             <WrapItem>
               <VStack align="baseline">
                 <Wrap align="center">
