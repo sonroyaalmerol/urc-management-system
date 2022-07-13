@@ -3,8 +3,10 @@ import { getSession } from 'next-auth/react'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import type { Session } from 'next-auth'
-import type { Profile } from '@prisma/client'
+import type { Profile, ResearchEvent } from '@prisma/client'
 import handleError from '../../../../../utils/server/handleError'
+import { roleChecker } from '../../../../../utils/roleChecker'
+import { MODIFY_RESEARCHER_PROFILE } from '../../../../../utils/permissions'
 
 const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const searchQuery = (req.query?.query as string) ?? ''
@@ -80,7 +82,73 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 }
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
-  const body = JSON.parse(req.body) as Partial<Profile>
+  const body = JSON.parse(req.body) as Partial<ResearchEvent>
+
+  if (!roleChecker(session.profile, MODIFY_RESEARCHER_PROFILE)) {
+    return res.status(401).json({ error: 'Unauthorized access.' })
+  }
+
+  await prisma.$transaction([
+    prisma.profileToResearchEventBridge.deleteMany({
+      where: {
+        research_event: {
+          id: body.id
+        }
+      }
+    }),
+    prisma.verificationRequest.deleteMany({
+      where: {
+        research_event: {
+          id: body.id
+        }
+      }
+    }),
+    prisma.researchEvent.delete({
+      where: {
+        id: body.id
+      }
+    })
+  ])
+
+  return res.status(200).json({
+    success: true
+  })
+}
+
+const deleteHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
+  const body = JSON.parse(req.body) as Partial<ResearchEvent>
+  const id: string = req.query.id as string
+
+  if (!roleChecker(session.profile, MODIFY_RESEARCHER_PROFILE)) {
+    return res.status(401).json({ error: 'Unauthorized access.' })
+  }
+
+  await prisma.$transaction([
+    prisma.profileToResearchEventBridge.deleteMany({
+      where: {
+        profile: {
+          id
+        },
+        research_event: {
+          id: body.id
+        }
+      }
+    }),
+    prisma.verificationRequest.deleteMany({
+      where: {
+        profile: {
+          id
+        },
+        research_event: {
+          id: body.id
+        }
+      }
+    })
+  ])
+
+  return res.status(200).json({
+    success: true
+  })
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -90,8 +158,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   return await handleError(async () => {
+    if (req.method === 'DELETE') {
+      return await deleteHandler(req, res, session);
+    }
+
     if (req.method === 'POST') {
-      return await postHandler(req, res, session);
+      return await postHandler(req, res, session)
     }
   
     if (req.method === 'GET') {

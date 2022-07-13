@@ -466,7 +466,6 @@ model ResearchPresentation {
   event_date             DateTime?             
   created_at             DateTime               @default(now())
   updated_at             DateTime               @updatedAt
-  presentors             String[]
   conference             String?
   budget                 Float?
   url                    String?
@@ -545,7 +544,6 @@ model JournalPublication {
   updated_at             DateTime               @updatedAt
   date_published         DateTime?             
   title                  String                 @unique
-  authors                String[]
   issn                   String?
   journal                String?
   url                    String?
@@ -582,7 +580,6 @@ model BookPublication {
   created_at             DateTime               @default(now())
   updated_at             DateTime               @updatedAt
   title                  String                 @unique
-  authors                String[]
   publisher              String?
   isbn                   String?
   slug                   String?                @unique

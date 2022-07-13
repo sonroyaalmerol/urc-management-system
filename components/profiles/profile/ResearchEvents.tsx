@@ -6,13 +6,6 @@ import type { ComponentProps, ExtendedResearchEvent } from '../../../types/profi
 import CardTemplate from '../../general/templates/CardTemplate'
 
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
   useDisclosure,
 } from '@chakra-ui/react'
 import Button from '../../general/Button'
@@ -20,6 +13,7 @@ import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
 import { roleChecker } from '../../../utils/roleChecker'
 import { MODIFY_RESEARCHER_PROFILE } from '../../../utils/permissions'
+import ResearchEventModal from './modals/ResearchEventModal'
 
 const ResearchEvent: React.FC<ComponentProps> = (props) => {
   const profile = props.profile
@@ -74,21 +68,12 @@ const ResearchEvent: React.FC<ComponentProps> = (props) => {
             entry={entry} 
             onClick={onOpen}
           />
-          <Modal key={`${entry.id}-modal`} isOpen={isOpen} onClose={onClose} blockScrollOnMount={false}>
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>{entry.event_name}</ModalHeader>
-              <ModalCloseButton />
-              <ModalBody>
-              </ModalBody>
-
-              <ModalFooter>
-                <Button colorScheme='blue' mr={3} onClick={onClose}>
-                  Close
-                </Button>
-              </ModalFooter>
-            </ModalContent>
-          </Modal>
+          <ResearchEventModal
+            profile={profile}
+            entry={entry}
+            isOpen={isOpen}
+            onClose={onClose}
+          />
         </>
       )) }
     </ListTemplate>

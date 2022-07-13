@@ -248,6 +248,7 @@ const VerificationCard: React.FC<VerificationCardProps> = (props) => {
       flexDir="column"
       {...divProps}
     >
+      {/* TODO: Add Cancel Button */}
       <VStack alignItems="flex-start" spacing={2}>
         <Wrap spacing={2}>
           <WrapItem>

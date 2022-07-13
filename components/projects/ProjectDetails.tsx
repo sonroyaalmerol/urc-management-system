@@ -8,7 +8,7 @@ import Card from '../general/Card'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { useSession } from 'next-auth/react'
 import IconButton from '../general/IconButton'
-import { CheckIcon, EditIcon } from '@chakra-ui/icons'
+import { CheckIcon, DeleteIcon, EditIcon } from '@chakra-ui/icons'
 import EditableText from '../general/EditableText'
 import EditableTextarea from '../general/EditableTextarea'
 import { ProjectStatus } from '@prisma/client'
@@ -17,6 +17,7 @@ import { CHANGE_PROJECT_STATUS } from '../../utils/permissions'
 import UnitsSection from './UnitsSection'
 import { useRouter } from 'next/router'
 import ResearchAreaSection from './ResearchAreaSection'
+import IconButtonWithConfirmation from '../general/IconButtonWithConfirmation'
 
 interface ProjectDetailsProps {
   project: ExtendedProject
@@ -66,6 +67,30 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = (props) => {
     setSubmitting(false)
   };
 
+  const onDelete = async () => {
+    setSubmitting(true)
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects`, {
+      method: 'POST',
+      body: JSON.stringify({mode: 'delete', id: project.id})
+    }).then((i) => i.json())
+
+    if (res.success) {
+      router.replace(`/projects`)
+      toast({
+        title: 'Success!',
+        description: 'Successfully deleted project!',
+        status: 'success'
+      })
+    } else {
+      toast({
+        title: 'Error!',
+        description: res.error,
+        status: 'error'
+      })
+    }
+    setSubmitting(false)
+  };
+
   React.useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects/status`).then((i) => i.json()).then((res) => setStatusList(res.data))
   }, [])
@@ -100,6 +125,23 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = (props) => {
                 onClick={() => setEditing((prev) => !prev)}
                 type={!editing ? "submit" : "button"}
                 isLoading={submitting}
+              />
+              <IconButtonWithConfirmation 
+                aria-label='Delete Project'
+                color="white"
+                bgColor="brand.red"
+                _hover={{
+                  color: 'brand.red',
+                  bgColor: 'brand.cardBackground'
+                }}
+                confirmationMessage={`
+                  You are about to delete ${props.project.title}. Do you want to proceed?
+                `}
+                isLoading={submitting}
+                icon={<DeleteIcon />}
+                onClick={() => {
+                  onDelete()
+                }}
               />
             </HStack>
           </WrapItem>

@@ -88,7 +88,6 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
               <WrapItem>
                 <HStack>
                   <AddProponentButton project={project} />
-                  <RemoveProponentButton project={project} />
                 </HStack>
               </WrapItem>
             ) }
@@ -99,7 +98,7 @@ const Project: React.FC<ProjectProps> = (props: InferGetServerSidePropsType<type
               <Wrap spacing={4} w="full">
                 { project.bridge_profiles.length > 0 ? project.bridge_profiles.map(({ profile, role_title }) => (
                   <WrapItem key={profile.id}>
-                    <InnerProfileCard profile={profile} role={role_title} />
+                    <InnerProfileCard project={project} profile={profile} role={role_title} />
                   </WrapItem>
                 )) : (
                   <Center marginTop="2rem" w="full">

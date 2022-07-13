@@ -99,8 +99,8 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 
 const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: Session) => {
   const body = JSON.parse(req.body) as Partial<
-    (Project & { mode: 'create' | 'update' }) |
-    ({ id: string, email: string, role: string, mode: 'add-proponent' | 'remove-proponent' })
+    (Project & { mode: 'create' | 'update' | 'delete' }) |
+    ({ id: string, email: string, role: string, mode: 'add-proponent' | 'remove-proponent' | 'edit-proponent' })
   >
 
   const id: string = session.profile.id
@@ -138,6 +138,20 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
           }
         },
         slug: slugGenerator(body.title)
+      }
+    })
+  } else if (body.mode === 'delete') {
+    if (!roleChecker(session.profile, CHANGE_PROJECT_STATUS) && !memberChecker(session.profile, tmpProject.bridge_profiles)) {
+      return res.status(401).json({ error: 'Unauthorized access.' })
+    }
+
+    if (!body.id) {
+      return res.status(400).json({ error: 'ID is required!' })
+    }
+
+    project = await prisma.project.delete({
+      where: {
+        id: body.id
       }
     })
   } else if (body.mode === 'update') {
@@ -185,7 +199,6 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
       return res.status(401).json({ error: 'Unauthorized access.' })
     }
 
-
     if (!body.email) {
       return res.status(400).json({ error: 'Email is required!' })
     }
@@ -212,6 +225,47 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
           }
         }
       })
+    } catch (err) {
+      return res.status(500).json({ error: err.message })
+    }
+  } else if (body.mode === 'edit-proponent') {
+    if (!roleChecker(session.profile, CHANGE_PROJECT_STATUS) && !memberChecker(session.profile, tmpProject.bridge_profiles)) {
+      return res.status(401).json({ error: 'Unauthorized access.' })
+    }
+
+    if (!body.email) {
+      return res.status(400).json({ error: 'Email is required!' })
+    }
+
+    if (!body.role) {
+      return res.status(400).json({ error: 'Role is required!' })
+    }
+
+    try {
+      const tmpProfile = await prisma.profile.findUnique({
+        where: {
+          email: body.email as string
+        }
+      })
+
+      await prisma.profileToProjectBridge.update({
+        where: {
+          project_id_profile_id: {
+            profile_id: tmpProfile.id,
+            project_id: body.id
+          }
+        },
+        data: {
+          role_title: body.role
+        }
+      })
+
+      project = await prisma.project.findUnique({
+        where: {
+          id: body.id
+        }
+      })
+      
     } catch (err) {
       return res.status(500).json({ error: err.message })
     }

@@ -1,91 +1,35 @@
 import React from 'react'
 
-import { useDisclosure, Text, Input, VStack, Icon, Flex, Avatar, Box, Center, Spinner, useToast } from '@chakra-ui/react'
-import { useForm, Controller, SubmitHandler } from "react-hook-form"
-
-import Button from '../general/Button'
-
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-} from '@chakra-ui/react'
+import { Icon, useToast } from '@chakra-ui/react'
 
 import { MdGroupOff } from 'react-icons/md'
-import type { Profile, ProfileToProjectBridge, Project } from '@prisma/client'
-import IconButton from '../general/IconButton'
-
-import {
-  AutoComplete,
-  AutoCompleteInput,
-  AutoCompleteItem,
-  AutoCompleteList,
-} from "@choc-ui/chakra-autocomplete"
-import { useDebounce } from 'use-debounce'
 import { useRouter } from 'next/router'
 import useUUID from '../../utils/client/useUUID'
 import { memberChecker, roleChecker } from '../../utils/roleChecker'
 import { useSession } from 'next-auth/react'
-import { ExtendedProject } from '../../types/profile-card'
+import { ExtendedProfile, ExtendedProject } from '../../types/profile-card'
 import { CHANGE_PROJECT_STATUS } from '../../utils/permissions'
+import IconButtonWithConfirmation from '../general/IconButtonWithConfirmation'
 
 interface RemoveProponentButtonProps {
   project: Partial<ExtendedProject>
-}
-
-interface FormFields { 
-  email: string
+  profile: Partial<ExtendedProfile>
 }
 
 const RemoveProponentButton: React.FC<RemoveProponentButtonProps> = (props) => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
-
-  const { control, handleSubmit, reset, setValue, watch } = useForm<FormFields>();
-
-  const { email } = watch()
-
   const key = useUUID()
 
-  const [profiles, setProfiles] = React.useState<Profile[]>([])
-  const [loadingProfiles, setLoadingProfiles] = React.useState(true)
   const [submitting, setSubmitting] = React.useState(false)
-
-  const [search, setSearch] = React.useState('')
-  const [deferredSearch] = useDebounce(search, 500)
-
-  const loadNewEntries = async () => {
-    const newEntries = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/management/profiles?proponents_only=true&project_id=${props.project.id}${search?.length > 0 ? `&query=${search}` : ''}`
-    ).then(res => res.json())
-    
-    setProfiles(newEntries?.data ?? [])
-    setLoadingProfiles(false)
-  }
-
-  React.useEffect(() => {
-    setLoadingProfiles(true)
-    if (deferredSearch === search) {
-      setLoadingProfiles(false)
-    }
-  }, [search])
-
-  React.useEffect(() => {
-    loadNewEntries()
-  }, [deferredSearch])
 
   const toast = useToast()
   const router = useRouter()
 
-  const onSubmit: SubmitHandler<FormFields> = async data => {
+  const onSubmit = async () => {
     setSubmitting(true)
     
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/management/projects`, {
       method: 'POST',
-      body: JSON.stringify({ ...data, mode: 'remove-proponent', id: props.project.id })
+      body: JSON.stringify({ email: props.profile.email, mode: 'remove-proponent', id: props.project.id })
     }).then((i) => i.json())
 
     if (res.success) {
@@ -104,8 +48,6 @@ const RemoveProponentButton: React.FC<RemoveProponentButtonProps> = (props) => {
     }
 
     setSubmitting(false)
-    reset()
-    onClose()
   };
 
   const session = useSession()
@@ -116,66 +58,16 @@ const RemoveProponentButton: React.FC<RemoveProponentButtonProps> = (props) => {
   
   return (
     <>
-      <IconButton
+      <IconButtonWithConfirmation
         aria-label='Remove Proponent'
-        onClick={onOpen}
+        onClick={onSubmit}
+        isLoading={submitting}
         icon={<Icon as={MdGroupOff} w={6} h={6} />}
         variant='red'
+        confirmationMessage={`
+          You are about to remove ${props.profile.first_name} ${props.profile.last_name} from ${props.project.title}. Do you want to proceed?
+        `}
       />
-      <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
-          <ModalHeader>Remove Proponent</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <VStack spacing={4}>
-              <VStack w="full" align="baseline" spacing={1}>
-                <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Proponent Email</Text>
-                <AutoComplete 
-                  openOnFocus
-                  disableFilter
-                  onChange={(vals) => {
-                    setValue('email', vals)
-                  }}
-                  value={search}
-                >
-                  <AutoCompleteInput
-                    autoComplete='off'
-                    onChange={(e) => {
-                      setSearch(e.target.value)
-                    }}
-                    onBlur={(e) => {
-                      if (e.target.value !== email) {
-                        e.target.value = ''
-                      }
-                    }}
-                  />
-                  <AutoCompleteList>
-                    {!loadingProfiles ? profiles.map((profile) => (
-                      <AutoCompleteItem
-                        key={profile.id}
-                        value={profile.email}
-                      >
-                        {profile.first_name} {profile.last_name} &lt;{profile.email}&gt;
-                      </AutoCompleteItem>
-                    )) : (
-                      <Center marginTop="2rem">
-                        <Spinner color="brand.blue" />
-                      </Center>
-                    )}
-                  </AutoCompleteList>
-                </AutoComplete>
-              </VStack>
-            </VStack>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button isLoading={submitting} colorScheme='blue' mr={3} type="submit">
-              Submit
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
     </>
   )
 }

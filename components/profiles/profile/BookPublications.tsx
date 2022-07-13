@@ -8,13 +8,6 @@ import CardTemplate from '../../general/templates/CardTemplate'
 import ListTemplate from '../../general/templates/ListTemplate'
 
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
   useDisclosure,
 } from '@chakra-ui/react'
 import Button from '../../general/Button'
@@ -22,6 +15,7 @@ import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
 import { roleChecker } from '../../../utils/roleChecker'
 import { MODIFY_RESEARCHER_PROFILE } from '../../../utils/permissions'
+import BookPublicationModal from './modals/BookPublicationModal'
 
 const BookPublications: React.FC<ComponentProps> = (props) => {
   const profile = props.profile
@@ -77,21 +71,12 @@ const BookPublications: React.FC<ComponentProps> = (props) => {
             role={entry.bridge_profiles.filter((bridge) => bridge.profile_id === profile.id)[0].role_title}
             onClick={onOpen}
           />
-          <Modal key={`${entry.id}-modal`} isOpen={isOpen} onClose={onClose} blockScrollOnMount={false}>
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>{entry.title}</ModalHeader>
-              <ModalCloseButton />
-              <ModalBody>
-              </ModalBody>
-
-              <ModalFooter>
-                <Button colorScheme='blue' mr={3} onClick={onClose}>
-                  Close
-                </Button>
-              </ModalFooter>
-            </ModalContent>
-          </Modal>
+          <BookPublicationModal
+            profile={profile}
+            entry={entry}
+            isOpen={isOpen}
+            onClose={onClose}
+          />
         </>
       )) }
     </ListTemplate>

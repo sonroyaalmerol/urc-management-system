@@ -60,6 +60,7 @@ const ProjectList: React.FC<ProjectListProps> = (props) => {
 
   return (
     <>
+      {/* TODO: Add Project filters */}
       { !loading ? (
         <CustomInfiniteScroll
           pageStart={0}
