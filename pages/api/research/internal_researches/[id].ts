@@ -8,7 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return await prisma.project.findFirst({ 
       where: {
         ...where,
-        approved: true
+        project_status_id: 'finished'
       },
       include: {
         units: {

@@ -62,7 +62,6 @@ const VerificationCard: React.FC<VerificationCardProps> = (props) => {
           title: request.book_publication.title,
           description: (
             <VStack align="baseline" spacing={0}>
-              <Text fontSize="sm"><strong>Authors</strong>: {request.book_publication.authors.join(', ')}</Text>
               <Text fontSize="sm"><strong>Publisher</strong>: {request.book_publication.publisher}</Text>
               <Text fontSize="sm"><strong>ISBN</strong>: {request.book_publication.isbn}</Text>
               <Text fontSize="sm"><strong>Date Published</strong>: {format(new Date(request.book_publication.date_published), 'MMM dd, yyyy h:mm a')}</Text>
@@ -88,7 +87,6 @@ const VerificationCard: React.FC<VerificationCardProps> = (props) => {
           title: request.journal_publication.title,
           description: (
             <VStack align="baseline" spacing={0}>
-              <Text fontSize="sm"><strong>Authors</strong>: {request.journal_publication.authors.join(', ')}</Text>
               <Text fontSize="sm"><strong>ISSN</strong>: {request.journal_publication.issn}</Text>
               <Text fontSize="sm"><strong>Journal</strong>: {request.journal_publication.journal}</Text>
               <Text fontSize="sm"><strong>Is indexed</strong>: {request.journal_publication.is_indexed ? 'Yes' : 'No'}</Text>
@@ -130,7 +128,6 @@ const VerificationCard: React.FC<VerificationCardProps> = (props) => {
             <VStack align="baseline" spacing={0}>
               <Text fontSize="sm"><strong>Location</strong>: {request.research_presentation.location}</Text>
               <Text fontSize="sm"><strong>Event Date</strong>: {format(new Date(request.research_presentation.event_date), 'MMM dd, yyyy h:mm a')}</Text>
-              <Text fontSize="sm"><strong>Presentors</strong>: {request.research_presentation.presentors.join(', ')}</Text>
               <Text fontSize="sm"><strong>Conference</strong>: {request.research_presentation.conference}</Text>
               <Text fontSize="sm"><strong>URL</strong>: {request.research_presentation.url}</Text>
             </VStack>

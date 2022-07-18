@@ -17,7 +17,7 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
 
   const queryFilter = searchQuery.split(' ').filter(s => s.trim().length > 0)
   const queryFields = [
-    'title'
+    'title', 'abstract'
   ]
   let orQuery = []
   queryFields.forEach((field) => {

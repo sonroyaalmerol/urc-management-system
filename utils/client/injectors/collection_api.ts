@@ -1,3 +1,4 @@
+import { Profile, ResearchArea, Unit } from '@prisma/client';
 import { parse } from 'date-fns';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import type { Function } from '../../../types/api';
@@ -186,56 +187,7 @@ const injectAuthors = async (search: string, type: CollectionTypes) => {
       })
     })
   }
-  const wildcardSearch = `%${search}%`
-  switch (type) {
-    case 'book_publications':
-      const bookIds: { id: string }[] = await prisma.$queryRaw`
-        select id from public."BookPublication" where lower(array_to_string(authors, ', ')) like lower(${wildcardSearch})
-      `
-      ORarray = [...ORarray, ...bookIds.map((id) => (
-        { id: id.id }
-      ))]
-
-      defaultCase()
-      break
-    case 'journal_publications':
-      const journalIds: { id: string }[] = await prisma.$queryRaw`
-        select id from public."JournalPublication" where lower(array_to_string(authors, ', ')) like lower(${wildcardSearch})
-      `
-      ORarray = [...ORarray, ...journalIds.map((id) => (
-        { id: id.id }
-      ))]
-
-      defaultCase()
-      break
-    case 'external_researches':
-      const externalIds: { id: string }[] = await prisma.$queryRaw`
-        select id from public."ExternalResearch" where lower(array_to_string(main_proponents , ', ')) like lower(${wildcardSearch}) or lower(array_to_string(co_proponents, ', ')) like lower(${wildcardSearch});
-      `
-      ORarray = [...ORarray, ...externalIds.map((id) => (
-        { id: id.id }
-      ))]
-      defaultCase()
-      break
-    case 'internal_researches':
-      const projectIds: { id: string }[] = await prisma.$queryRaw`
-        select id from public."Project" where lower(array_to_string(main_proponents , ', ')) like lower(${wildcardSearch}) or lower(array_to_string(co_proponents, ', ')) like lower(${wildcardSearch});
-      `
-      ORarray = [...ORarray, ...projectIds.map((id) => (
-        { id: id.id }
-      ))]
-      defaultCase()
-      break
-    case 'presentations':
-      const presentationIds: { id: string }[] = await prisma.$queryRaw`
-        select id from public."ResearchPresentation" where lower(array_to_string(presentors , ', ')) like lower(${wildcardSearch});
-      `
-      ORarray = [...ORarray, ...presentationIds.map((id) => (
-        { id: id.id }
-      ))]
-    case 'disseminations':
-      defaultCase()
-  }
+  defaultCase()
 
   return ORarray
 }
@@ -340,6 +292,28 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function,
     })
   }
 
+  const sortGenerator = () => {
+    if (sort_field === 'units' || sort_field === 'users' || sort_field === 'research_areas') {
+      return {
+        _count: sort
+      }
+    }
+    return sort
+  }
+
+  const sortFieldGenerator = () => {
+    if (sort_field === 'users') {
+      return 'bridge_profiles'
+    }
+    if (sort_field === 'fullname') {
+      return 'first_name'
+    }
+    if (sort_field === 'duration') {
+      return 'duration_start'
+    }
+    return sort_field
+  }
+
   const args = {
     skip: (per_page ?? 10) * (page ? (page - 1) : 0),
     take: (per_page ?? 10),
@@ -352,9 +326,17 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function,
       ]
     },
     orderBy: sort_field && sort ? {
-      [sort_field as string]: sort
+      [sortFieldGenerator() as string]: sortGenerator()
     } : undefined
   }
+
+  prisma.project.findMany({
+    orderBy: {
+      bridge_profiles: {
+        
+      }
+    }
+  })
 
   try {
     [count, rawData] = await fn(args);
