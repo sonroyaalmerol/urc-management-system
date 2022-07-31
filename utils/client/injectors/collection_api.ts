@@ -193,7 +193,7 @@ const injectAuthors = async (search: string, type: CollectionTypes) => {
 }
 
 const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function, type: CollectionTypes) => {
-  let { page: raw_page, per_page: raw_per_page, search, fields, sort_field, sort, created_range, updated_range, duration_range, event_date_range } = req.query
+  let { page: raw_page, per_page: raw_per_page, search, fields, sort_field, sort, created_range, updated_range, published_range, duration_range, event_date_range } = req.query
   const page: number = raw_page ? parseInt(raw_page as string) : 1
   const per_page: number = raw_per_page ? parseInt(raw_per_page as string) : 10
 
@@ -312,6 +312,19 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function,
 
     ANDarray.push({
       event_date: {
+        gte: from,
+        lte: to
+      }
+    })
+  }
+
+  if (published_range) {
+    const createdRange = (published_range as string).split(',')
+    const from = parse(createdRange[0].trim(), 'yyyy-MM-dd', baseDateFrom)
+    const to = parse(createdRange[1].trim(), 'yyyy-MM-dd', baseDateTo)
+
+    ANDarray.push({
+      date_published: {
         gte: from,
         lte: to
       }
