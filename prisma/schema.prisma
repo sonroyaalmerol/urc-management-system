@@ -325,10 +325,10 @@ model ExternalResearch {
 
   project_status                ProjectStatus?                @relation(fields: [project_status_id], references: [id], onDelete: SetNull)
   file_uploads                  FileUpload[]
-  research_presentations         ResearchPresentation[]
-  journal_publications           JournalPublication[]
+  // research_presentations         ResearchPresentation[]
+  // journal_publications           JournalPublication[]
   bridge_profiles               ProfileToExternalResearchBridge[]
-  disseminations                ResearchDissemination[]
+  // disseminations                ResearchDissemination[]
 
   verified                       Boolean                      @default(false)
   verification_requests          VerificationRequest[]
@@ -458,9 +458,9 @@ model ProfileToResearchEventBridge {
 
 model ResearchPresentation {
   id                     String                 @id @default(cuid())
-  is_external_research   Boolean                @default(false)
-  project_id String?                
-  external_research_id   String?                
+  // is_external_research   Boolean                @default(false)
+  // project_id String?                
+  // external_research_id   String?                
   title                  String                 @unique
   location               String
   event_date             DateTime?             
@@ -473,8 +473,8 @@ model ResearchPresentation {
 
   file_uploads           FileUpload[]
 
-  external_research      ExternalResearch?   @relation(fields: [external_research_id], references: [id], onDelete: SetNull)
-  project    Project? @relation(fields: [project_id], references: [id], onDelete: SetNull)
+  // external_research      ExternalResearch?   @relation(fields: [external_research_id], references: [id], onDelete: SetNull)
+  // project    Project? @relation(fields: [project_id], references: [id], onDelete: SetNull)
   bridge_profiles   ProfileToResearchPresentationBridge[]
   units Unit[]
 
@@ -498,9 +498,9 @@ model ProfileToResearchPresentationBridge {
 
 model ResearchDissemination {
   id                     String                 @id @default(cuid())
-  is_external_research   Boolean                @default(false)
-  project_id String?                
-  external_research_id   String?                
+  // is_external_research   Boolean                @default(false)
+  // project_id String?                
+  // external_research_id   String?                
   title                  String                 @unique
   location               String?
   organization           String?
@@ -513,8 +513,8 @@ model ResearchDissemination {
   file_uploads           FileUpload[]
 
   bridge_profiles   ProfileToResearchDisseminationBridge[]
-  external_researches  ExternalResearch[]
-  projects  Project[]
+  // external_researches  ExternalResearch[]
+  // projects  Project[]
   units Unit[]
 
   verified                       Boolean                      @default(false)
@@ -537,9 +537,9 @@ model ProfileToResearchDisseminationBridge {
 
 model JournalPublication {
   id                     String                 @id @default(cuid())
-  is_external_research   Boolean                @default(false)
-  project_id String?                
-  external_research_id   String?                
+  // is_external_research   Boolean                @default(false)
+  // project_id String?                
+  // external_research_id   String?                
   created_at             DateTime               @default(now())
   updated_at             DateTime               @updatedAt
   date_published         DateTime?             
@@ -549,11 +549,11 @@ model JournalPublication {
   url                    String?
   slug                   String?                @unique
   is_indexed             Boolean                @default(false)
-  external_researches    ExternalResearch?   @relation(fields: [external_research_id], references: [id], onDelete: SetNull)
+  // external_researches    ExternalResearch?   @relation(fields: [external_research_id], references: [id], onDelete: SetNull)
   
   file_uploads           FileUpload[]
   
-  projects  Project? @relation(fields: [project_id], references: [id], onDelete: SetNull)
+  // projects  Project? @relation(fields: [project_id], references: [id], onDelete: SetNull)
   bridge_profiles   ProfileToJournalPublicationBridge[]
   units Unit[]
 
@@ -695,9 +695,9 @@ model Project {
   related_files                    FileUpload[]
   submissions                      Submission[]
   deliverables                     Deliverable[]
-  research_presentations           ResearchPresentation[]
-  disseminations                   ResearchDissemination[]
-  journal_publications             JournalPublication[]
+  // research_presentations           ResearchPresentation[]
+  // disseminations                   ResearchDissemination[]
+  // journal_publications             JournalPublication[]
   bridge_profiles                  ProfileToProjectBridge[]
   bridge_institutes                ProjectToInstituteBridge[]
   units                            Unit[]
