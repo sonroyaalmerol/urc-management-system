@@ -13,6 +13,7 @@ import AutoCompleteInput from '../../general/AutoCompleteInput'
 import fetchWithFile from '../../../utils/client/fetchWithFile'
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
+import DatePicker from '../../general/DatePicker'
 
 interface ResearchEventFormProps {
   profileId?: string
@@ -84,11 +85,11 @@ const ResearchEventForm: React.FC<ResearchEventFormProps> = (props) => {
             <>
               <VStack w="full" align="baseline" spacing={1}>
                 <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Start Date</Text>
-                <Input {...register('start_date')} />
+                <DatePicker {...register('duration_start')} />
               </VStack>
               <VStack w="full" align="baseline" spacing={1}>
                 <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">End Date</Text>
-                <Input {...register('end_date')} />
+                <DatePicker {...register('duration_end')} />
               </VStack>
               <VStack w="full" align="baseline" spacing={1}>
                 <Text paddingLeft="1rem" fontSize="md" color="brand.blue" fontWeight="bold">Description</Text>

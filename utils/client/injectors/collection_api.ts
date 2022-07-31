@@ -193,7 +193,7 @@ const injectAuthors = async (search: string, type: CollectionTypes) => {
 }
 
 const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function, type: CollectionTypes) => {
-  let { page: raw_page, per_page: raw_per_page, search, fields, sort_field, sort, created_range, updated_range } = req.query
+  let { page: raw_page, per_page: raw_per_page, search, fields, sort_field, sort, created_range, updated_range, duration_range, event_date_range } = req.query
   const page: number = raw_page ? parseInt(raw_page as string) : 1
   const per_page: number = raw_per_page ? parseInt(raw_per_page as string) : 10
 
@@ -280,12 +280,38 @@ const injector = async (req: NextApiRequest, res: NextApiResponse, fn: Function,
   }
 
   if (updated_range) {
-    const createdRange = (created_range as string).split(',')
+    const createdRange = (updated_range as string).split(',')
     const from = parse(createdRange[0].trim(), 'yyyy-MM-dd', baseDateFrom)
     const to = parse(createdRange[1].trim(), 'yyyy-MM-dd', baseDateTo)
 
     ANDarray.push({
       updated_at: {
+        gte: from,
+        lte: to
+      }
+    })
+  }
+
+  if (duration_range) {
+    const createdRange = (duration_range as string).split(',')
+    const from = parse(createdRange[0].trim(), 'yyyy-MM-dd', baseDateFrom)
+    const to = parse(createdRange[1].trim(), 'yyyy-MM-dd', baseDateTo)
+
+    ANDarray.push({
+      duration_start: {
+        gte: from,
+        lte: to
+      }
+    })
+  }
+
+  if (event_date_range) {
+    const createdRange = (event_date_range as string).split(',')
+    const from = parse(createdRange[0].trim(), 'yyyy-MM-dd', baseDateFrom)
+    const to = parse(createdRange[1].trim(), 'yyyy-MM-dd', baseDateTo)
+
+    ANDarray.push({
+      event_date: {
         gte: from,
         lte: to
       }

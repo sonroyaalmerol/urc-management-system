@@ -138,7 +138,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
   })
 
   if (!currentEntry) {
-    if (!cleanString(body.fields.start_date)) {
+    if (!body.fields.duration_start) {
       for await (const file of body.files) {
         await deleteFile(file.value.id)
       }
@@ -146,7 +146,7 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
       return res.status(400).json({ error: 'Start Date is required!' })
     }
 
-    if (!cleanString(body.fields.end_date)) {
+    if (!body.fields.duration_end) {
       for await (const file of body.files) {
         await deleteFile(file.value.id)
       }
@@ -165,8 +165,8 @@ const postHandler = async (req: NextApiRequest, res: NextApiResponse, session: S
     currentEntry = await prisma.researchEvent.create({
       data: {
         event_name: body.fields.event_name,
-        start_date: body.fields.start_date,
-        end_date: body.fields.end_date,
+        duration_start: new Date(body.fields.duration_start),
+        duration_end: new Date(body.fields.duration_end),
         description: body.fields.description
       }
     })

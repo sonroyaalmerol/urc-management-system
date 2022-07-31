@@ -147,7 +147,7 @@ const ResearchEventModal: React.FC<{
             ) }
             <Wrap align="center">
               <WrapItem fontWeight="bold">Duration:</WrapItem>
-              <WrapItem>{format(new Date(entry.start_date), 'MMM dd, yyyy h:mm a')} - {format(new Date(entry.end_date), 'MMM dd, yyyy h:mm a')}</WrapItem>
+              <WrapItem>{format(new Date(entry.duration_start), 'MMM dd, yyyy h:mm a')} - {format(new Date(entry.duration_end), 'MMM dd, yyyy h:mm a')}</WrapItem>
             </Wrap>
             <Wrap align="center">
               <WrapItem fontWeight="bold">Description:</WrapItem>

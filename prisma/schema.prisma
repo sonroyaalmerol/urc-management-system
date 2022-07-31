@@ -431,8 +431,8 @@ model ResearchEvent {
   created_at      DateTime     @default(now())
   updated_at      DateTime     @updatedAt
   event_name      String       @unique
-  start_date      String    
-  end_date        String    
+  duration_start  DateTime?    
+  duration_end    DateTime?    
   description     String?
   file_uploads                  FileUpload[]
 

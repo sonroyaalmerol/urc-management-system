@@ -114,8 +114,8 @@ const VerificationCard: React.FC<VerificationCardProps> = (props) => {
           title: request.research_event.event_name,
           description: (
             <VStack align="baseline" spacing={0}>
-              <Text fontSize="sm"><strong>Start Date</strong>: {format(new Date(request.research_event.start_date), 'MMM dd, yyyy h:mm a')}</Text>
-              <Text fontSize="sm"><strong>End Date</strong>: {format(new Date(request.research_event.end_date), 'MMM dd, yyyy h:mm a')}</Text>
+              <Text fontSize="sm"><strong>Start Date</strong>: {format(new Date(request.research_event.duration_start), 'MMM dd, yyyy h:mm a')}</Text>
+              <Text fontSize="sm"><strong>End Date</strong>: {format(new Date(request.research_event.duration_end), 'MMM dd, yyyy h:mm a')}</Text>
               <Text fontSize="sm"><strong>Description</strong>: {request.research_event.description}</Text>
             </VStack>
           )
