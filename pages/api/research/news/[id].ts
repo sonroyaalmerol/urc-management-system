@@ -10,7 +10,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         ...where
       },
       include: {
-        uploads: true
+        uploads: true,
+        institute: true
       }
     })
   }, 'news')

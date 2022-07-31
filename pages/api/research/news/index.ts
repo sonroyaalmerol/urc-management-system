@@ -20,7 +20,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           verified: true
         },
         include: {
-          uploads: true
+          uploads: true,
+          institute: true
         },
         orderBy
       })
