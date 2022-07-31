@@ -54,6 +54,7 @@ const getHandler = async (req: NextApiRequest, res: NextApiResponse, session: Se
         }
       },
       include: {
+        file_uploads: true,
         bridge_profiles: {
           include: {
             profile: {
