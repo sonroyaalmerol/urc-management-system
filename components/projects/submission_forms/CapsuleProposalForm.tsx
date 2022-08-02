@@ -27,7 +27,8 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
   const thrustList: ResearchThrust[] = React.useMemo(() => {
     const list = []
     missionList.forEach((entry) => {
-      entry.research_thrusts.forEach((thrust) => {
+      entry.research_thrusts.forEach((tmpThrust) => {
+        const thrust = { ...tmpThrust, university_mission_id: entry.description }
         list.push(thrust)
       })
     })
@@ -87,9 +88,12 @@ const CapsuleProposalForm: React.FC<CapsuleProposalFormProps> = (props) => {
               render={({ field }) => (
                 <Select {...field}>
                   <option value={null}>Select a Research Thrust</option>
-                  { thrustList.map((status) => (
-                    <option key={status.id} value={status.id}>{status.description}</option>
-                  )) }
+                  { thrustList.map((status) => {
+                    console.log(status)
+                    return (
+                      <option key={status.id} value={status.id}>{status.description} ({status.university_mission_id})</option>
+                    )
+                  }) }
                 </Select>
               )}
             />
